@@ -1,0 +1,2558 @@
+[
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "achase@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "achase@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "achase@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "achase@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "achase@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "achase@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "achase@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "achase@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "achase@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "achase@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "achase@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "achase@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "achase@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "achase@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "luvalero@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "bchastain@160over90.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "bchastain@160over90.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "bchastain@160over90.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "bchastain@160over90.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "bchastain@160over90.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "bchastain@160over90.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "bchastain@160over90.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "bchastain@160over90.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "bchastain@160over90.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "bchastain@160over90.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "bchastain@160over90.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "bchastain@160over90.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "bchastain@160over90.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "bchastain@160over90.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "carlos@oleopr.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler pr — country us not in [pr,all-countries]"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "carlos@oleopr.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler pr — country jp not in [pr,all-countries]"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "carlos@oleopr.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler pr — country au not in [pr,all-countries]"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "carlos@oleopr.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler pr — country br not in [pr,all-countries]"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "carlos@oleopr.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler pr — country th not in [pr,all-countries]"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "carlos@oleopr.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler pr — country sa not in [pr,all-countries]"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "carlos@oleopr.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler pr — country us not in [pr,all-countries]"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "carlos@oleopr.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "country all-countries passes — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "carlos@oleopr.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "carlos@oleopr.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "carlos@oleopr.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler pr — country none not in [pr,all-countries]"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "carlos@oleopr.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler pr — country none not in [pr,all-countries]"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "carlos@oleopr.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler pr — country all-countries passes"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "carlos@oleopr.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "bottler us — country us passes"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country jp not in [us,all-countries]"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country au not in [us,all-countries]"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country br not in [us,all-countries]"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country th not in [us,all-countries]"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country sa not in [us,all-countries]"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "country us passes — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "country all-countries passes — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "bottler us — country us passes, in aloe-gloe CUG — brand passes"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler us — country none not in [us,all-countries]"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler us — country none not in [us,all-countries]"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler us — country all-countries passes"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "aemtestbottler@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler legacy - unknown — country us not in [legacy - unknown,all-countries]"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler legacy - unknown — country jp not in [legacy - unknown,all-countries]"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler legacy - unknown — country au not in [legacy - unknown,all-countries]"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler legacy - unknown — country br not in [legacy - unknown,all-countries]"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler legacy - unknown — country th not in [legacy - unknown,all-countries]"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler legacy - unknown — country sa not in [legacy - unknown,all-countries]"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler legacy - unknown — country us not in [legacy - unknown,all-countries]"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "country all-countries passes — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler legacy - unknown — country none not in [legacy - unknown,all-countries]"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler legacy - unknown — country none not in [legacy - unknown,all-countries]"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler legacy - unknown — country all-countries passes"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "akhlestov@loweadventa.ru",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "bottler us — country us passes"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country jp not in [us,all-countries]"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country au not in [us,all-countries]"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country br not in [us,all-countries]"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country th not in [us,all-countries]"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country sa not in [us,all-countries]"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "country us passes — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "country all-countries passes — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "bottler us — country us passes, in aloe-gloe CUG — brand passes"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler us — country none not in [us,all-countries]"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler us — country none not in [us,all-countries]"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler us — country all-countries passes"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "aadam@abartacocacola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "lotte.verboven@kandesign.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "agency skips country"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "seira.yoshimura@bredgedesign.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler (none) — country us not in [all-countries]"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler (none) — country jp not in [all-countries]"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler (none) — country au not in [all-countries]"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler (none) — country br not in [all-countries]"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler (none) — country th not in [all-countries]"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler (none) — country sa not in [all-countries]"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler (none) — country us not in [all-countries]"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler  — country all-countries passes, mcdonald-s customer matches"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler (none) — country none not in [all-countries]"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler (none) — country none not in [all-countries]"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler  — country all-countries passes"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "a.ortiz@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "no roles — match-nothing filter blocks all results"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "no roles — match-nothing filter blocks all results"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "no roles — match-nothing filter blocks all results"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "no roles — match-nothing filter blocks all results"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "no roles — match-nothing filter blocks all results"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "no roles — match-nothing filter blocks all results"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "asset",
+    "access": 0,
+    "accessExpected": 1,
+    "bug": "no-roles-with-customers",
+    "reason": "BUG: no roles blocks all results, but user has mcdonald-s customer — should see customer assets"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "asset",
+    "access": 0,
+    "accessExpected": 1,
+    "bug": "no-roles-with-customers",
+    "reason": "BUG: no roles blocks all results, but user has mcdonald-s customer — should see customer assets"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "no roles — match-nothing filter blocks all results"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "no roles — match-nothing filter blocks all results"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "no roles — match-nothing filter blocks all results"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "asset",
+    "access": 0,
+    "accessExpected": 1,
+    "bug": "no-roles-with-customers",
+    "reason": "BUG: no roles blocks all results, but user has mcdonald-s customer — should see customer assets"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "no roles — match-nothing filter blocks all results"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "customer2@mcdonalds.com",
+    "searchType": "asset",
+    "access": 0,
+    "accessExpected": 1,
+    "bug": "no-roles-with-customers",
+    "reason": "BUG: no roles blocks all results, but user has mcdonald-s customer — should see customer assets"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country, in aloe-gloe CUG — brand passes"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "michal.mukawa@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "contingent-worker skips country"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "contingent-worker skips country"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "contingent-worker skips country"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "contingent-worker skips country"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "contingent-worker skips country"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "contingent-worker skips country"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "contingent-worker skips country"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "contingent-worker skips country"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "aemtestprintshopemployee@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "abienert@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler es,pt — country us not in [es,pt,all-countries]"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "abienert@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler es,pt — country jp not in [es,pt,all-countries]"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "abienert@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler es,pt — country au not in [es,pt,all-countries]"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "abienert@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler es,pt — country br not in [es,pt,all-countries]"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "abienert@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler es,pt — country th not in [es,pt,all-countries]"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "abienert@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler es,pt — country sa not in [es,pt,all-countries]"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "abienert@ccep.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler es,pt — country us not in [es,pt,all-countries]"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "abienert@ccep.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "country all-countries passes — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "abienert@ccep.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler es,pt — country es passes, in nestea CUG — brand passes"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "abienert@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "abienert@ccep.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler es,pt — country none not in [es,pt,all-countries]"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "abienert@ccep.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler es,pt — country none not in [es,pt,all-countries]"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "abienert@ccep.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler es,pt — country all-countries passes"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "abienert@ccep.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler es,pt — country us not in [es,pt,all-countries]"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "brandonh@fairlife.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "brandonh@fairlife.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "brandonh@fairlife.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "brandonh@fairlife.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "brandonh@fairlife.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "brandonh@fairlife.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "brandonh@fairlife.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "brandonh@fairlife.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "brandonh@fairlife.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "brandonh@fairlife.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "brandonh@fairlife.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "brandonh@fairlife.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "brandonh@fairlife.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "brandonh@fairlife.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "kolathap@adobe.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "kolathap@adobe.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "kolathap@adobe.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "kolathap@adobe.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "kolathap@adobe.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "kolathap@adobe.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "kolathap@adobe.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "kolathap@adobe.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "kolathap@adobe.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "kolathap@adobe.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "kolathap@adobe.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "kolathap@adobe.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "kolathap@adobe.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "kolathap@adobe.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "admin — no filters"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "ktyree@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "jambaird@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country, mcdonald-s customer matches"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country, mcdonald-s customer matches"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country, mcdonald-s customer matches"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "antaruc@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler jp — country us not in [jp,all-countries]"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "bottler jp — country jp passes"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler jp — country au not in [jp,all-countries]"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler jp — country br not in [jp,all-countries]"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler jp — country th not in [jp,all-countries]"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler jp — country sa not in [jp,all-countries]"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler jp — country us not in [jp,all-countries]"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "country all-countries passes — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler jp — country none not in [jp,all-countries]"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler jp — country none not in [jp,all-countries]"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler jp — country all-countries passes"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "koassetstest123@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler au — country us not in [au,all-countries]"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler au — country jp not in [au,all-countries]"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "template",
+    "access": 1,
+    "reason": "bottler au — country au passes"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler au — country br not in [au,all-countries]"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler au — country th not in [au,all-countries]"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler au — country sa not in [au,all-countries]"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler au — country us not in [au,all-countries]"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "country all-countries passes — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler au — country none not in [au,all-countries]"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler au — country none not in [au,all-countries]"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler au — country all-countries passes"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "ben.shapcott@organicandraw.com.au",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler br — country us not in [br,all-countries]"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler br — country jp not in [br,all-countries]"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler br — country au not in [br,all-countries]"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "template",
+    "access": 1,
+    "reason": "bottler br — country br passes"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler br — country th not in [br,all-countries]"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler br — country sa not in [br,all-countries]"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler br — country us not in [br,all-countries]"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "country all-countries passes — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler br — country none not in [br,all-countries]"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler br — country none not in [br,all-countries]"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler br — country all-countries passes"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "aapereira@solarbr.com.br",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler th — country us not in [th,all-countries]"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler th — country jp not in [th,all-countries]"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler th — country au not in [th,all-countries]"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler th — country br not in [th,all-countries]"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "template",
+    "access": 1,
+    "reason": "bottler th — country th passes"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler th — country sa not in [th,all-countries]"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler th — country us not in [th,all-countries]"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "country all-countries passes — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler th — country none not in [th,all-countries]"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler th — country none not in [th,all-countries]"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler th — country all-countries passes"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "amnat.ba@thainamthip.co.th",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "aastuy@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler es — country us not in [es,all-countries]"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "aastuy@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler es — country jp not in [es,all-countries]"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "aastuy@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler es — country au not in [es,all-countries]"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "aastuy@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler es — country br not in [es,all-countries]"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "aastuy@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler es — country th not in [es,all-countries]"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "aastuy@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler es — country sa not in [es,all-countries]"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "aastuy@ccep.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler es — country us not in [es,all-countries]"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "aastuy@ccep.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "country all-countries passes — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "aastuy@ccep.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "aastuy@ccep.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "NOT in aloe-gloe CUG — brand filter blocks"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "aastuy@ccep.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler es — country none not in [es,all-countries]"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "aastuy@ccep.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler es — country none not in [es,all-countries]"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "aastuy@ccep.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler es — country all-countries passes"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "aastuy@ccep.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "employee skips country, in aloe-gloe CUG — brand passes"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "skip country — but no mcdonald-s customer — customer filter blocks"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "employee skips country"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "jkircher@coca-cola.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
+    "email": "shibinose@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "bottler us — country us passes"
+  },
+  {
+    "assetId": "b64c0203-ec9b-4b02-a9b0-4c5a49fe7352",
+    "email": "shibinose@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country jp not in [us,all-countries]"
+  },
+  {
+    "assetId": "61eeedf5-dccb-4e22-b02b-57e3b51b5724",
+    "email": "shibinose@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country au not in [us,all-countries]"
+  },
+  {
+    "assetId": "5230cff2-c842-4831-b6ed-a9fe34af429f",
+    "email": "shibinose@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country br not in [us,all-countries]"
+  },
+  {
+    "assetId": "aecdbed6-7c77-4916-ad3e-9cac8fd2415e",
+    "email": "shibinose@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country th not in [us,all-countries]"
+  },
+  {
+    "assetId": "80a1550b-4853-457c-866d-803ec6eef76f",
+    "email": "shibinose@gmail.com",
+    "searchType": "template",
+    "access": 0,
+    "reason": "bottler us — country sa not in [us,all-countries]"
+  },
+  {
+    "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
+    "email": "shibinose@gmail.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler us — country us passes, mcdonald-s customer matches"
+  },
+  {
+    "assetId": "77415f2b-ad38-432d-90ae-884e378d1b57",
+    "email": "shibinose@gmail.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler us — country all-countries passes, mcdonald-s customer matches"
+  },
+  {
+    "assetId": "aa0b6070-b37b-4ff6-8856-48e924eec035",
+    "email": "shibinose@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  },
+  {
+    "assetId": "76e0188b-5fb6-4fb0-9aca-665983700646",
+    "email": "shibinose@gmail.com",
+    "searchType": "template",
+    "access": 1,
+    "reason": "bottler us — country us passes, in aloe-gloe CUG — brand passes"
+  },
+  {
+    "assetId": "6484ab96-127e-4bd9-b719-d6074e4c7fd8",
+    "email": "shibinose@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler us — country none not in [us,all-countries]"
+  },
+  {
+    "assetId": "fe3695e0-7b5e-496f-80d2-79412fa02253",
+    "email": "shibinose@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "bottler us — country none not in [us,all-countries]"
+  },
+  {
+    "assetId": "21fecb26-366e-4b19-8feb-8758c3c4a96c",
+    "email": "shibinose@gmail.com",
+    "searchType": "asset",
+    "access": 1,
+    "reason": "bottler us — country all-countries passes"
+  },
+  {
+    "assetId": "1aa7d2c8-0f79-4168-a788-e154f37ec4d9",
+    "email": "shibinose@gmail.com",
+    "searchType": "asset",
+    "access": 0,
+    "reason": "NOT in nestea CUG — brand filter blocks"
+  }
+]

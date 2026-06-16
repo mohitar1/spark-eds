@@ -1,0 +1,20 @@
+{
+  "name": "saved-searches-migration",
+  "version": "1.0.0",
+  "description": "Migrate saved searches from AEM CRX to Cloudflare KV",
+  "type": "module",
+  "scripts": {
+    "migrate": "node migrate-all.js",
+    "dry-run": "node migrate-all.js --dry",
+    "lint": "eslint *.js"
+  },
+  "dependencies": {
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

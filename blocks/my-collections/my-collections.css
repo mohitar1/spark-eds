@@ -1,0 +1,1009 @@
+/* Share dropdown variables */
+:root {
+    --dropdown-item-padding: 12px 16px;
+    --dropdown-item-padding-mobile: 10px 14px;
+    --dropdown-icon-size: 18px;
+    --dropdown-icon-size-mobile: 16px;
+    --dropdown-icon-opacity: 0.7;
+    --dropdown-icon-opacity-hover: 1;
+}
+
+.my-collections {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
+    height: auto;
+}
+
+.my-collections-container {
+    width: 100%;
+
+    /* 100vh - nav height (108px) - footer height (60px + 40px padding) - extra spacing */
+    min-height: calc(100vh - var(--nav-height, 108px) - 160px);
+}
+
+.title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.my-collections-title {
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: #333;
+    margin: 0;
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.my-collections-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.showing-text {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    max-width: 520px;
+    width: 100%;
+    gap: 0;
+    position: relative;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border: 1px solid #e0e0e0;
+    border-right: none;
+    border-radius: 20px 0 0 20px;
+    font-size: 0.9rem;
+    background-color: white;
+    outline: none;
+    height: 40px;
+    box-sizing: border-box;
+}
+
+/* Left search icon - positioned on wrapper when present, otherwise on container */
+.search-input-wrapper::before,
+.search-container:not(:has(.search-input-wrapper))::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    background: url('/icons/search.svg') center center / contain no-repeat;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.search-input::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.search-input:focus {
+    border-color: #e60012;
+    background-color: white;
+}
+
+/* Search input wrapper for clear button positioning */
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.search-input-wrapper .search-input {
+    padding-right: 30px; /* Space for clear button */
+}
+
+.search-clear-btn {
+    position: absolute;
+    right: 8px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.search-clear-btn:hover {
+    background-color: #eee;
+    color: #666;
+}
+
+.search-btn {
+    background-color: #e60012;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0 20px 20px 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    height: 40px;
+    box-sizing: border-box;
+}
+
+.search-btn:hover {
+    background-color: #cc0010;
+}
+
+/* Loading spinner for collections */
+.collections-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    gap: 1rem;
+    color: #666;
+}
+
+.collections-loading p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f0f0f0;
+    border-top-color: #e60012;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Modal Styles */
+.collection-modal,
+.edit-modal,
+.delete-modal,
+.share-modal,
+.view-access-modal,
+.remove-user-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(0 0 0 / 60%);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgb(0 0 0 / 30%);
+}
+
+.modal-content-small {
+    max-width: 450px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 2rem 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #333;
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.form-label:first-child {
+    margin-top: 0;
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: #e60012;
+    background-color: white;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #e60012;
+    background-color: white;
+}
+
+/* View Access Modal Content */
+.view-access-content {
+    max-height: 400px;
+    overflow: hidden auto;
+    padding: 1rem 0;
+}
+
+/* Subtle scroll indicator */
+.view-access-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.view-access-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.view-access-content::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.view-access-content::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+.access-role-group {
+    margin-bottom: 0.75rem;
+}
+
+.access-role-group:last-child {
+    margin-bottom: 0;
+}
+
+.access-role-label {
+    font-weight: 700;
+    color: #555;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.access-user-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.access-user-item {
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    color: #666;
+    font-size: 0.9rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.access-user-item::before {
+    content: '•';
+    position: absolute;
+    left: 0.5rem;
+    color: #999;
+}
+
+.access-user-email {
+    flex: 1;
+}
+
+.access-user-remove-btn {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 0.5rem;
+    margin-left: 0.5rem;
+    transition: color 0.2s ease;
+}
+
+.access-user-item:hover .access-user-remove-btn {
+    color: #999;
+}
+
+.access-user-remove-btn:hover {
+    color: #e60012;
+}
+
+.access-empty {
+    padding: 0.5rem 0;
+    color: #999;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1rem 2rem 2rem;
+    border-top: 1px solid #eee;
+}
+
+/* Load More Button */
+.my-collections .load-more-button-container {
+    padding-bottom: 50px;
+    padding-top: 30px;
+}
+
+.my-collections .load-more-button {
+    align-items: center;
+    background: none;
+    border: 1px solid #ed0000;
+    border-radius: 50px;
+    color: #ed0000;
+    cursor: pointer;
+    display: flex;
+    font-family: "TCCC UnityHeadline", "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    gap: 10px;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 15px 25px;
+    text-transform: capitalize;
+}
+
+.my-collections .load-more-button:hover {
+    background-color: transparent;
+    color: #ed0000;
+    transition: all 0.3s ease;
+}
+
+.my-collections .load-more-button:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+    border-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Button spinner for Load More */
+.btn-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ccc;
+    border-top-color: #999;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+}
+
+/* Remove User Modal */
+.remove-user-message {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+.remove-user-message p {
+    margin: 0 0 1rem;
+}
+
+.remove-user-message p:last-child {
+    margin-bottom: 0;
+}
+
+.remove-user-message strong {
+    font-weight: 600;
+    color: #000;
+}
+
+/* Responsive design */
+@media (width <= 768px) {
+    .my-collections {
+        padding: 1rem;
+    }
+
+    .my-collections-title {
+        font-size: 2rem;
+    }
+
+    .my-collections-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .search-container {
+        max-width: 100%;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .modal-footer button {
+        width: 100%;
+    }
+}
+
+/* Toast Notification Styles */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    z-index: 10000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+    min-width: 200px;
+    text-align: center;
+}
+
+.toast-success {
+    background-color: #28a745;
+    border: 1px solid #1e7e34;
+}
+
+.toast-info {
+    background-color: #17a2b8;
+    border: 1px solid #138496;
+}
+
+.toast-error {
+    background-color: #dc3545;
+    border: 1px solid #c82333;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+@media (width <= 768px) {
+    .toast {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        min-width: auto;
+        transform: translateY(100%);
+    }
+
+    .toast.show {
+        transform: translateY(0);
+    }
+}
+
+/* Collections List Styles */
+.collections-list {
+    margin-top: 2rem;
+    width: 100%;
+}
+
+.collections-empty {
+    text-align: center;
+    padding: 3rem 0;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.collections-error {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #666;
+}
+
+.collections-error h2 {
+    color: #e60012;
+    margin-bottom: 1rem;
+}
+
+.collections-error p {
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.collections-header {
+    display: grid;
+    grid-template-columns: 80px 1fr 150px 160px;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #dcd1d1;
+    margin-bottom: 1rem;
+}
+
+.header-cell {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Center align Access and Action header cells */
+.header-cell:nth-child(3),
+.header-cell:nth-child(4) {
+    text-align: center;
+}
+
+.collections-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.collection-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 150px 160px;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #dcd1d1;
+    transition: background-color 0.2s ease;
+}
+
+.collection-row .share-btn-container button{
+  margin: 0;  
+}
+
+.collection-row:hover {
+    background-color: #fafafa;
+}
+
+.row-cell {
+    display: flex;
+    align-items: center;
+}
+
+.cell-preview {
+    justify-content: center;
+}
+
+.preview-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.collection-preview-image {
+    width: 60px;
+    height: 60px;
+    object-fit: none;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+}
+
+.cell-name {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.collection-name {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #333;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+}
+
+.collection-description {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.collection-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+/* Calendar icon via CSS */
+.my-collections .collection-date::before {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background: url('/icons/calendar.svg') center center / 100% 100% no-repeat;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.cell-access {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    text-align: center;
+}
+
+.access-role-text {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.access-shared-text {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.access-shared-text.clickable {
+    color: #e60012;
+}
+
+.access-shared-text.clickable:hover {
+    color: #cc0010;
+    font-weight: 500;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.6rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn:hover {
+    background-color: #f0f0f0;
+}
+
+/* Ensure image-based icons render consistently */
+
+/* Generic image sizing no longer used for edit/share; kept for fallback */
+.my-collections .action-btn img {
+    width: 28px !important;
+    height: 28px !important;
+    display: block;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+/* Delete button icon via CSS background (no inner <img>) */
+.my-collections .delete-btn {
+    position: relative;
+    margin: 0;
+}
+
+.my-collections .delete-btn::before {
+    content: '';
+    width: 28px;
+    height: 28px;
+    background: url('/icons/delete-circle.svg') center center / 100% 100% no-repeat;
+    display: block;
+}
+
+.my-collections .delete-btn:hover::before {
+    background: url('/icons/delete-red-icon.svg') center center / 100% 100% no-repeat;
+}
+
+/* Edit button icon via CSS background */
+.my-collections .edit-btn { 
+  position: relative;
+   margin: 0;
+  }
+
+.my-collections .edit-btn::before {
+    content: '';
+    width: 28px;
+    height: 28px;
+    background: url('/icons/edit-circle.svg') center center / 100% 100% no-repeat;
+    display: block;
+}
+
+.my-collections .edit-btn:hover::before {
+    background: url('/icons/edit-circle-red.svg') center center / 100% 100% no-repeat;
+}
+
+/* Share button icon via CSS background */
+.my-collections .share-btn { position: relative; }
+
+.my-collections .share-btn::before {
+    content: '';
+    width: 28px;
+    height: 28px;
+    background: url('/icons/share-icon-circle.svg') center center / contain no-repeat;
+    display: block;
+}
+
+.my-collections .share-btn:hover::before {
+    background: url('/icons/share-icon-circle-red.svg') center center / contain no-repeat;
+}
+
+/* Share dropdown container */
+.share-btn-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown indicator (chevron down) */
+.my-collections .share-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    background: url('/icons/chevron-down.svg') center center / contain no-repeat;
+    pointer-events: none;
+}
+
+/* Dropdown menu */
+.share-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+    min-width: 160px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.share-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Dropdown items */
+.share-dropdown-item {
+    padding: var(--dropdown-item-padding);
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
+}
+
+.share-dropdown-item:first-child {
+    border-radius: 8px 8px 0 0;
+}
+
+.share-dropdown-item:last-child {
+    border-radius: 0 0 8px 8px;
+}
+
+.share-dropdown-item:hover {
+    background-color: #f5f5f5;
+}
+
+/* Icons for dropdown items (on the left) */
+.share-dropdown-item[data-action="share-access"]::before {
+    content: '';
+    width: var(--dropdown-icon-size);
+    height: var(--dropdown-icon-size);
+    background: url('/icons/share.svg') center center / contain no-repeat;
+    display: block;
+    flex-shrink: 0;
+    opacity: var(--dropdown-icon-opacity);
+}
+
+.share-dropdown-item[data-action="copy-link"]::before {
+    content: '';
+    width: var(--dropdown-icon-size);
+    height: var(--dropdown-icon-size);
+    background: url('/icons/copy.svg') center center / contain no-repeat;
+    display: block;
+    flex-shrink: 0;
+    opacity: var(--dropdown-icon-opacity);
+}
+
+.share-dropdown-item:hover::before {
+    opacity: var(--dropdown-icon-opacity-hover);
+}
+
+/* Responsive design for collections list */
+@media (width <= 768px) {
+    .collections-header {
+        grid-template-columns: 60px 1fr 120px 100px;
+        gap: 0.5rem;
+    }
+
+    .collection-row {
+        grid-template-columns: 60px 1fr 120px 100px;
+        gap: 0.5rem;
+        padding: 0.75rem 0;
+    }
+
+    .access-role-text,
+    .access-shared-text {
+        font-size: 0.8rem;
+    }
+
+    .preview-placeholder svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .collection-preview-image {
+        width: 45px;
+        height: 45px;
+    }
+
+    .collection-name {
+        font-size: 0.9rem;
+    }
+
+    .collection-description {
+        font-size: 0.8rem;
+        margin-bottom: 0.4rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .collection-date {
+        font-size: 0.8rem;
+    }
+
+    .action-btn {
+        padding: 0.25rem;
+    }
+
+    .my-collections .action-btn img {
+        width: 24px !important;
+        height: 24px !important;
+    }
+
+    .my-collections .delete-btn::before {
+        width: 24px;
+        height: 24px;
+        background-size: 100% 100%;
+    }
+
+    .my-collections .edit-btn::before,
+    .my-collections .share-btn::before {
+        width: 24px;
+        height: 24px;
+        background-size: 100% 100%;
+    }
+
+    .my-collections .share-btn::after {
+        width: 8px;
+        height: 8px;
+        bottom: 1px;
+        right: 1px;
+    }
+
+    .share-dropdown-menu {
+        min-width: 140px;
+    }
+
+    .share-dropdown-item {
+        padding: var(--dropdown-item-padding-mobile);
+        font-size: 0.85rem;
+    }
+
+    .share-dropdown-item::before {
+        width: var(--dropdown-icon-size-mobile);
+        height: var(--dropdown-icon-size-mobile);
+    }
+}

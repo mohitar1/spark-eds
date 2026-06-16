@@ -1,0 +1,636 @@
+Key	English Value	Needs Translation
+---	-------------	-----------------
+access	ACCESS	YES
+accessLabelColon	Access:	YES
+action	ACTION	no
+actionCannotBeUndone	This action cannot be undone.	YES
+actions	Actions	YES
+adaptationIntentionLabel	How do you intend to adapt these materia	YES
+addToCart	Add To Cart	no
+addToCollection	Add to Collection	no
+addToFavorites	Add to Favorites	YES
+additionalNotesOrExceptions	Any additional notes or exceptions	YES
+ageDemographic	Age and Demographic	YES
+agency	Agency	no
+agencyName	Agency Name	no
+agencyNameLabel	Agency Name	no
+agencyOrAssociateQuestion	Are you with an agency, or a TCCC Associ	YES
+agencyOrTcccAssociate	Are you with an agency, or a TCCC Associ	YES
+agreeToTermsPrefix	I agree to the	YES
+agreeToTermsSuffix	of use.	YES
+airDateQuestion	When do you intend to air these assets? 	YES
+airDateSelectPrompt	When do you intend to air these assets? 	YES
+alerts	Alerts	YES
+all	All	no
+allAssetsAlreadyInCart	All assets already in cart	YES
+allNotifications	All Notifications	YES
+allPriorities	All Priorities	YES
+allReviewers	All Reviewers	YES
+allStatuses	All Statuses	YES
+allTime	All Time	YES
+allTypes	All Types	YES
+announcements	Announcements	YES
+anyAdditionalNotes	Any additional notes or exceptions	YES
+apply	Apply	no
+ascending	Ascending	no
+assetAddedToCart	ASSET ADDED TO CART	YES
+assetCategoryAndType	Asset Category and Asset Type Execution	YES
+assetDescription	Asset Description	YES
+assetExpiryDate	Asset Expiry Date	no
+assetList	Asset List	YES
+assetRemovedFromCart	ASSET REMOVED FROM CART	YES
+assetRemovedFromCollectionSuccessfully	ASSET REMOVED FROM COLLECTION SUCCESSFUL	YES
+assetStatus	Asset Status	no
+assets	Assets	no
+assetsAddedToCart	{0} asset(s) added to cart	YES
+assetsClearedAvailable	Assets Cleared - Available to Download	YES
+assetsClearedTitle	Assets Cleared - Available to Download	YES
+assetsRestrictedPleaseRequest	Assets Restricted - Please Request Right	YES
+assetsRestrictedTitle	Assets Restricted - Please Request Right	YES
+assign	Assign	YES
+assignRightsRequest	Assign Rights Request	YES
+assignTo	Assign To...	YES
+assignToMe	Assign to Me	YES
+assigning	Assigning...	YES
+authorized	AUTHORIZED	no
+back	Back	YES
+budgetForMarket	Budget For market	YES
+budgetForMarketLabel	Budget For market	YES
+budgetInformation	Budget Information	YES
+byDateLabel	By Date:	YES
+byReviewerLabel	By Reviewer:	YES
+byStatusLabel	By Status:	YES
+campaignReach	Campaign Reach	YES
+cancel	Cancel	YES
+cancelling	Cancelling...	YES
+cannotRemoveOwner	Cannot remove owner from collection	YES
+carousel	Carousel	YES
+carouselSlideControls	Carousel Slide Controls	YES
+cart	Cart	no
+cartWorkflowCart	Cart	no
+cartWorkflowDownload	Download	no
+cartWorkflowRequestDownload	Request Download	YES
+cartWorkflowRequestRightsExtension	Request Rights Extension	YES
+cartWorkflowRightsCheck	Rights Check	YES
+category	CATEGORY	YES
+changeStatus	Change Status	YES
+checkRightsFilters	Check Rights Filters	YES
+checkingAssetClearance	Checking asset clearance...	YES
+checkingAssetRights	Checking asset rights...	YES
+chooseDate	Choose date	YES
+chooseRoleForUsers	Choose the role to be assigned to the ab	YES
+clearAll	CLEAR ALL	YES
+clearAllFilters	Clear all filters	YES
+clearCart	Clear Cart	no
+clearDate	Clear date	YES
+clearSearch	Clear search	YES
+clearSearchText	clear search	YES
+close	Close	no
+closeNavigation	Close navigation	YES
+closePdfViewer	Close PDF viewer	YES
+collapseAll	Collapse All	YES
+collapseMessage	Collapse message	YES
+collectionAccess	Collection Access	YES
+collectionAccessRemoved	Collection Access Removed	YES
+collectionCreatedSuccessfully	COLLECTION CREATED SUCCESSFULLY	YES
+collectionDeletedSuccessfully	COLLECTION DELETED SUCCESSFULLY	YES
+collectionDescriptionOptional	Collection Description (optional)	YES
+collectionDetails	Collection Details	YES
+collectionIsEmpty	This collection is empty.	YES
+collectionLinkCopied	Collection link copied to clipboard	YES
+collectionName	Collection Name	YES
+collectionNameRequired	Collection name is required	YES
+collectionSharedSuccessfully	COLLECTION SHARED SUCCESSFULLY WITH {0} 	YES
+collectionSharedWithYou	Collection Shared With You	YES
+collectionUpdatedSuccessfully	COLLECTION UPDATED SUCCESSFULLY	YES
+collectionsServiceNotAvailable	Collections service not available	YES
+completeDownload	Complete Download	YES
+completed	Completed	no
+confirm	Confirm	YES
+contactEmailLabel	Email Address of Agency Contact	YES
+contactNameLabel	Name of Agency Contact	YES
+contactPhoneLabel	Phone Number of Agency Contact	YES
+contentStoresMissingPath	Content Stores configuration is missing 	YES
+continue	Continue	YES
+copy	Copy	YES
+copyLink	Copy Link	YES
+copySearchLink	Copy Search Link	YES
+create	Create	YES
+createCollection	Create Collection	YES
+createNewCollection	Create New Collection	no
+created	CREATED	no
+currentStatusLabelColon	Current Status:	YES
+date	DATE	YES
+dateCreated	Date Created	no
+delete	Delete	YES
+deleteCollection	Delete Collection	YES
+deleteCollectionConfirm	Are you sure you want to delete this col	YES
+deleteMessage	Delete message	YES
+deleteNotification	Delete Notification	YES
+deleteNotificationConfirm	Are you sure you want to delete this not	YES
+deleteSavedSearch	Delete Saved Search	YES
+deleteSavedSearchConfirm	Are you sure you want to delete "{0}"?	YES
+deleteSavedSearchTitle	Delete Saved Search	YES
+deleteSavedSearchWarning	Are you sure you want to delete this sav	YES
+derivedAssets	Derived Assets	YES
+descending	Descending	no
+describeAdaptation	Describe how you intend to adapt these m	YES
+describeFormatsRequired	Describe the formats required	YES
+displayed	Displayed	YES
+download	Download	no
+downloadArchiveCreatedSuccessfully	Download archive created successfully	YES
+downloadCart	Download Cart	no
+downloadCsv	Download CSV	YES
+downloadFailedPleaseTryAgain	Download failed. Please try again.	YES
+downloadOptions	DOWNLOAD OPTIONS	YES
+downloadStartedSuccessfully	Download started successfully	YES
+downloading	Downloading...	YES
+downloads	Downloads	YES
+edit	Edit	YES
+editAccess	edit	YES
+editCollection	Edit Collection	YES
+editSavedSearch	Edit Saved Search	YES
+editSavedSearchTitle	Edit Saved Search	YES
+editor	Editor	YES
+emailAddressOfAgencyContact	Email Address of Agency Contact	YES
+enterAgencyName	Enter agency name	YES
+enterAtLeastOneEmail	Please enter at least one email address	YES
+enterBudgetForMarket	Enter budget for market	YES
+enterCustomEmployeeType	Enter custom employee type	YES
+enterEmailAddress	Enter email address	YES
+enterEmailAddresses	Enter email address(es)	YES
+enterPhoneNumber	Enter phone number	YES
+enterSearchName	Enter search name	YES
+enterValidEmails	Please enter valid email addresses	YES
+error	Error	YES
+errorLoadingReviewers	Error loading reviewers	YES
+errorPerformingRightsCheck	Error performing rights check. Please tr	YES
+exceptionOrNotes	Exception or Notes	YES
+exceptionOrNotesLabel	Exception or Notes	YES
+expandAll	Expand All	YES
+expandMessage	Expand message	YES
+expired	EXPIRED	no
+extensionRequired	EXTENSION REQUIRED	no
+facetAgencyName	Agency Name	no
+facetAssetCategoryAndType	Asset Category and Asset Type Execution	YES
+facetBottlerContentByCountry	Bottler Content by Country	YES
+facetBrand	Brand	no
+facetCampaign	Campaign	no
+facetDateCreated	Date created	no
+facetIntendedChannel	Intended Channel	no
+facetIntendedMarket	Intended Market	no
+facetMarketRightsCovered	Market Rights Covered	YES
+facetMasterOrAdaptation	Master or Adaptation	YES
+facetMediaRightsCovered	Media Rights Covered	YES
+facetPackageSize	Package Size	YES
+facetRightsEndDate	Rights End Date	no
+facetRightsFree	Rights Free	YES
+facetRightsStartDate	Rights Start Date	no
+failed	Failed	YES
+failedToAddAssetsToCart	Failed to add assets to cart	YES
+failedToAssignRequest	Failed to assign request: {0}	YES
+failedToAssignReview	Failed to assign review: {0}	YES
+failedToCancelRequest	Failed to cancel request: {0}	YES
+failedToCopyLink	Failed to copy link	YES
+failedToCreateCollection	Failed to create collection: {0}	YES
+failedToCreateDownloadArchive	Failed to create download archive	YES
+failedToDeleteCollection	Failed to delete collection: {0}	YES
+failedToDeleteNotification	Failed to delete notification	YES
+failedToInitializeNotifications	Failed to initialize notifications servi	YES
+failedToLoadCollections	Failed to load collections	YES
+failedToLoadNotifications	Failed to load notifications	YES
+failedToLoadPdf	Failed to load PDF: {0}	YES
+failedToLoadRequest	Failed to load request: {0}	YES
+failedToLoadReviewers	Failed to load reviewers: {0}	YES
+failedToLoadReviews	Failed to load reviews: {0}	YES
+failedToLoadRightsRequests	Failed to load rights requests: {0}	YES
+failedToMarkAsRead	Failed to mark notification as read	YES
+failedToRemoveAsset	Failed to remove asset: {0}	YES
+failedToRemoveUser	Failed to remove user: {0}	YES
+failedToShareCollection	Failed to share collection: {0}	YES
+failedToStartDownload	Failed to start download	YES
+failedToUpdateCollection	Failed to update collection: {0}	YES
+failedToUpdateStatus	Failed to update status: {0}	YES
+favorite	Favorite	YES
+fileExtension	FILE EXT	YES
+fileType	File Type	no
+filesAddedToZip	FILES ADDED TO ZIP:	YES
+filter	Filter	no
+filterBy	FILTER BY	YES
+filteredFrom	filtered from {0}	YES
+filters	Filters	no
+filtersApplied	{0} filter(s) applied	YES
+filtersLabelColon	Filters:	YES
+formatsRequired	Formats Required	YES
+from	FROM	YES
+fromLabel	From:	YES
+fromRightsDate	From Rights Date	YES
+generatedLink	Generated Link:	YES
+gridView	Grid View	YES
+help	Help	YES
+hideFilter	Hide Filter	YES
+howDoYouIntendToAdapt	How do you intend to adapt these materia	YES
+iAgreeToThe	I agree to the	YES
+important	Important	YES
+inProgress	In Progress	no
+inYourCart	in your cart	no
+info	Info	YES
+intendedAirDate	INTENDED AIR DATE	YES
+intendedMarkets	INTENDED MARKETS	YES
+intendedMedia	INTENDED MEDIA	YES
+intendedPullDate	INTENDED PULL DATE	YES
+intendedUsage	Intended Usage	YES
+intendedUse	Intended Use	no
+invalidRemovalRequest	Invalid removal request	YES
+item	Item	YES
+items	Items	YES
+japaneseDescription	Japanese Description	YES
+japaneseKeywords	Japanese Keywords	YES
+japaneseTitle	Japanese Title	YES
+keywords	Keywords	no
+labelAgeDemographic	Age and Demographic	YES
+labelAgencyName	Agency Name	no
+labelAssetCategoryAndType	Asset Category and Asset Type Execution	YES
+labelAssetDescription	Asset Description	YES
+labelAssetExpiryDate	Asset Expiry Date	no
+labelAssetStatus	Asset Status	no
+labelBeverageType	Beverage Type	no
+labelBrand	Brand	no
+labelBrandsWithAssetGuideline	Brands which have the asset as guideline	YES
+labelBrandsWithAssetHero	Brands which have the asset as hero imag	YES
+labelBroadcastFormat	Broadcast Format	no
+labelBusinessAffairsManager	Business Affairs Manager	YES
+labelCampaignActivationRemark	Campaign Activation Remark	YES
+labelCampaignName	Campaign Name	no
+labelCampaignReach	Campaign Reach	YES
+labelCampaignSubActivationRemark	Campaign Sub-Activation Remark	YES
+labelCampaignsWithKeyAssets	Campaign where assets are key assets	YES
+labelCanTemplateBeResized	Can this template be resized by a print 	YES
+labelContractAssetJobs	Jobs which have the asset as the contrac	YES
+labelCostAvoidanceCategory	Cost Avoidance Category	no
+labelCreatedBy	Created By	no
+labelDateCreated	Date Created	no
+labelDateModified	Date Modified	no
+labelDatePublished	Date Published	no
+labelDateUploaded	Date Uploaded	no
+labelDerivedAssets	Derived Assets	YES
+labelDoesTemplateOfferMultipleLayouts	Does this template offer multiple layout	YES
+labelDuration	Duration	no
+labelExperienceId	Experience ID	YES
+labelExpiryDate	Expiry Date	no
+labelFadelId	Fadel ID	YES
+labelFadelJobId	Fadel Job ID	YES
+labelFeaturedAsset	Featured Asset	no
+labelFileSize	File Size	no
+labelFileType	File Type	no
+labelFontsUsed	Fonts Used in This Template	YES
+labelFundingBuOrMarket	Funding BU or Market	YES
+labelGtin14	GTIN14	YES
+labelId	ID	YES
+labelImageHeight	Image Height	YES
+labelImageWidth	Image Width	YES
+labelIntendedBottlerCountry	Intended Bottler Country	no
+labelIntendedBusinessUnitOrMarket	Intended Business Unit or Market	YES
+labelIntendedChannel	Intended Channel	no
+labelIntendedCustomers	Intended Customers	YES
+labelIsAssetAssociatedWithBrand	Is this asset associated with a brand?	no
+labelIsPackageDepicted	Is there a package depicted in this asse	YES
+labelJapaneseDescription	Japanese Description	YES
+labelJapaneseKeywords	Japanese Keywords	YES
+labelJapaneseTitle	Japanese Title	YES
+labelJobId	Job ID	no
+labelKeyAsset	Key Asset	no
+labelKeywords	Keywords	no
+labelLanguage	Language	no
+labelLayout	Layout	no
+labelLeadOperatingUnit	Lead Operating Unit	YES
+labelLegacyAssetId1	Legacy Asset ID 1.0	YES
+labelLegacyAssetId2	Legacy Asset ID 2.0	YES
+labelLegacyFileName	Legacy File Name	YES
+labelLegacySourceSystem	Legacy Source System	YES
+labelLongRangePlanBusinessGoal	Long Range Plan - Business Goal	YES
+labelLongRangePlanTactic	Long Range Plan Tactic	YES
+labelMasterOrAdaptation	Master or Adaptation	YES
+labelMigrationId	Migration ID	YES
+labelModifiedBy	Modified By	no
+labelOffTime	Off Time	YES
+labelOnTime	On Time	YES
+labelOrientation	Orientation	YES
+labelOriginalCreateDate	Original Create Date	no
+labelOtherAssets	Other Assets	YES
+labelPackageContainerMaterial	Package or Container Material	YES
+labelPackageContainerSize	Package or Container Size	YES
+labelPackageContainerType	Package or Container Type	YES
+labelProducingBottlingPartner	Producing Bottling Partner	no
+labelProductDescription	Product Description	YES
+labelProductMarket	Product Market	YES
+labelProjectId	Project ID	YES
+labelPublishStatus	Publish Status	YES
+labelPublishedBy	Published By	no
+labelRatio	Ratio	no
+labelResolution	Resolution	YES
+labelRetailers	Retailers	YES
+labelRightsFree	Rights Free	YES
+labelRightsNotes	Rights Notes	no
+labelRightsStatus	Rights Status	YES
+labelRiskTypeManagement	Risk Type Management	YES
+labelSecondaryPackaging	Secondary Packaging	YES
+labelSecondaryProductRecords	Secondary Product Records	YES
+labelSequenceNumber	Sequence number	YES
+labelSharedDownstream	Shared Downstream	YES
+labelSourceAsset	Source Asset	YES
+labelSourceId	Source ID	no
+labelSourceUploadDate	Source Upload Date	no
+labelSourceUploader	Source Uploader	no
+labelSubBrand	Sub-brand	YES
+labelTags	Tags	no
+labelTcccContact	TCCC Contact	YES
+labelTcccLeadAssociateLegacy	TCCC Lead Associate (Legacy)	YES
+labelTitle	Title	YES
+clearDownloads	Clear Downloads	YES
+labelTitling	Titling	no
+labelTrackName	Track Name	no
+labelUnderEmbargo	Under Embargo	YES
+labelUpc	UPC (GTIN12)	YES
+labelWorkfrontId	Workfront ID	YES
+language	Language	no
+last12Months	Last 12 Months	YES
+last30Days	Last 30 Days	YES
+last90Days	Last 90 Days	YES
+lastModified	Last Modified	YES
+lastUsed	Last used:	YES
+listView	List View	YES
+loadMore	Load more	no
+loadSavedSearch	Load this saved search	YES
+loading	Loading...	YES
+loadingImages	Loading images...	YES
+loadingMarkets	Loading markets...	YES
+loadingMediaChannels	Loading media channels...	YES
+loadingMoreResults	Loading more results...	YES
+loadingRenditions	Loading available renditions...	YES
+loadingRequestDetails	Loading request details...	YES
+loadingReviewers	Loading reviewers...	YES
+loadingReviews	Loading reviews...	YES
+loadingRightsRequests	Loading rights requests...	YES
+loadingSavedSearches	Loading saved searches...	YES
+logOut	Log Out	no
+longRangePlanBusinessGoal	Long Range Plan - Business Goal	YES
+longRangePlanTactic	Long Range Plan Tactic	YES
+loseAccessWarning	You will lose {0} access to this collect	YES
+marketChannelsWarning	Please do not select a region or Operati	YES
+marketCovered	MARKET COVERED	YES
+marketsQuestion	What specific markets will you air these	YES
+marketsSelectPrompt	What specific markets will you air these	YES
+marketsWarning	Please do not select a region or Operati	YES
+masterOrAdaptation	Master or Adaptation	YES
+materialsNeeded	Materials Needed	YES
+materialsRequiredBy	Materials required by	YES
+media	MEDIA	YES
+mediaChannelsQuestion	What specific TCCC media channels will y	YES
+mediaChannelsWarning	Please refer to the TCCC media terms and	YES
+mediaSelectPrompt	What specific TCCC media channels will y	YES
+music	Music	no
+myAccount	My Account	YES
+myCollections	My Collections	no
+myNotifications	My Notifications	YES
+myPrintJobs	My Print Jobs	no
+myProfile	My Profile	no
+myReviewsTabLabel	My Reviews ({0})	YES
+myRightsRequests	My Rights Requests	no
+myRightsReviews	My Rights Reviews	YES
+mySavedSearches	My Saved Searches	no
+mySavedTemplates	My Saved Templates	no
+name	Name	no
+nameOfAgencyContact	Name of Agency Contact	YES
+nextMonth	Next month	YES
+nextSlide	Next Slide	YES
+no	No	no
+noAssetsInRequest	No assets in this request.	YES
+noAssignedReviews	You have no assigned reviews.	YES
+noCollectionsFoundMatching	No collections found matching "{0}".	YES
+noCollectionsYet	No collections yet. Create your first co	YES
+noDataToExport	No data to export	YES
+noDescription	No description	YES
+noImagesToDisplay	No images to display	YES
+noItemsMatchFilters	No items match the selected filters	YES
+noKeepIt	No, Keep It	YES
+noMarketsAvailable	No markets available	YES
+noMarketsFound	No markets found	YES
+noMatchingFilters	No matching filters	YES
+noMediaChannelsAvailable	No media channels available	YES
+noNotifications	No Notifications	YES
+noNotificationsMessage	You don't have any notifications at this	YES
+noOfFiles	NO OF FILES	YES
+noPendingDownloads	No pending downloads	YES
+noPreviewAvailable	No preview available	YES
+noRequestIdProvided	No request ID provided in URL.	YES
+noResultsFound	No results found	no
+noReviewersAvailable	No reviewers available	YES
+noRightsRequestsFound	No rights requests found	YES
+noSavedSearches	No saved searches yet.	YES
+noSavedSearchesFoundMatching	No saved searches found matching "{0}".	YES
+noSavedSearchesYet	No saved searches yet. Save searches fro	YES
+noSearchTerm	(no search term)	YES
+noSubject	(No subject)	YES
+noTemplatesAvailableForDownload	No templates available for download	YES
+noTemplatesInCart	No templates in cart	YES
+noUnassignedReviewsFound	No unassigned reviews found.	YES
+noUsersGrantedAccess	No users have been granted access yet.	YES
+noneSelected	None selected	YES
+normal	Normal	YES
+notApplicable	N/A	YES
+notStarted	Not Started	YES
+notificationDeletedSuccessfully	NOTIFICATION DELETED SUCCESSFULLY	YES
+notificationMarkedAsRead	NOTIFICATION MARKED AS READ	YES
+notifications	Notifications	no
+notificationsOption	Notifications	YES
+of	of	YES
+ofUse	of use.	YES
+ok	Ok	YES
+openCalendar	Open calendar	YES
+openNavigation	Open navigation	YES
+otherAssets	Other Assets	YES
+overview	Overview	YES
+owner	Owner	YES
+phoneNumberOfAgencyContact	Phone Number of Agency Contact	YES
+photographer	Photographer	no
+pleaseSelectReviewer	Please select a reviewer	YES
+preview	Preview	no
+previousMonth	Previous month	YES
+previousSlide	Previous Slide	YES
+priorityLabel	Priority:	YES
+processing	PROCESSING	YES
+pullDateQuestion	When do you intend to pull these assets?	YES
+pullDateSelectPrompt	When do you intend to pull these assets?	YES
+pullDateValidationError	Pull date must be at least 1 day after a	YES
+read	Read	YES
+readyToDownload	Ready to Download	YES
+remove	Remove	YES
+removeAssetFromCollection	Remove Asset From Collection	YES
+removeAssetFromCollectionConfirm	Do you want to remove this asset from th	YES
+removeFromCart	Remove From Cart	no
+removeFromFavorites	Remove from Favorites	YES
+removeItem	Remove item	YES
+removeMe	Remove Me	YES
+removeTemplate	Remove template	YES
+removeUser	Remove user	YES
+removeUserAccess	Remove User Access	YES
+removeUserFromCollection	Remove {0} from "{1}"?	YES
+removingYourselfWarning	You're about to remove yourself as {0} f	YES
+requestAssignedTo	Request assigned to {0}	YES
+requestAuthorization	Request Authorization	YES
+requestCancelledSuccessfully	Request cancelled successfully	YES
+requestDownload	Request Download	YES
+requestLabelColon	Request:	YES
+requestRightsExtension	Request Rights Extension	YES
+required	*	YES
+resetFilters	Reset Filters	YES
+resolution	RES.	YES
+restrictedBrandsWarning	Brand restricted by market - Please note	YES
+retry	Retry	YES
+reviewAssignedSuccessfully	Review assigned successfully	YES
+reviewStatus	Review Status	no
+rights	Rights	YES
+rightsEndDate	RIGHTS END DATE	no
+rightsExtensionRequest	Rights Extension Request	YES
+rightsFree	RIGHTS FREE	YES
+rightsProfileTitle	RIGHTS PROFILE TITLE	no
+rightsRequestReviews	Rights Request Reviews	YES
+rightsRequestsReport	Rights Requests Report	YES
+rightsRestrictedFor	Rights Restricted For {0} Of {1} Assets	YES
+rightsRestrictions	RIGHTS RESTRICTIONS	no
+rightsStartDate	RIGHTS START DATE	no
+rightsValidationWarning	Select all rights parameters to enable t	YES
+save	Save	no
+saveSearch	Save Search	YES
+savedSearchCopiedSuccessfully	SAVED SEARCH COPIED SUCCESSFULLY	YES
+savedSearchDeletedSuccessfully	SAVED SEARCH DELETED SUCCESSFULLY	YES
+savedSearchUpdatedSuccessfully	SAVED SEARCH UPDATED SUCCESSFULLY	YES
+savedSearches	Saved Searches	YES
+search	Search	no
+searchAccordionContent	<p><b>SEARCH:</b> Use the search bar in 	YES
+searchAccordionTitle	Search Assets - where you can discover t	YES
+searchAddedToFavorites	SEARCH ADDED TO FAVORITES	YES
+searchByTitle	Search by title...	YES
+searchContentStoresByTitle	Search content stores by title	YES
+searchFacetPlaceholder	Search {facetName}...	YES
+searchLinkCopiedToClipboard	SEARCH LINK COPIED TO CLIPBOARD	YES
+searchMarkets	Search Markets	no
+searchName	Search Name	YES
+searchNameLabel	Search Name:	YES
+searchNameRequired	Search name is required	YES
+searchPlaceholder	What are you looking for?	no
+searchRemovedFromFavorites	SEARCH REMOVED FROM FAVORITES	YES
+searchSavedSuccessfully	SEARCH SAVED SUCCESSFULLY	YES
+searchTermHeader	SEARCH TERM	YES
+sectionDRM	DRM	YES
+sectionIntendedUse	Intended Use	no
+sectionLegacyFields	Legacy Fields	YES
+sectionMarketingOverview	Marketing Overview	YES
+sectionMarketingPackageContainer	Marketing Package and Container Info	YES
+sectionOverview	Overview	YES
+sectionProductAssetInfo	Product Asset Info	YES
+sectionProductIntendedUse	Product Asset Intended Use	YES
+sectionProductPackageContainer	Product Asset Package and Container	YES
+sectionProduction	Production	YES
+sectionScheduledActivation	Scheduled (de)activation	YES
+sectionSystemDetails	System Details	YES
+sectionSystemInfoLegacy	System Info Legacy	YES
+sectionTCCCGeneralInfo	TCCC General Info	YES
+sectionTechnicalInfo	Technical Info	YES
+sectionTemplateBrand	Template Brand	YES
+sectionTemplateIntendedUse	Template Intended Use	YES
+sectionTemplateOverview	Template Overview	YES
+sectionTemplatePackageContainer	Template Package & Container	YES
+selectAReviewer	Select a reviewer...	YES
+selectAirDate	Select the intended air date	YES
+selectAll	Select All	no
+selectDate	Select date	YES
+selectFilter	Select Filter	YES
+selectIntendedAirDate	Select the intended air date	YES
+selectIntendedPullDate	Select the intended pull date	YES
+selectMarkets	Select markets	YES
+selectMediaChannels	Select media channels	YES
+selectNewStatus	Select New Status:	YES
+selectPullDate	Select the intended pull date	YES
+selectReviewer	Select Reviewer:	YES
+sendRequest	Send Request	YES
+share	Share	YES
+shareAccess	Share Access	YES
+shareAsset	Share Asset	YES
+shareCart	Share Cart	no
+shareCollection	Share Collection	YES
+shareSearch	Share Search	YES
+sharedCount	Shared: {0}	YES
+shoppingCart	Shopping Cart	YES
+shortlyYouWillFindNotification	Shortly you will find a notification in 	YES
+showFilter	Show Filter	YES
+showFullDetails	Show full details	YES
+showOnlyAuthorizedAssets	Show only authorized assets	YES
+showSlide	Show Page	YES
+showing	Showing	YES
+simulateUser	Simulate User	YES
+simulatingUser	Simulating User	YES
+size	Size	no
+smrWarning	Self-managed rights (SMR) - Please note 	YES
+sourceAsset	Source Asset	YES
+status	STATUS	no
+statusLabel	Status:	YES
+statusUpdatedTo	Status updated to "{0}"	YES
+stockFootage	Stock Footage	no
+subject	SUBJECT	YES
+submittedBy	Submitted by {0}	YES
+submittedByLabelColon	Submitted by:	YES
+submitterInformation	Submitter Information	YES
+success	SUCCESS	YES
+switchToFiltersHint	Switch to Filters tab and click "Save Se	YES
+tags	Tags	no
+talent	Talent	no
+tcccAssociate	TCCC Associate	YES
+tcccGeneralInfo	TCCC General Info	YES
+template	Template	no
+templates	Templates	no
+termsAndConditions	terms and conditions	YES
+thankYouForYourRequest	Thank you for your request. We are worki	YES
+thumbnail	THUMBNAIL	no
+title	TITLE	no
+toRightsDate	To Rights Date	YES
+toSeeAllSavedSearches	to see all saved searches.	YES
+toggleInfo	Toggle info	YES
+topResults	Top Results	no
+total	Total	no
+totalRequests	total requests	YES
+tryAdjustingSearch	Try adjusting your search or filter crit	YES
+tryDifferentSearchOrClear	Try different search terms or clear sear	YES
+type	TYPE	no
+typeAName	Type a name...	YES
+typeLabel	Type:	YES
+unableToCheckAssetClearance	Unable to check asset clearance. Please 	YES
+unableToFindAssetIds	Unable to find asset IDs. Assets may not	YES
+unassignedTabLabel	Unassigned ({0})	YES
+unknown	Unknown	YES
+unread	Unread	YES
+untitled	Untitled	YES
+update	Update	YES
+updating	Updating...	YES
+upload	Upload	YES
+usage	USAGE	YES
+usageAuthorizedFor	Usage Is Authorized For {0} Of {1} Asset	YES
+usageRightsRequired	Usage Rights Required	YES
+userRemovedFromCollection	USER REMOVED FROM COLLECTION	YES
+viewAccess	view	YES
+viewDetails	View Details	YES
+viewLargerImage	View larger image	YES
+viewOnly	View Only	YES
+viewPdf	View PDF	YES
+viewPdfFullScreen	View PDF in full screen	YES
+viewer	Viewer	YES
+voiceover	Voiceover	no
+xItemsFound	{0} items found	YES
+xOfYNotifications	{0} of {1} notifications	YES
+xUnread	{0} unread	YES
+yes	Yes	no
+yesCancelRequest	Yes, Cancel Request	YES
+yourCartIsEmpty	Your cart is empty	YES
+youveBeenRemovedFromCollection	YOU'VE BEEN REMOVED FROM '{0}'	YES
+zipFiles	ZIP FILES	YES

@@ -1,0 +1,13 @@
+# AEM Author Configuration
+# Get the cookie from your browser after logging into AEM Author
+AEM_AUTHOR=https://author-p64403-e609778.adobeaemcloud.com
+AUTHOR_AUTH_COOKIE=your-aem-author-cookie-here
+
+# KOAssets Configuration
+# Get the cookie from your browser after logging into KOAssets
+KOASSETS_HOST=https://koassets.adobecocacola.workers.dev
+KOASSETS_COOKIE=your-koassets-cookie-here
+
+# AEM Delivery Configuration (for collection search API)
+# Bearer token for delivery API authentication
+DELIVERY_BEARER_TOKEN=your-delivery-bearer-token-here

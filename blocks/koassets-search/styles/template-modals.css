@@ -1,0 +1,189 @@
+/* Template Adaptation Modal Styles */
+
+/* Modal Overlay */
+.template-adaptation-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(0 0 0 / 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fade-in 0.2s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container */
+.template-adaptation-modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgb(0 0 0 / 30%);
+  width: 100%;
+  max-width: 59.625rem;
+  animation: slide-up 0.3s ease;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Modal Header */
+.template-adaptation-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.template-adaptation-modal .modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e1e1e;
+}
+
+.template-adaptation-modal .modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.template-adaptation-modal .modal-close-btn:hover {
+  color: #1e1e1e;
+}
+
+/* Modal Content */
+.template-adaptation-modal .modal-content {
+  padding: 24px;
+}
+
+.template-adaptation-modal .modal-content p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* Modal Input */
+.template-adaptation-modal .modal-input-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.template-adaptation-modal .modal-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.template-adaptation-modal .modal-input:focus {
+  border-color: var(--primary-color);
+}
+
+/* Modal Actions */
+.template-adaptation-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e1e1e1;
+  background-color: #f9f9f9;
+  border-radius: 0 0 8px 8px;
+}
+
+.template-adaptation-modal .modal-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.template-adaptation-modal .modal-btn-secondary {
+  background-color: white;
+  color: #666;
+  border: 1px solid #ccc;
+}
+
+.template-adaptation-modal .modal-btn-secondary:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.template-adaptation-modal .modal-btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.template-adaptation-modal .modal-btn-primary:hover {
+  background-color: var(--primary-color-hover);
+  transform: scale(1.02);
+}
+
+/* Loader Styles */
+.template-adaptation-loader {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(255 255 255 / 85%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: fade-in 0.2s ease;
+}
+
+.template-adaptation-loader .loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.template-adaptation-loader .loader-spinner {
+  width: 256px;
+  height: 256px;
+  object-fit: contain;
+}
+
+.template-adaptation-loader .loader-text {
+  color: #1e1e1e;
+  font-size: 20px;
+  font-weight: 600;
+}

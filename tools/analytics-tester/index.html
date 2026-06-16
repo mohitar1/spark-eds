@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  KOAssets Analytics Query Tool
+  
+  IMPORTANT: Cloudflare's API blocks browser requests (CORS). You must run Chrome with CORS disabled.
+  
+  Quick Start:
+    1. Get your API token from cloudflare/.secrets (KOASSETS_ANALYTICS_API_TOKEN)
+       Or from Cloudflare Dashboard → My Profile → API Tokens
+    
+    2. Run Chrome with CORS disabled (dev instance only):
+       macOS/Linux:
+       open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-security
+       
+       Windows:
+       "C:\...\chrome.exe" --user-data-dir=C:\temp\chrome-dev --disable-web-security
+    
+    3. Open this file in that Chrome instance (can use file:// or http://)
+    
+    4. Paste your API token in Configuration
+    
+    5. Click any pre-built query or write custom SQL
+  
+  How it works:
+    This tool calls Cloudflare's Analytics Engine SQL API directly from the browser.
+    No backend required - fully standalone HTML file.
+    
+  Security:
+    - Only disable CORS for this dev tool, don't browse other sites
+    - API token stored in localStorage only
+    - Read-only Analytics:Read permission recommended
+-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOAssets Analytics Query Tool</title>
+  <style>
+    /* Reset and Base */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, #f50 0%, #e04000 100%);
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(245, 80, 0, 0.2);
+    }
+
+    .header h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .header p {
+      margin: 0;
+      font-size: 16px;
+      opacity: 0.95;
+    }
+
+    /* Configuration Section */
+    .config-section {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .config-section details summary {
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 600;
+      color: #f50;
+      padding: 10px 0;
+      user-select: none;
+    }
+
+    .config-section details summary:hover {
+      color: #e04000;
+    }
+
+    .config-section details[open] summary {
+      margin-bottom: 15px;
+      border-bottom: 2px solid #f50;
+    }
+
+    .form-field {
+      margin-bottom: 15px;
+    }
+
+    .form-field label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .form-field input,
+    .form-field textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus {
+      outline: none;
+      border-color: #f50;
+      box-shadow: 0 0 0 3px rgba(245, 80, 0, 0.1);
+    }
+
+    .form-field input[readonly] {
+      background: #f9f9f9;
+      color: #666;
+    }
+
+    .form-field small {
+      display: block;
+      margin-top: 5px;
+      color: #666;
+      font-size: 12px;
+    }
+
+    /* Query Builder Grid Layout */
+    .query-builder-grid {
+      display: grid;
+      grid-template-columns: 200px 200px 1fr 1fr auto;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .query-button-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .query-button-field .btn {
+      margin-top: auto;
+      white-space: nowrap;
+    }
+
+    /* Range field with radio buttons */
+    .range-field {
+      min-width: 0;
+    }
+
+    .range-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .range-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .range-option:hover {
+      background: #f9f9f9;
+    }
+
+    .range-option input[type="radio"] {
+      width: auto;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .range-option input[type="number"],
+    .range-option input[type="date"] {
+      width: auto;
+      padding: 4px 8px;
+      font-size: 13px;
+    }
+
+    .range-option span {
+      white-space: nowrap;
+    }
+
+    @media (max-width: 1200px) {
+      .query-builder-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+      
+      .range-field {
+        grid-column: 1 / -1;
+      }
+      
+      .query-button-field {
+        grid-column: 1 / -1;
+      }
+      
+      .query-button-field .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .query-builder-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .config-help {
+      background: #f0f8ff;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #0066cc;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+
+    .config-help summary {
+      cursor: pointer;
+      user-select: none;
+      color: #0066cc;
+      font-size: 14px;
+      padding: 4px 0;
+    }
+
+    .config-help summary:hover {
+      color: #004499;
+    }
+
+    .config-help strong {
+      color: #0066cc;
+    }
+
+    .config-help ol {
+      margin: 10px 0 10px 20px;
+      padding: 0;
+    }
+
+    .config-help li {
+      margin: 5px 0;
+    }
+
+    .config-help em {
+      color: #666;
+      font-size: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 10px 20px;
+      background: #f50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-right: 10px;
+    }
+
+    .btn:hover {
+      background: #e04000;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(245, 80, 0, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: #666;
+    }
+
+    .btn-secondary:hover {
+      background: #555;
+    }
+
+    /* Status Messages */
+    .status-message {
+      padding: 10px 15px;
+      margin-top: 15px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .status-message.show {
+      display: block;
+    }
+
+    .status-message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status-message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .status-message.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    /* Query Sections */
+    .section {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .section h2 {
+      margin: 0 0 15px;
+      color: #333;
+      font-size: 22px;
+      border-bottom: 2px solid #f50;
+      padding-bottom: 8px;
+    }
+
+    .info-message {
+      background: #f0f8ff;
+      padding: 10px 12px;
+      border-radius: 4px;
+      border-left: 3px solid #0066cc;
+      margin-bottom: 15px;
+      font-size: 13px;
+      color: #0c5460;
+    }
+
+    .info-message code {
+      background: #e0e0e0;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: Monaco, Menlo, "Ubuntu Mono", monospace;
+      font-size: 12px;
+    }
+
+    /* OOTB Queries Grid */
+    .ootb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .ootb-category {
+      background: #fafafa;
+      padding: 15px;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .ootb-category h3 {
+      margin: 0 0 12px;
+      color: #333;
+      font-size: 16px;
+      font-weight: 600;
+      border-bottom: 2px solid #f50;
+      padding-bottom: 6px;
+    }
+
+    .ootb-query-btn {
+      display: block;
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #f50 0%, #e04000 100%);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .ootb-query-btn:last-child {
+      margin-bottom: 0;
+    }
+
+    .ootb-query-btn:hover {
+      background: linear-gradient(135deg, #e04000 0%, #c03500 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(245, 80, 0, 0.3);
+    }
+
+    .ootb-query-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Custom SQL Section */
+    .custom-sql-section textarea {
+      font-family: Monaco, Menlo, "Ubuntu Mono", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      resize: vertical;
+      min-height: 150px;
+    }
+
+    .sql-examples {
+      margin: 15px 0;
+    }
+
+    .sql-examples details summary {
+      cursor: pointer;
+      color: #f50;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 8px 0;
+      user-select: none;
+    }
+
+    .sql-examples details summary:hover {
+      color: #e04000;
+    }
+
+    .example-queries {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 12px;
+      background: #f9f9f9;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .example-btn {
+      padding: 6px 12px;
+      background: #fff;
+      color: #333;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .example-btn:hover {
+      background: #f50;
+      color: white;
+      border-color: #f50;
+    }
+
+    /* Query Results */
+    .query-results {
+      margin-top: 20px;
+    }
+
+    .query-results .loading {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+      font-style: italic;
+      font-size: 14px;
+    }
+
+    .query-results .error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 4px;
+      border: 1px solid #f5c6cb;
+      font-size: 14px;
+    }
+
+    .query-results h3 {
+      margin: 0 0 10px;
+      color: #333;
+      font-size: 18px;
+    }
+
+    .query-meta {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .query-data {
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 800px;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    /* Sticky header for scrolling tables */
+    .query-data table thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .query-data table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      font-size: 12px;
+    }
+
+    .query-data table thead {
+      background: #f50;
+      color: white;
+    }
+
+    .query-data table th,
+    .query-data table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+      white-space: nowrap;
+    }
+
+    .query-data table th {
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Two-row header styling */
+    .query-data table thead tr.field-names th {
+      text-transform: uppercase;
+      font-family: Monaco, Menlo, "Ubuntu Mono", monospace;
+      background: #c03500;
+      font-size: 10px;
+      padding: 6px 12px;
+    }
+
+    .query-data table thead tr.field-names th.row-number-header {
+      background: #d0d0d0;
+      color: #333;
+      font-family: inherit;
+    }
+
+    .query-data table thead tr.friendly-names th {
+      background: #e04000;
+      font-size: 11px;
+      padding: 6px 12px;
+      font-style: italic;
+      opacity: 0.95;
+    }
+
+    .query-data table thead tr.friendly-names th.row-number-header {
+      background: #d0d0d0;
+      opacity: 0.5;
+    }
+
+    .query-data table thead tr.friendly-names th:empty {
+      opacity: 0.3;
+    }
+
+    .query-data table tbody tr:hover {
+      background: #f9f9f9;
+    }
+
+    .query-data table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Highlight columns that have friendly name mappings */
+    .query-data table tbody td.mapped-column {
+      background: rgba(245, 80, 0, 0.05);
+    }
+
+    .query-data table tbody tr:hover td.mapped-column {
+      background: rgba(245, 80, 0, 0.08);
+    }
+
+    /* Highlight sample interval > 1 */
+    .query-data table tbody td.sample-interval-high {
+      background: #fff3b0;
+      font-weight: 600;
+    }
+
+    .query-data table tbody tr:hover td.sample-interval-high {
+      background: #ffe870;
+    }
+
+    /* Row number column styling */
+    .query-data table th.row-number-header,
+    .query-data table td.row-number {
+      position: sticky;
+      left: 0;
+      background: #f0f0f0;
+      text-align: center;
+      font-weight: 600;
+      min-width: 50px;
+      max-width: 50px;
+      padding: 10px 8px;
+      border-right: 2px solid #e0e0e0;
+      z-index: 5;
+    }
+
+    .query-data table thead th.row-number-header {
+      background: #d0d0d0;
+      z-index: 15;
+    }
+
+    .query-data table tbody tr:hover td.row-number {
+      background: #e8e8e8;
+    }
+
+    /* Debug Panel */
+    .debug-panel {
+      margin-top: 20px;
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .debug-panel details summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #666;
+      user-select: none;
+    }
+
+    .debug-content {
+      margin-top: 10px;
+      padding: 10px;
+      background: #2d2d2d;
+      color: #f0f0f0;
+      border-radius: 4px;
+      font-family: Monaco, Menlo, "Ubuntu Mono", monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+
+      .ootb-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .query-data table {
+        font-size: 11px;
+      }
+
+      .query-data table th,
+      .query-data table td {
+        padding: 6px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>📊 KOAssets Analytics Query Tool</h1>
+      <p>Query Cloudflare Analytics Engine directly from your browser • Standalone HTML tool</p>
+    </div>
+
+    <!-- CORS Warning -->
+    <div id="cors-warning" class="status-message error" style="display: none; margin-bottom: 20px;">
+      <strong>⚠️ CORS Error Detected</strong><br>
+      Cloudflare's Analytics Engine API blocks browser requests (CORS policy).<br>
+      <strong>Solutions:</strong><br>
+      <details style="margin-top: 10px;">
+        <summary style="cursor: pointer; font-weight: 600; user-select: none;">▶ Show options</summary>
+        <div style="margin-top: 10px; padding-left: 15px; line-height: 1.8;">
+          <strong>Option 1: Chrome with CORS Disabled (Recommended for Dev)</strong><br>
+          macOS/Linux:<br>
+          <code style="display: block; background: #2d2d2d; color: #f0f0f0; padding: 8px; margin: 5px 0; border-radius: 3px; font-size: 11px; overflow-x: auto;">
+open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-security --disable-site-isolation-trials</code>
+          Windows:<br>
+          <code style="display: block; background: #2d2d2d; color: #f0f0f0; padding: 8px; margin: 5px 0; border-radius: 3px; font-size: 11px; overflow-x: auto;">
+"C:\Program Files\Google\Chrome\Application\chrome.exe" --user-data-dir=C:\temp\chrome-dev --disable-web-security</code>
+          <em style="color: #666; font-size: 11px;">⚠️ Only use for development! Don't browse other sites with this instance.</em><br><br>
+          
+          <strong>Option 2: Use Backend Proxy</strong><br>
+          Start backend: <code>npm run dev</code><br>
+          Access at: <code>http://localhost:8787/tools/analytics-tester/</code><br>
+          (Requires session authentication)
+        </div>
+      </details>
+    </div>
+
+    <!-- Configuration Section -->
+    <div class="config-section">
+      <details open>
+        <summary>⚙️ Configuration</summary>
+        
+        <div class="form-field">
+          <label>Cloudflare Account ID:</label>
+          <input type="text" id="config-account-id" value="d3259185ae56522248254092489d6755" readonly>
+          <small>Your Cloudflare account ID (pre-filled)</small>
+        </div>
+        
+        <div class="form-field">
+          <label>Cloudflare API Token:</label>
+          <input type="password" id="config-api-token" placeholder="Paste your Cloudflare API token here">
+          <small>Get from: <code>cloudflare/.secrets</code> (KOASSETS_ANALYTICS_API_TOKEN) or Cloudflare Dashboard → My Profile → API Tokens</small>
+        </div>
+        
+        <div class="form-field">
+          <label>Dataset Name:</label>
+          <input type="text" id="config-dataset" value="koassets_analyticstest" readonly>
+          <small>Analytics Engine dataset name (pre-filled)</small>
+        </div>
+        
+        <button class="btn" id="save-config-btn">💾 Save Configuration</button>
+        <button class="btn btn-secondary" id="test-connection-btn">🔌 Test Connection</button>
+        
+        <div id="config-status" class="status-message"></div>
+        
+        <details class="config-help" open>
+          <summary><strong>Where to find your API token</strong></summary>
+          <ol>
+            <li><strong>From project secrets (easiest):</strong> Open <code>cloudflare/.secrets</code> and copy the value of <code>KOASSETS_ANALYTICS_API_TOKEN</code></li>
+            <li><strong>From Cloudflare Secrets Store:</strong> Check <code>cloudflare/wrangler.toml</code> for the <code>ANALYTICS_API_TOKEN</code> binding (secret name: <code>KOASSETS_ANALYTICS_API_TOKEN</code>)</li>
+            <li><strong>From Cloudflare Dashboard:</strong> Go to My Profile → API Tokens → create/use token with "Analytics:Read" permission</li>
+          </ol>
+          <p><em>Note: Token is stored in browser localStorage only. This tool calls Cloudflare's API directly.</em></p>
+          
+          <p><strong>⚠️ CORS Note:</strong> Cloudflare blocks browser requests by default. You must either:</p>
+          <ul style="margin: 5px 0 0 20px; padding: 0;">
+            <li>Run Chrome with CORS disabled (see warning banner if you get errors)</li>
+            <li>Or use the backend proxy option (see README)</li>
+          </ul>
+        </details>
+      </details>
+    </div>
+
+    <!-- Query Builder Section -->
+    <div class="section">
+      <h2>🔍 Query Analytics Data</h2>
+      <p class="info-message">Query analytics data from Cloudflare Analytics Engine via SQL API.</p>
+      
+      <div class="query-builder-grid">
+        <div class="form-field">
+          <label for="event-type-filter">Event Type:</label>
+          <select id="event-type-filter">
+            <option value="">All</option>
+            <option value="login">Login</option>
+            <option value="download">Download</option>
+            <option value="search">Search</option>
+          </select>
+        </div>
+        
+        <div class="form-field">
+          <label for="query-type">Query:</label>
+          <select id="query-type">
+            <option value="recent">Events List</option>
+            <option value="by-type">Count by Type</option>
+          </select>
+        </div>
+        
+        <div class="form-field range-field">
+          <label>Range:</label>
+          <div class="range-options">
+            <label class="range-option">
+              <input type="radio" name="range-mode" value="limit" checked>
+              <span>Last</span>
+              <input type="number" id="limit-value" value="20" min="1" max="1000" style="width: 60px;">
+              <span>events</span>
+            </label>
+            <label class="range-option">
+              <input type="radio" name="range-mode" value="days">
+              <span>Since</span>
+              <input type="number" id="days-value" value="30" min="1" max="365" style="width: 60px;">
+              <span>days ago</span>
+            </label>
+            <label class="range-option">
+              <input type="radio" name="range-mode" value="date">
+              <span>Since date</span>
+              <input type="date" id="since-date">
+            </label>
+          </div>
+        </div>
+
+        <div class="form-field range-field">
+          <label>User / KOID:</label>
+          <div class="range-options">
+            <label class="range-option">
+              <input type="radio" name="koid-mode" value="all" checked>
+              <span>All users</span>
+            </label>
+            <label class="range-option">
+              <input type="radio" name="koid-mode" value="specific">
+              <span>KOID:</span>
+              <input type="text" id="koid-value" value="S700855" style="width: 80px; font-family: Monaco, Menlo, monospace; font-size: 12px;">
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-field query-button-field">
+          <label>&nbsp;</label>
+          <button class="btn" id="query-builder-btn">▶️ Query Data</button>
+        </div>
+      </div>
+      
+      <div id="query-builder-debug" class="debug-panel" style="display: none;">
+        <details open>
+          <summary>🐛 Debug Info</summary>
+          <div class="debug-content" id="query-builder-debug-content"></div>
+        </details>
+      </div>
+      
+      <div id="query-builder-result" class="query-results"></div>
+    </div>
+
+    <!-- OOTB Queries Section -->
+    <div class="section">
+      <h2>📋 Pre-built Report Queries</h2>
+      <p class="info-message">Click any button to run common analytics queries. Table: <code>koassets_analyticstest</code></p>
+      
+      <div class="ootb-grid">
+        <div class="ootb-category">
+          <h3>👥 User Metrics</h3>
+          <button class="ootb-query-btn" data-query="unique-users">Unique User Count</button>
+          <button class="ootb-query-btn" data-query="users-by-month">Users by Month</button>
+          <button class="ootb-query-btn" data-query="users-by-role">Users by Role</button>
+          <button class="ootb-query-btn" data-query="first-time-users-native">First Time Users (2025)</button>
+        </div>
+        
+        <div class="ootb-category">
+          <h3>⬇️ Download Metrics</h3>
+          <button class="ootb-query-btn" data-query="total-downloads">Total Downloads</button>
+          <button class="ootb-query-btn" data-query="downloads-by-month">Downloads by Month</button>
+          <button class="ootb-query-btn" data-query="downloads-by-role">Downloads by Role</button>
+          <button class="ootb-query-btn" data-query="downloads-by-type">Downloads by Resource Type</button>
+          <button class="ootb-query-btn" data-query="downloads-by-country">Downloads by Country</button>
+          <button class="ootb-query-btn" data-query="first-time-downloaders-native">First Time Downloaders (2025)</button>
+        </div>
+        
+        <div class="ootb-category">
+          <h3>🔍 Search Metrics</h3>
+          <button class="ootb-query-btn" data-query="top-searches">Top Search Terms</button>
+          <button class="ootb-query-btn" data-query="searches-by-month">Searches by Month</button>
+        </div>
+      </div>
+      
+      <div id="ootb-debug" class="debug-panel" style="display: none;">
+        <details open>
+          <summary>🐛 Debug Info</summary>
+          <div class="debug-content" id="ootb-debug-content"></div>
+        </details>
+      </div>
+      
+      <div id="ootb-result" class="query-results"></div>
+    </div>
+
+    <!-- Custom SQL Section -->
+    <div class="section custom-sql-section">
+      <h2>💻 Custom SQL Query</h2>
+      <p class="info-message">Run your own SQL queries against Analytics Engine. Table: <code>koassets_analyticstest</code></p>
+      
+      <div class="form-field">
+        <label>SQL Query:</label>
+        <textarea id="custom-sql-input" placeholder="SELECT COUNT(DISTINCT blob1) as unique_users FROM koassets_analyticstest WHERE index1 = 'login'"></textarea>
+      </div>
+      
+      <div class="sql-examples">
+        <details>
+          <summary>💡 Example Queries (click to load)</summary>
+          <div class="example-queries">
+            <button class="example-btn" data-sql="SELECT * FROM koassets_analyticstest ORDER BY timestamp DESC LIMIT 10">Recent events (10)</button>
+            <button class="example-btn" data-sql="SELECT index1 as eventType, COUNT() as count FROM koassets_analyticstest GROUP BY index1">Count by event type</button>
+            <button class="example-btn" data-sql="SELECT COUNT(DISTINCT blob1) as unique_users FROM koassets_analyticstest WHERE index1 = 'login' AND timestamp >= toDateTime('2025-01-01 00:00:00')">Unique users (2025)</button>
+            <button class="example-btn" data-sql="SELECT blob1 as koid, COUNT() as logins FROM koassets_analyticstest WHERE index1 = 'login' GROUP BY blob1 ORDER BY logins DESC LIMIT 20">Top users by logins</button>
+            <button class="example-btn" data-sql="SELECT blob6 as search_term, COUNT() as searches FROM koassets_analyticstest WHERE index1 = 'search' AND blob6 != '' GROUP BY search_term ORDER BY searches DESC LIMIT 20">Top search terms</button>
+            <button class="example-btn" data-sql="SELECT blob7 as brand, COUNT() as downloads FROM koassets_analyticstest WHERE index1 = 'download' AND blob7 != '' GROUP BY brand ORDER BY downloads DESC LIMIT 20">Downloads by brand</button>
+          </div>
+        </details>
+      </div>
+      
+      <button class="btn" id="run-custom-sql-btn">▶️ Run Query</button>
+      
+      <div id="custom-debug" class="debug-panel" style="display: none;">
+        <details open>
+          <summary>🐛 Debug Info</summary>
+          <div class="debug-content" id="custom-debug-content"></div>
+        </details>
+      </div>
+      
+      <div id="custom-sql-result" class="query-results"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================
+     * Configuration Management
+     * ============================================ */
+    
+    function loadConfig() {
+      return {
+        accountId: document.getElementById('config-account-id').value,
+        apiToken: localStorage.getItem('cf-api-token') || '',
+        dataset: document.getElementById('config-dataset').value
+      };
+    }
+
+    function saveConfig() {
+      const apiToken = document.getElementById('config-api-token').value.trim();
+      if (apiToken) {
+        localStorage.setItem('cf-api-token', apiToken);
+        showConfigStatus('Configuration saved!', 'success');
+        return true;
+      } else {
+        showConfigStatus('Please enter an API token', 'error');
+        return false;
+      }
+    }
+
+    function showConfigStatus(message, type) {
+      const statusEl = document.getElementById('config-status');
+      statusEl.textContent = message;
+      statusEl.className = `status-message show ${type}`;
+      setTimeout(() => {
+        statusEl.classList.remove('show');
+      }, 5000);
+    }
+
+    function showCorsWarning() {
+      const corsWarning = document.getElementById('cors-warning');
+      if (corsWarning) {
+        corsWarning.style.display = 'block';
+      }
+    }
+
+    // Load saved token on page load and set default date
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedToken = localStorage.getItem('cf-api-token');
+      if (savedToken) {
+        document.getElementById('config-api-token').value = savedToken;
+      }
+      
+      // Set default "Since" date to 7 days ago
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const defaultDate = sevenDaysAgo.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+      document.getElementById('since-date').value = defaultDate;
+    });
+
+    // Save config button
+    document.getElementById('save-config-btn').addEventListener('click', saveConfig);
+
+    // Test connection button
+    document.getElementById('test-connection-btn').addEventListener('click', async () => {
+      if (!saveConfig()) return;
+
+      const testQuery = "SELECT COUNT() as total FROM koassets_analyticstest LIMIT 1";
+      
+      try {
+        showConfigStatus('Testing connection...', 'info');
+        const result = await executeQuery(testQuery);
+        showConfigStatus(`✅ Connection successful! Total events: ${result.data[0]?.total || 0}`, 'success');
+      } catch (error) {
+        showConfigStatus(`❌ Connection failed: ${error.message}`, 'error');
+        
+        // Show CORS warning if it looks like a CORS error
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+          showCorsWarning();
+        }
+      }
+    });
+
+    /* ============================================
+     * Cloudflare Analytics Engine SQL API (Direct)
+     * ============================================ */
+    
+    async function executeQuery(sqlQuery) {
+      const config = loadConfig();
+      
+      if (!config.apiToken) {
+        throw new Error('API token not configured. Please add your Cloudflare API token in Configuration.');
+      }
+
+      const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/analytics_engine/sql`;
+      
+      const startTime = Date.now();
+      
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Bearer ${config.apiToken}`
+          },
+          body: sqlQuery
+        });
+        const responseTime = Date.now() - startTime;
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          const errorMsg = errorData.errors?.[0]?.message || `HTTP ${response.status}: ${response.statusText}`;
+          throw new Error(errorMsg);
+        }
+
+        const result = await response.json();
+        
+        // Return both data and metadata
+        return {
+          data: result.data || [],
+          meta: {
+            responseTime,
+            rows: result.data?.length || 0,
+            sql: sqlQuery
+          }
+        };
+      } catch (error) {
+        // If it's a network error (likely CORS), show helpful warning
+        if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+          showCorsWarning();
+          throw new Error('CORS blocked - See warning banner above for solutions');
+        }
+        throw error;
+      }
+    }
+
+    /* ============================================
+     * Column Name Mapping (Friendly Names)
+     * ============================================ */
+    
+    function getColumnFriendlyName(column, eventType) {
+      // Common mappings for all event types
+      const commonMap = {
+        'index1': 'Event Type',
+        'timestamp': 'Timestamp',
+        'blob1': 'KOID',
+        'blob2': 'Country',
+        'blob3': 'Employee Type',
+        'blob4': 'Company',
+        'blob5': 'Roles'
+      };
+      
+      // Event-specific mappings
+      const eventSpecificMaps = {
+        'download': {
+          'blob6': 'Resource Type',
+          'blob7': 'Brand',
+          'blob8': 'Campaigns',
+          'blob9': 'Download ID',
+          'blob10': 'Download Item ID',
+          'blob11': 'Download Type',
+          'blob12': 'Rendition'
+        },
+        'search': {
+          'blob6': 'Search Term',
+          'blob7': 'Search Type',
+          'double1': 'Result Count'
+        },
+        'login': {
+          // Login only uses common fields
+        }
+      };
+      
+      // Check common mapping first
+      if (commonMap[column]) {
+        return commonMap[column];
+      }
+      
+      // Check event-specific mapping
+      if (eventType && eventSpecificMaps[eventType] && eventSpecificMaps[eventType][column]) {
+        return eventSpecificMaps[eventType][column];
+      }
+      
+      // Return original column name if no mapping
+      return column;
+    }
+
+    function renderTable(data, containerEl, eventType = null) {
+      if (!data || data.length === 0) {
+        containerEl.innerHTML = '<div class="info-message">Query returned no results.</div>';
+        return;
+      }
+
+      let columns = Object.keys(data[0]);
+
+      // Move 'timestamp' to second position (after '_sample_interval') if both are present
+      if (columns.includes('timestamp') && columns.includes('_sample_interval')) {
+        columns = columns.filter(c => c !== 'timestamp');
+        const sampleIdx = columns.indexOf('_sample_interval');
+        columns.splice(sampleIdx + 1, 0, 'timestamp');
+      }
+
+      // Move 'index1' (event type) to after 'timestamp' if both are present
+      if (columns.includes('index1') && columns.includes('timestamp')) {
+        columns = columns.filter(c => c !== 'index1');
+        const tsIdx = columns.indexOf('timestamp');
+        columns.splice(tsIdx + 1, 0, 'index1');
+      }
+
+      // Determine which columns have friendly mappings
+      const hasFriendlyMapping = columns.map(col => {
+        const friendlyName = getColumnFriendlyName(col, eventType);
+        return friendlyName !== col;
+      });
+      
+      // Build two-row header: actual field names + friendly names
+      let html = '<div class="query-data"><table><thead>';
+      
+      // First row: actual field names (with row # column)
+      html += '<tr class="field-names">';
+      html += '<th class="row-number-header">#</th>'; // Row number column
+      columns.forEach(col => {
+        html += `<th>${col}</th>`;
+      });
+      html += '</tr>';
+      
+      // Second row: friendly names (with empty cell for row # column)
+      html += '<tr class="friendly-names">';
+      html += '<th class="row-number-header"></th>'; // Empty cell for row number column
+      columns.forEach(col => {
+        const friendlyName = getColumnFriendlyName(col, eventType);
+        // Only show friendly name if it's different from actual field name
+        const displayName = friendlyName !== col ? friendlyName : '';
+        html += `<th>${displayName}</th>`;
+      });
+      html += '</tr>';
+      
+      html += '</thead><tbody>';
+      
+      data.forEach((row, rowIndex) => {
+        html += '<tr>';
+        html += `<td class="row-number">${rowIndex + 1}</td>`; // Row number cell
+        columns.forEach((col, colIndex) => {
+          const val = row[col];
+          const classes = [];
+          if (hasFriendlyMapping[colIndex]) classes.push('mapped-column');
+          if (col === '_sample_interval' && Number(val) > 1) classes.push('sample-interval-high');
+          const cellClass = classes.join(' ');
+          html += `<td class="${cellClass}">${val !== null && val !== undefined ? val : ''}</td>`;
+        });
+        html += '</tr>';
+      });
+      
+      html += '</tbody></table></div>';
+      containerEl.innerHTML = html;
+    }
+
+    function showDebug(debugEl, contentEl, data) {
+      debugEl.style.display = 'block';
+      contentEl.textContent = JSON.stringify(data, null, 2);
+    }
+
+    /* ============================================
+     * Query Builder Section
+     * ============================================ */
+    
+    // Auto-select "specific" KOID radio when user types in the KOID field
+    document.getElementById('koid-value').addEventListener('input', () => {
+      document.querySelector('input[name="koid-mode"][value="specific"]').checked = true;
+    });
+
+    // Query Builder button handler
+    document.getElementById('query-builder-btn').addEventListener('click', async () => {
+      const queryType = document.getElementById('query-type').value;
+      const eventType = document.getElementById('event-type-filter').value;
+      
+      // Get selected range mode from radio buttons
+      const rangeModeRadio = document.querySelector('input[name="range-mode"]:checked');
+      const rangeMode = rangeModeRadio ? rangeModeRadio.value : 'limit';
+      
+      const limitValue = parseInt(document.getElementById('limit-value').value, 10) || 20;
+      const daysValue = parseInt(document.getElementById('days-value').value, 10) || 30;
+      let sinceDate = document.getElementById('since-date').value;
+
+      // Get KOID filter
+      const koidMode = document.querySelector('input[name="koid-mode"]:checked')?.value || 'all';
+      const koidValue = document.getElementById('koid-value').value.trim();
+      const koidFilter = koidMode === 'specific' && koidValue ? koidValue : null;
+      
+      const resultEl = document.getElementById('query-builder-result');
+      const debugEl = document.getElementById('query-builder-debug');
+      const debugContentEl = document.getElementById('query-builder-debug-content');
+      
+      // Calculate date for "days" mode
+      let calculatedDate = null;
+      if (rangeMode === 'days') {
+        const daysAgo = new Date();
+        daysAgo.setDate(daysAgo.getDate() - daysValue);
+        calculatedDate = daysAgo.toISOString().split('T')[0] + 'T00:00:00';
+      }
+      
+      // Validate and format since date
+      if (rangeMode === 'date') {
+        if (!sinceDate) {
+          resultEl.innerHTML = '<div class="error">Please select a date for the "Since date" filter.</div>';
+          return;
+        }
+        // Ensure date is in YYYY-MM-DD format and add T00:00:00 for midnight
+        if (!sinceDate.includes('T')) {
+          sinceDate = `${sinceDate}T00:00:00`;
+        }
+      }
+
+      // Build shared WHERE conditions
+      const conditions = [];
+      if (eventType) conditions.push(`index1 = '${eventType}'`);
+      if (koidFilter) conditions.push(`blob1 = '${koidFilter}'`);
+      if (rangeMode === 'days' && calculatedDate) conditions.push(`timestamp >= toDateTime('${calculatedDate}')`);
+      else if (rangeMode === 'date' && sinceDate) conditions.push(`timestamp >= toDateTime('${sinceDate}')`);
+      const whereClause = conditions.length ? ` WHERE ${conditions.join(' AND ')}` : '';
+
+      // Build SQL query based on selections
+      let sql = '';
+      
+      if (queryType === 'recent') {
+        sql = `SELECT * FROM koassets_analyticstest${whereClause} ORDER BY timestamp DESC`;
+        if (rangeMode === 'limit') sql += ` LIMIT ${limitValue}`;
+      } else if (queryType === 'by-type') {
+        sql = `SELECT index1 as event_type, COUNT() as count FROM koassets_analyticstest${whereClause} GROUP BY index1 ORDER BY count DESC`;
+      }
+      
+      // Show loading message
+      const filterText = eventType ? ` (${eventType} only)` : '';
+      const koidText = koidFilter ? `, KOID: ${koidFilter}` : '';
+      let rangeText = '';
+      if (rangeMode === 'limit') {
+        rangeText = `, last ${limitValue} events`;
+      } else if (rangeMode === 'days') {
+        rangeText = `, since ${daysValue} days ago`;
+      } else if (rangeMode === 'date') {
+        rangeText = `, since ${sinceDate.split('T')[0]}`;
+      }
+      resultEl.innerHTML = `<div class="loading">Querying Analytics Engine${filterText}${koidText}${rangeText}...</div>`;
+      debugEl.style.display = 'none';
+      
+      try {
+        const result = await executeQuery(sql);
+        
+        // Render results with friendly column names
+        const headerHtml = `
+          <h3>Results</h3>
+          <p class="query-meta">${result.meta.rows} rows • ${result.meta.responseTime}ms</p>
+        `;
+        resultEl.innerHTML = headerHtml;
+        
+        const tableContainer = document.createElement('div');
+        resultEl.appendChild(tableContainer);
+        renderTable(result.data, tableContainer, eventType);
+        
+        // Show debug info
+        const debugInfo = {
+          query_type: queryType,
+          event_type: eventType || 'all',
+          koid_filter: koidFilter || 'all',
+          range_mode: rangeMode,
+          sql: result.meta.sql,
+          rows: result.meta.rows,
+          responseTime: `${result.meta.responseTime}ms`
+        };
+        
+        // Add range-specific parameters to debug info
+        if (rangeMode === 'limit') {
+          debugInfo.limit = limitValue;
+        } else if (rangeMode === 'days') {
+          debugInfo.days_ago = daysValue;
+          debugInfo.calculated_date = calculatedDate;
+        } else if (rangeMode === 'date') {
+          debugInfo.since_date = sinceDate;
+        }
+        
+        showDebug(debugEl, debugContentEl, debugInfo);
+        
+        console.log('[Analytics] Query builder successful:', result.data);
+      } catch (error) {
+        console.error('[Analytics] Query builder error:', error);
+        resultEl.innerHTML = `<div class="error"><strong>Query failed:</strong> ${error.message}</div>`;
+        showDebug(debugEl, debugContentEl, { error: error.message, sql });
+      }
+    });
+
+    /* ============================================
+     * OOTB Queries
+     * ============================================ */
+    
+    const ootbQueries = {
+      'unique-users': {
+        name: 'Unique User Count',
+        sql: "SELECT COUNT(DISTINCT blob1) as unique_users FROM koassets_analyticstest WHERE index1 = 'login'",
+        eventType: 'login'
+      },
+      'users-by-month': {
+        name: 'Users by Month',
+        sql: "SELECT toStartOfMonth(timestamp) as month, COUNT(DISTINCT blob1) as unique_users FROM koassets_analyticstest WHERE index1 = 'login' GROUP BY month ORDER BY month DESC",
+        eventType: 'login'
+      },
+      'users-by-role': {
+        name: 'Users by Role',
+        sql: "SELECT blob5 as roles, COUNT(DISTINCT blob1) as unique_users FROM koassets_analyticstest WHERE index1 = 'login' GROUP BY roles ORDER BY unique_users DESC",
+        eventType: 'login'
+      },
+      'first-time-users-native': {
+        name: 'First Time Users - 2025',
+        sql: "SELECT COUNT() as first_time_users FROM (SELECT blob1, MIN(timestamp) as first_login FROM koassets_analyticstest WHERE index1 = 'login' GROUP BY blob1 HAVING MIN(timestamp) >= toDateTime('2025-01-01 00:00:00') AND MIN(timestamp) <= toDateTime('2025-12-31 23:59:59'))",
+        eventType: 'login'
+      },
+      'total-downloads': {
+        name: 'Total Downloads',
+        sql: "SELECT COUNT() as download_count FROM koassets_analyticstest WHERE index1 = 'download'",
+        eventType: 'download'
+      },
+      'downloads-by-month': {
+        name: 'Downloads by Month',
+        sql: "SELECT toStartOfMonth(timestamp) as month, COUNT() as download_count FROM koassets_analyticstest WHERE index1 = 'download' GROUP BY month ORDER BY month DESC",
+        eventType: 'download'
+      },
+      'downloads-by-role': {
+        name: 'Downloads by Role',
+        sql: "SELECT blob5 as roles, COUNT() as download_count FROM koassets_analyticstest WHERE index1 = 'download' GROUP BY roles ORDER BY download_count DESC",
+        eventType: 'download'
+      },
+      'downloads-by-type': {
+        name: 'Downloads by Resource Type',
+        sql: "SELECT blob6 as resource_type, COUNT() as download_count FROM koassets_analyticstest WHERE index1 = 'download' GROUP BY resource_type ORDER BY download_count DESC",
+        eventType: 'download'
+      },
+      'downloads-by-country': {
+        name: 'Downloads by Country',
+        sql: "SELECT blob2 as country, COUNT() as download_count FROM koassets_analyticstest WHERE index1 = 'download' GROUP BY country ORDER BY download_count DESC LIMIT 20",
+        eventType: 'download'
+      },
+      'first-time-downloaders-native': {
+        name: 'First Time Downloaders - 2025',
+        sql: "SELECT COUNT() as first_time_downloaders FROM (SELECT blob1, MIN(timestamp) as first_download FROM koassets_analyticstest WHERE index1 = 'download' GROUP BY blob1 HAVING MIN(timestamp) >= toDateTime('2025-01-01 00:00:00') AND MIN(timestamp) <= toDateTime('2025-12-31 23:59:59'))",
+        eventType: 'download'
+      },
+      'top-searches': {
+        name: 'Top Search Terms',
+        sql: "SELECT blob6 as search_term, COUNT() as search_count FROM koassets_analyticstest WHERE index1 = 'search' AND blob6 != '' GROUP BY search_term ORDER BY search_count DESC LIMIT 50",
+        eventType: 'search'
+      },
+      'searches-by-month': {
+        name: 'Searches by Month',
+        sql: "SELECT toStartOfMonth(timestamp) as month, COUNT() as search_count FROM koassets_analyticstest WHERE index1 = 'search' GROUP BY month ORDER BY month DESC",
+        eventType: 'search'
+      }
+    };
+
+    async function runOotbQuery(queryId) {
+      const query = ootbQueries[queryId];
+      if (!query) return;
+
+      const resultEl = document.getElementById('ootb-result');
+      const debugEl = document.getElementById('ootb-debug');
+      const debugContentEl = document.getElementById('ootb-debug-content');
+      
+      resultEl.innerHTML = `<div class="loading">Running: ${query.name}...</div>`;
+      debugEl.style.display = 'none';
+
+      try {
+        const result = await executeQuery(query.sql);
+        
+        // Render results with friendly column names
+        const headerHtml = `
+          <h3>${query.name}</h3>
+          <p class="query-meta">${result.meta.rows} rows • ${result.meta.responseTime}ms</p>
+        `;
+        resultEl.innerHTML = headerHtml;
+        
+        const tableContainer = document.createElement('div');
+        resultEl.appendChild(tableContainer);
+        renderTable(result.data, tableContainer, query.eventType);
+        
+        // Show debug info
+        showDebug(debugEl, debugContentEl, {
+          query: query.name,
+          sql: result.meta.sql,
+          rows: result.meta.rows,
+          responseTime: `${result.meta.responseTime}ms`,
+          data: result.data.slice(0, 3) // First 3 rows only for debug
+        });
+        
+        console.log(`[Analytics] OOTB Query "${query.name}" successful:`, result.data);
+      } catch (error) {
+        console.error(`[Analytics] OOTB Query "${query.name}" error:`, error);
+        resultEl.innerHTML = `<div class="error"><strong>Query failed:</strong> ${error.message}</div>`;
+        showDebug(debugEl, debugContentEl, { error: error.message, sql: query.sql });
+      }
+    }
+
+    // Attach OOTB query button handlers
+    document.querySelectorAll('.ootb-query-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        runOotbQuery(btn.dataset.query);
+      });
+    });
+
+    /* ============================================
+     * Custom SQL Query
+     * ============================================ */
+    
+    // Example query button handlers
+    document.querySelectorAll('.example-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('custom-sql-input').value = btn.dataset.sql;
+      });
+    });
+
+    // Helper to detect event type from SQL query
+    function detectEventTypeFromSQL(sql) {
+      const sqlLower = sql.toLowerCase();
+      if (sqlLower.includes("index1 = 'login'") || sqlLower.includes('index1 = "login"')) {
+        return 'login';
+      }
+      if (sqlLower.includes("index1 = 'download'") || sqlLower.includes('index1 = "download"')) {
+        return 'download';
+      }
+      if (sqlLower.includes("index1 = 'search'") || sqlLower.includes('index1 = "search"')) {
+        return 'search';
+      }
+      return null; // Mixed or unknown event type
+    }
+
+    // Run custom SQL button
+    document.getElementById('run-custom-sql-btn').addEventListener('click', async () => {
+      const sqlInput = document.getElementById('custom-sql-input');
+      const sql = sqlInput.value.trim();
+      const resultEl = document.getElementById('custom-sql-result');
+      const debugEl = document.getElementById('custom-debug');
+      const debugContentEl = document.getElementById('custom-debug-content');
+
+      if (!sql) {
+        resultEl.innerHTML = '<div class="error">Please enter a SQL query.</div>';
+        return;
+      }
+
+      resultEl.innerHTML = '<div class="loading">Running query...</div>';
+      debugEl.style.display = 'none';
+
+      try {
+        const result = await executeQuery(sql);
+        
+        // Try to detect event type from SQL for friendly column names
+        const detectedEventType = detectEventTypeFromSQL(sql);
+        
+        // Render results with friendly column names if event type detected
+        const headerHtml = `
+          <h3>Query Results</h3>
+          <p class="query-meta">${result.meta.rows} rows • ${result.meta.responseTime}ms</p>
+        `;
+        resultEl.innerHTML = headerHtml;
+        
+        const tableContainer = document.createElement('div');
+        resultEl.appendChild(tableContainer);
+        renderTable(result.data, tableContainer, detectedEventType);
+        
+        // Show debug info
+        showDebug(debugEl, debugContentEl, {
+          sql: result.meta.sql,
+          rows: result.meta.rows,
+          responseTime: `${result.meta.responseTime}ms`,
+          data: result.data.slice(0, 3) // First 3 rows only for debug
+        });
+        
+        console.log('[Analytics] Custom SQL query successful:', result.data);
+      } catch (error) {
+        console.error('[Analytics] Custom SQL query error:', error);
+        resultEl.innerHTML = `<div class="error"><strong>Query failed:</strong> ${error.message}</div>`;
+        showDebug(debugEl, debugContentEl, { error: error.message, sql });
+      }
+    });
+  </script>
+</body>
+</html>

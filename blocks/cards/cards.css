@@ -1,0 +1,205 @@
+.cards > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns */
+  grid-gap: 24px;
+}
+
+.cards > ul > li {
+  background-color: #f6f6f6; /* Light grey background */
+  border-radius: 12px; /* Rounded corners */
+  overflow: hidden; /* Ensures image corners are also rounded */
+  display: flex; /* Enable horizontal layout */
+  align-items: stretch; /* Ensure both image and content have same height */
+  box-shadow: 0 2px 8px rgb(0 0 0 / 10%); /* Subtle shadow */
+  height: 120px;
+}
+
+.cards > ul > li:hover {
+  /* No visual effects on hover for the card */
+}
+
+.cards > ul > li:hover .cards-card-body {
+  background-color: white;
+}
+
+.cards .cards-card-body {
+  flex: 1; /* Allow text content to take remaining space */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align text towards the top */
+  background-color: #e9ecef;
+  transition: background-color 0.3s ease; /* Smooth background transition */
+  padding: 16px;
+  padding-top: 20px;
+}
+
+.cards h2 {
+  font-family: "TCCC UnityHeadline", sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  margin: 0;
+}
+
+.cards h2::after {
+  display: none;
+}
+
+.cards a {
+  color: inherit;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.cards a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cards .cards-card-image {
+  line-height: 0;
+  flex: 0 0 40%; /* Fixed width for image (40% of card width) */
+}
+
+.cards > ul > li img {
+  width: 100%;
+  height: 100%; /* Make image fill the full height of the card */
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* Responsive: Adjust for smaller screens */
+@media (width < 1200px) {
+  .cards > ul {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
+  }
+}
+
+@media (width < 600px) {
+  .cards > ul {
+    grid-template-columns: 1fr; /* 1 column on mobile */
+  }
+
+  .cards > ul > li {
+    flex-direction: column; /* Stack vertically on mobile */
+    height: auto; /* Allow height to adjust on mobile */
+  }
+
+  .cards .cards-card-image {
+    flex: none; /* Reset flex on mobile */
+  }
+
+  .cards > ul > li img {
+    height: auto; /* Reset height on mobile */
+  }
+}
+
+/* Two-up variant: 2-column grid for sections with fewer cards */
+.cards.two-up > ul {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Three-up variant: 3-column grid */
+.cards.three-up > ul {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (width < 600px) {
+  .cards.two-up > ul,
+  .cards.three-up > ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Highlights variant styling */
+.cards.highlights > ul > li {
+  background-color: #0d0000ce; /* Dark red background for highlights */
+  color: white; /* White text */
+  position: relative;
+  flex-direction: column; /* Stack image on top, text at bottom */
+  height: 218px; /* Fixed height */
+  border-radius: 8px; /* Smaller border radius for highlights */
+  transition: background-color 0.3s ease; /* Smooth background transition */
+}
+
+.cards.highlights > ul > li:hover {
+  background-color: #ED0000; /* Bright red on hover */
+}
+
+.cards.highlights .cards-card-body {
+  width: 100%; /* Full width */
+  padding: 12px; /* Remove vertical padding, use only horizontal */
+  justify-content: center; /* Center text vertically in the area */
+  align-items: flex-start; /* Align text to the left */
+  flex: 0 0 48px;
+  box-sizing: border-box; /* Include padding in height calculation */
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  background-color: rgb(0 0 0 / 80%);
+  height: 52px;
+  transition: background-color 1s ease;
+}
+
+.cards.highlights .cards-card-image {
+  flex: 1; /* Take remaining space after text */
+  width: 100%; /* Full width */
+  overflow: hidden; /* Hide overflow */
+  order: -1; /* Ensure image appears first (on top) */
+}
+
+.cards.highlights > ul > li img {
+  width: 100%;
+  height: 100%; /* Fill the image container */
+  object-fit: contain;
+  background-color: white;
+  transition: transform 0.5s ease; /* Smooth zoom transition */
+}
+
+.cards.highlights > ul > li:hover img {
+  transform: scale(1.05); /* Slight zoom on hover */
+}
+
+/* Override general card body hover effect for highlights */
+.cards.highlights > ul > li:hover .cards-card-body {
+  background-color: var(--primary-color);
+}
+
+.cards.highlights h2 {
+  color: white;
+  font-size: 20px;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+  font-weight: normal;
+}
+
+.cards.highlights a {
+  color: white;
+}
+
+/* Add arrow icon for highlights */
+.cards.highlights > ul > li::after {
+  content: '›';
+  position: absolute;
+  right: 16px;
+  bottom: 0; /* Start from bottom */
+  height: 48px; /* Match content area height */
+  display: flex;
+  align-items: center; /* Center arrow vertically within its container */
+  font-size: 24px;
+  color: white;
+  font-weight: bold;
+  line-height: 1; /* Remove line-height spacing */
+}
+
+/* Light variant: lighter label overlay for JP portal cards */
+.cards.highlights.light .cards-card-body {
+  background-color: rgb(0 0 0 / 25%);
+  font-weight: bold;
+}

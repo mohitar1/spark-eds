@@ -1,0 +1,114 @@
+/* Main container styling */
+.team-cards {
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
+  margin: 32px 0;
+}
+
+/* Title styling */
+.team-cards-title {
+  font-family: "TCCC UnityHeadline", sans-serif;
+  font-size: var(--heading-font-size-l);
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.team-cards > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns on desktop */
+  grid-gap: 24px;
+}
+
+.team-cards > ul > li {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column; /* Stack image on top, text below */
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  transition: box-shadow 0.3s ease;
+}
+
+.team-cards > ul > li:hover {
+  box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+}
+
+/* Image container */
+.team-cards .team-cards-card-image {
+  line-height: 0;
+  padding: 16px 16px 0; /* Padding around image */
+}
+
+.team-cards > ul > li img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1; /* Square images */
+  object-fit: cover;
+  border-radius: 8px; /* Rounded corners for images */
+}
+
+/* Text content */
+.team-cards .team-cards-card-body {
+  padding: 16px;
+  flex: 1;
+}
+
+.team-cards h2 {
+  font-family: "TCCC UnityHeadline", sans-serif;
+  font-size: var(--heading-font-size-m);
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: #333;
+  line-height: 1.2;
+}
+
+.team-cards h3::after {
+  display: none !important;
+}
+
+.team-cards :is(h1, h2, h3, h4, h5, h6)::after {
+  display: none !important;
+}
+
+.team-cards p {
+  font-family: "TCCC UnityHeadline", sans-serif;
+  font-size: var(--body-font-size-xs);
+  color: #666;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Responsive design */
+@media (width < 1024px) {
+  .team-cards > ul {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+  }
+
+  .team-cards {
+    padding: 24px;
+  }
+}
+
+@media (width < 600px) {
+  .team-cards > ul {
+    grid-template-columns: 1fr; /* 1 column on mobile */
+    grid-gap: 16px;
+  }
+
+  .team-cards {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .team-cards > ul > li {
+    border-radius: 8px;
+  }
+}

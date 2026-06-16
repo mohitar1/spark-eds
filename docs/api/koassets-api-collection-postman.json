@@ -1,0 +1,1203 @@
+{
+  "info": {
+    "_postman_id": "koassets-api-security-review",
+    "name": "KO Assets API - Security Review",
+    "description": "Comprehensive API collection for KO Assets platform security assessment.\n\n## Authentication\nAll authenticated endpoints require a valid `session` cookie obtained through the Microsoft Entra ID OAuth/OIDC flow.\n\n## Base URL\nProduction: https://koassets.adobecocacola.workers.dev\nPreview: https://preview-koassets.adobecocacola.workers.dev\nLocal: http://localhost:8787\n\n## API Categories\n- Internal APIs: Implemented in Cloudflare Worker\n- Proxied APIs: Forwarded to external services (Adobe DM, Fadel, AEM)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://koassets.adobecocacola.workers.dev",
+      "type": "string"
+    },
+    {
+      "key": "sessionCookie",
+      "value": "YOUR_SESSION_COOKIE_VALUE",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "description": "OAuth/OIDC authentication flow with Microsoft Entra ID. The session cookie is set after successful authentication.",
+      "item": [
+        {
+          "name": "Login Redirect",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Initiates OAuth flow - redirects to Microsoft Entra ID login page. After successful authentication, redirects back with session cookie set."
+          },
+          "response": [
+            {
+              "name": "Redirect to IDP",
+              "status": "Found",
+              "code": 302,
+              "header": [
+                {
+                  "key": "Location",
+                  "value": "https://login.microsoftonline.com/..."
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Clears session cookie and optionally redirects to IDP logout."
+          },
+          "response": [
+            {
+              "name": "Logout Success",
+              "status": "Found",
+              "code": 302,
+              "header": [
+                {
+                  "key": "Set-Cookie",
+                  "value": "session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. User API (Internal)",
+      "description": "User session information API. Returns authenticated user details from the session cookie.",
+      "item": [
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/user",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "user"]
+            },
+            "description": "Returns the authenticated user's profile information including roles, permissions, and session expiration."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@coca-cola.com\",\n  \"country\": \"US\",\n  \"employeeType\": \"10\",\n  \"koid\": \"12345\",\n  \"company\": \"The Coca-Cola Company\",\n  \"permissions\": [\"preview\", \"admin-reports\"],\n  \"roles\": [\"employee\"],\n  \"countries\": [],\n  \"customers\": [],\n  \"brands\": [],\n  \"sessionExpiresInSec\": 21600\n}"
+            },
+            {
+              "name": "Unauthorized",
+              "status": "Unauthorized",
+              "code": 401,
+              "body": "{\n  \"error\": \"Unauthorized\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Saved Searches API (Internal - KV)",
+      "description": "CRUD operations for user saved searches stored in Cloudflare KV. All keys are automatically scoped to the authenticated user.",
+      "item": [
+        {
+          "name": "List Saved Search Keys",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/savedsearches/list?limit=100",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "savedsearches", "list"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Maximum number of keys to return (default: 100)"
+                }
+              ]
+            },
+            "description": "Lists all saved search keys for the authenticated user."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"keys\": [\n    {\n      \"name\": \"user:john.doe@coca-cola.com:saved-searches\",\n      \"expiration\": null,\n      \"metadata\": null\n    }\n  ],\n  \"prefix\": \"user:john.doe@coca-cola.com:\",\n  \"count\": 1\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Saved Searches",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/savedsearches/get",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "savedsearches", "get"]
+            },
+            "description": "Retrieves the saved searches for the authenticated user."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"key\": \"user:john.doe@coca-cola.com:saved-searches\",\n  \"value\": [\n    {\n      \"id\": \"search-123\",\n      \"name\": \"Coca-Cola Red Assets\",\n      \"searchTerm\": \"coca-cola red\",\n      \"filters\": {\"brand\": \"Coca-Cola\"},\n      \"dateCreated\": \"2024-01-15T10:30:00Z\"\n    }\n  ],\n  \"rawValue\": \"[...]\"\n}"
+            },
+            {
+              "name": "Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "body": "{\n  \"success\": false,\n  \"error\": \"Key not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Save Searches",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"value\": [\n    {\n      \"id\": \"search-123\",\n      \"name\": \"Coca-Cola Red Assets\",\n      \"searchTerm\": \"coca-cola red\",\n      \"filters\": {\"brand\": \"Coca-Cola\"},\n      \"dateCreated\": \"2024-01-15T10:30:00Z\"\n    }\n  ],\n  \"metadata\": {\"version\": 1},\n  \"expirationTtl\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/savedsearches/set",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "savedsearches", "set"]
+            },
+            "description": "Saves or updates the user's saved searches."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"key\": \"user:john.doe@coca-cola.com:saved-searches\",\n  \"message\": \"Value set successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Saved Searches",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/savedsearches/delete",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "savedsearches", "delete"]
+            },
+            "description": "Deletes the saved searches for the authenticated user."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"key\": \"user:john.doe@coca-cola.com:saved-searches\",\n  \"message\": \"Key deleted successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Report Metrics (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/savedsearches/report-metrics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "savedsearches", "report-metrics"]
+            },
+            "description": "Returns aggregate metrics for saved searches across all users. Requires admin-reports permission."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"metrics\": {\n    \"totalUsers\": 1500,\n    \"usersWithSavedSearches\": 350,\n    \"totalSavedSearches\": 1200,\n    \"avgPerUser\": 3.43\n  },\n  \"charts\": {\n    \"savedSearchesByMonth\": [...],\n    \"distribution\": [...]\n  },\n  \"timestamp\": \"2024-01-15T10:30:00Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Rights Requests API (Internal - KV)",
+      "description": "Rights request management for restricted assets. Supports submitter and reviewer workflows.",
+      "item": [
+        {
+          "name": "List User's Rights Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/rightsrequests",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rightsrequests"]
+            },
+            "description": "Lists all rights requests submitted by the authenticated user."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"rights-request-1234567890\": {\n      \"rightsRequestID\": \"1234567890\",\n      \"rightsRequestSubmittedUserID\": \"john.doe@coca-cola.com\",\n      \"created\": \"Mon, 15 Jan 2024 10:30:00 GMT\",\n      \"rightsRequestDetails\": {...},\n      \"rightsRequestReviewDetails\": {\n        \"rightsRequestStatus\": \"In Progress\",\n        \"rightsReviewer\": \"reviewer@coca-cola.com\"\n      }\n    }\n  },\n  \"count\": 1\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Rights Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restrictedAssets\": [\n    {\n      \"assetId\": \"urn:aaid:aem:abc123\",\n      \"name\": \"Campaign Asset.jpg\"\n    }\n  ],\n  \"agencyType\": \"Associate\",\n  \"agencyName\": \"TCCC Marketing\",\n  \"contactName\": \"John Doe\",\n  \"contactEmail\": \"john.doe@coca-cola.com\",\n  \"contactPhone\": \"+1-555-0123\",\n  \"airDate\": \"2024-03-01\",\n  \"pullDate\": \"2024-06-01\",\n  \"selectedMarkets\": [{\"id\": 1, \"name\": \"North America\"}],\n  \"selectedMediaChannels\": [{\"id\": 1, \"name\": \"Digital\"}],\n  \"materialsRequiredDate\": \"2024-02-15\",\n  \"formatsRequired\": \"PSD, JPEG\",\n  \"usageRightsRequired\": {\"music\": true, \"talent\": false},\n  \"adaptationIntention\": \"None\",\n  \"budgetForMarket\": \"$50,000\",\n  \"exceptionOrNotes\": \"Urgent request\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/rightsrequests",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rightsrequests"]
+            },
+            "description": "Creates a new rights request for restricted assets."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"rightsRequestID\": \"1234567890123456\",\n    \"rightsRequestSubmittedUserID\": \"john.doe@coca-cola.com\",\n    \"created\": \"Mon, 15 Jan 2024 10:30:00 GMT\",\n    \"rightsRequestDetails\": {...},\n    \"rightsRequestReviewDetails\": {\n      \"rightsRequestStatus\": \"Not Started\",\n      \"rightsReviewer\": \"\"\n    }\n  },\n  \"message\": \"Rights request created successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Request Status (Submitter)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"1234567890\",\n  \"status\": \"User Canceled\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/rightsrequests/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rightsrequests", "status"]
+            },
+            "description": "Allows submitter to cancel their own request. Only 'User Canceled' status is allowed."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {...},\n  \"message\": \"Request cancelled successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List All Rights Requests (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/rightsrequests/all",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rightsrequests", "all"]
+            },
+            "description": "Lists all rights requests across all users. Requires admin-reports permission."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {...},\n  \"count\": 150,\n  \"totalKeys\": 150\n}"
+            },
+            {
+              "name": "Forbidden",
+              "status": "Forbidden",
+              "code": 403,
+              "body": "{\n  \"success\": false,\n  \"error\": \"admin-reports permission required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Reviews for Reviewer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/rightsrequests/reviews",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rightsrequests", "reviews"]
+            },
+            "description": "Lists all reviews (assigned + unassigned) for the authenticated reviewer. Requires manage-rights or admin-rights permission."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {...},\n  \"count\": 10,\n  \"unassignedCount\": 3,\n  \"assignedCount\": 7\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Available Reviewers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/rightsrequests/reviews/reviewers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rightsrequests", "reviews", "reviewers"]
+            },
+            "description": "Lists users who can be assigned as reviewers. Requires admin-rights permission."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"email\": \"reviewer1@coca-cola.com\",\n      \"permissions\": [\"manage-rights\"]\n    },\n    {\n      \"email\": \"admin@coca-cola.com\",\n      \"permissions\": [\"admin-rights\"]\n    }\n  ],\n  \"count\": 2\n}"
+            }
+          ]
+        },
+        {
+          "name": "Assign Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"1234567890\",\n  \"assigneeEmail\": \"reviewer@coca-cola.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/rightsrequests/reviews/assign",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rightsrequests", "reviews", "assign"]
+            },
+            "description": "Assigns a review to a reviewer. Self-assignment requires manage-rights; assigning to others requires admin-rights."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {...},\n  \"message\": \"Review assigned to reviewer@coca-cola.com successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Review Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"1234567890\",\n  \"status\": \"Done\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/rightsrequests/reviews/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "rightsrequests", "reviews", "status"]
+            },
+            "description": "Updates the status of an assigned review. Valid statuses: In Progress, User Canceled, RM Canceled, Quote Pending, Release Pending, Done. Requires manage-rights permission."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {...},\n  \"message\": \"Status updated successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Notifications API (Internal - KV)",
+      "description": "RESTful CRUD operations for user notifications stored in Cloudflare KV.",
+      "item": [
+        {
+          "name": "List Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/messages",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "messages"]
+            },
+            "description": "Lists all notifications for the authenticated user, including system notifications from EDS."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"messages\": [\n    {\n      \"id\": \"notif-123\",\n      \"owner\": \"john.doe@coca-cola.com\",\n      \"date\": \"2024-01-15T10:30:00Z\",\n      \"subject\": \"Rights Request Update\",\n      \"message\": \"Your rights request has been approved.\",\n      \"type\": \"Notification\",\n      \"from\": \"Rights Management System\",\n      \"priority\": \"normal\",\n      \"expiresInXDays\": 30,\n      \"status\": \"unread\"\n    }\n  ],\n  \"count\": 1\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Notification",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/messages/notif-123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "messages", "notif-123"]
+            },
+            "description": "Retrieves a specific notification by ID."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": {\n    \"id\": \"notif-123\",\n    \"owner\": \"john.doe@coca-cola.com\",\n    \"date\": \"2024-01-15T10:30:00Z\",\n    \"subject\": \"Rights Request Update\",\n    \"message\": \"Your rights request has been approved.\",\n    \"type\": \"Notification\",\n    \"from\": \"Rights Management System\",\n    \"priority\": \"normal\",\n    \"status\": \"unread\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"notif-456\",\n  \"subject\": \"New Asset Available\",\n  \"message\": \"A new asset matching your saved search is now available.\",\n  \"type\": \"Notification\",\n  \"from\": \"system@coca-cola.com\",\n  \"priority\": \"normal\",\n  \"expiresInXDays\": 30,\n  \"status\": \"unread\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/messages",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "messages"]
+            },
+            "description": "Creates a new notification for the authenticated user."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": {\n    \"id\": \"notif-456\",\n    \"owner\": \"john.doe@coca-cola.com\",\n    \"date\": \"2024-01-15T10:30:00Z\",\n    \"subject\": \"New Asset Available\",\n    \"message\": \"A new asset matching your saved search is now available.\",\n    \"type\": \"Notification\",\n    \"from\": \"system@coca-cola.com\",\n    \"priority\": \"normal\",\n    \"expiresInXDays\": 30,\n    \"status\": \"unread\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"read\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/messages/notif-123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "messages", "notif-123"]
+            },
+            "description": "Updates an existing notification. Commonly used to mark as read."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": {\n    \"id\": \"notif-123\",\n    \"status\": \"read\",\n    ...\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/messages/notif-123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "messages", "notif-123"]
+            },
+            "description": "Deletes a notification by ID."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Notification deleted successfully\",\n  \"notificationId\": \"notif-123\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6. Analytics API (Internal - Analytics Engine)",
+      "description": "Analytics reporting using Cloudflare Analytics Engine. Events are tracked server-side automatically during downloads, searches, and logins.",
+      "item": [
+        {
+          "name": "Get Report Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/analytics/report-metrics?year=2024&month=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "analytics", "report-metrics"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2024"
+                },
+                {
+                  "key": "month",
+                  "value": "1",
+                  "description": "Optional: 1-12 for specific month"
+                }
+              ]
+            },
+            "description": "Returns aggregated analytics metrics for reports. Requires admin-reports permission."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"summary\": {\n    \"uniqueUsers\": 1500,\n    \"firstTimeUsers\": 200,\n    \"uniqueDownloaders\": 800,\n    \"firstTimeDownloaders\": 150\n  },\n  \"downloadsByMonth\": [...],\n  \"downloadersByRole\": [...],\n  \"geoData\": {...},\n  \"topCampaigns\": [...],\n  \"topAssets\": [...]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Raw Downloads",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/analytics/raw-downloads?year=2024&month=1&limit=100",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "analytics", "raw-downloads"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2024"
+                },
+                {
+                  "key": "month",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            },
+            "description": "Returns raw download event data for analysis."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": [...],\n  \"count\": 100\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "7. Dynamic Media API (Proxied to Adobe)",
+      "description": "Proxied to Adobe Dynamic Media / ContentAI API (delivery-*.adobeaemcloud.com). Provides asset search, collection search, metadata, and rendition delivery. Search endpoints use ContentAI query format.",
+      "item": [
+        {
+          "name": "Search Assets",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": [\n    {\n      \"and\": [\n        {\n          \"and\": [\n            {\n              \"match\": {\n                \"text\": \"coke\",\n                \"fields\": [\n                  \"assetMetadata.dc:title\",\n                  \"assetMetadata.dc:subject\",\n                  \"repositoryMetadata.repo:name\",\n                  \"assetMetadata.xcm:keywords\",\n                  \"assetMetadata.xcm:machineKeywords.value\",\n                  \"assetMetadata.dam:textContent\",\n                  \"assetMetadata.autogen:subject\",\n                  \"assetMetadata.autogen:description\",\n                  \"assetMetadata.autogen:title\",\n                  \"assetMetadata.tccc:keywords\"\n                ]\n              }\n            },\n            {\n              \"or\": [\n                {\n                  \"not\": [\n                    {\n                      \"exists\": {\n                        \"field\": \"assetMetadata.pur:expirationDate\"\n                      }\n                    }\n                  ]\n                },\n                {\n                  \"range\": {\n                    \"assetMetadata.pur:expirationDate\": {\n                      \"gt\": \"2026-02-17T21:37:43.011Z\"\n                    }\n                  }\n                }\n              ]\n            }\n          ]\n        },\n        {\n          \"and\": [\n            {\n              \"or\": [\n                {\n                  \"term\": {\n                    \"assetMetadata.tccc:contentType\": [\n                      \"marketing\"\n                    ]\n                  }\n                },\n                {\n                  \"term\": {\n                    \"assetMetadata.tccc:contentType\": [\n                      \"customers\"\n                    ]\n                  }\n                }\n              ]\n            }\n          ]\n        }\n      ]\n    }\n  ],\n  \"limit\": 24,\n  \"orderBy\": \"repositoryMetadata.repo:modifyDate desc\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/adobe/assets/contentai/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "adobe", "assets", "contentai", "search"]
+            },
+            "description": "Searches for assets using ContentAI search API. The worker applies authorization filters (tccc:includeInSearch, tccc:assetStatus) and expiration date filtering server-side before forwarding to Adobe."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"hits\": {\n    \"results\": [\n      {\n        \"assetId\": \"urn:aaid:aem:abc123\",\n        \"repositoryMetadata\": {\n          \"repo:name\": \"summer-campaign-hero.jpg\",\n          \"repo:modifyDate\": \"2026-01-15T10:30:00Z\"\n        },\n        \"assetMetadata\": {\n          \"dc:format\": \"image/jpeg\",\n          \"dc:title\": \"Summer Campaign Hero Image\"\n        }\n      }\n    ]\n  },\n  \"search_metadata\": {\n    \"totalCount\": {\n      \"total\": 42\n    }\n  },\n  \"cursor\": \"eyJhbGci...\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Search Collections",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": [\n    {\n      \"match\": {\n        \"text\": \"\",\n        \"fields\": [\n          \"collectionMetadata.title\",\n          \"collectionMetadata.description\"\n        ]\n      }\n    }\n  ],\n  \"limit\": 50,\n  \"orderBy\": \"repositoryMetadata.repo:modifyDate desc\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/adobe/assets/contentai/collections/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "adobe", "assets", "contentai", "collections", "search"]
+            },
+            "description": "Searches collections using ContentAI search API. The server automatically applies authorization filters (ACL) to limit results to collections where the user is owner, editor, or viewer. Set the query text to filter by collection title/description."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"hits\": {\n    \"results\": [\n      {\n        \"collectionId\": \"col-123\",\n        \"collectionMetadata\": {\n          \"title\": \"Summer Campaign Assets\",\n          \"description\": \"Assets for the summer campaign\"\n        },\n        \"repositoryMetadata\": {\n          \"repo:modifyDate\": \"2026-01-15T10:30:00Z\"\n        }\n      }\n    ]\n  },\n  \"search_metadata\": {\n    \"totalCount\": {\n      \"total\": 5\n    }\n  },\n  \"cursor\": \"eyJhbGci...\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Asset Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/adobe/assets/urn:aaid:aem:abc123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "adobe", "assets", "urn:aaid:aem:abc123"]
+            },
+            "description": "Retrieves detailed metadata for a specific asset."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": \"urn:aaid:aem:abc123\",\n  \"name\": \"summer-campaign-hero.jpg\",\n  \"dc:format\": \"image/jpeg\",\n  \"dc:title\": \"Summer Campaign Hero Image\",\n  \"dc:description\": \"Main hero image for summer campaign\",\n  \"tccc:brand\": [\"Coca-Cola\"],\n  \"tccc:campaign\": [\"Summer 2024\"],\n  ...\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Asset Thumbnail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/adobe/assets/urn:aaid:aem:abc123/as/thumbnail.jpg?width=200",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "adobe", "assets", "urn:aaid:aem:abc123", "as", "thumbnail.jpg"],
+              "query": [
+                {
+                  "key": "width",
+                  "value": "200"
+                }
+              ]
+            },
+            "description": "Retrieves a thumbnail rendition of the asset."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "image/jpeg"
+                }
+              ],
+              "body": "(binary image data)"
+            }
+          ]
+        },
+        {
+          "name": "Get Asset Rendition",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/adobe/assets/urn:aaid:aem:abc123/as/original?download=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "adobe", "assets", "urn:aaid:aem:abc123", "as", "original"],
+              "query": [
+                {
+                  "key": "download",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Downloads the original or specified rendition of an asset."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "image/jpeg"
+                },
+                {
+                  "key": "Content-Disposition",
+                  "value": "attachment; filename=\"asset.jpg\""
+                }
+              ],
+              "body": "(binary file data)"
+            }
+          ]
+        },
+        {
+          "name": "Create Archive (Multi-asset Download)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-analytics-context",
+                "value": "{\"downloadId\":\"dl-123\",\"assets\":[{\"assetId\":\"urn:aaid:aem:5feffccb-7249-434d-808d-d8523f03c6b7\",\"brand\":\"Coca-Cola\",\"campaign\":\"Summer 2024\",\"downloadType\":\"ready-to-use\",\"renditions\":[\"original\"]},{\"assetId\":\"urn:aaid:aem:9ff98e98-452d-4622-a06e-b12798d9975e\",\"brand\":\"Sprite\",\"campaign\":\"Summer 2024\",\"downloadType\":\"ready-to-use\",\"renditions\":[\"original\"]}]}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"assetId\": \"urn:aaid:aem:5feffccb-7249-434d-808d-d8523f03c6b7\",\n      \"includeRenditions\": [\n        \"original\"\n      ]\n    },\n    {\n      \"assetId\": \"urn:aaid:aem:9ff98e98-452d-4622-a06e-b12798d9975e\",\n      \"includeRenditions\": [\n        \"original\"\n      ]\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/adobe/assets/archives",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "adobe", "assets", "archives"]
+            },
+            "description": "Creates a ZIP archive containing multiple assets. The x-analytics-context header provides tracking metadata."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/zip"
+                }
+              ],
+              "body": "(binary ZIP data)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "8. Fadel API (Proxied)",
+      "description": "Proxied to Fadel rights management system (*.fadelarc.net). Used for rights checking and clearance workflows.",
+      "item": [
+        {
+          "name": "Check Asset Clearance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inDate\": 1770872400000,\n  \"outDate\": 1771477200000,\n  \"selectedExternalAssets\": [\n    \"e0434f5f-f07c-4745-9b7f-da1dbfc7c4b5\"\n  ],\n  \"selectedRights\": {\n    \"20\": [\n      0\n    ],\n    \"30\": [\n      0\n    ]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/fadel/rc-api/clearance/assetclearance",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fadel", "rc-api", "clearance", "assetclearance"]
+            },
+            "description": "Checks asset clearance against specified rights, markets, and date range. Returns clearance status (AVAILABLE, NOT_AVAILABLE, AVAILABLE_EXCEPT) for each asset."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"restOfAssets\": [\n    {\n      \"asset\": {\n        \"assetExtId\": \"e0434f5f-f07c-4745-9b7f-da1dbfc7c4b5\"\n      },\n      \"typeName\": \"AVAILABLE\",\n      \"typeCode\": \"A\",\n      \"available\": true,\n      \"notAvailable\": false,\n      \"availableExcept\": false\n    }\n  ],\n  \"totalRecords\": 1\n}"
+            },
+            {
+              "name": "No Content",
+              "status": "No Content",
+              "code": 204,
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Fetch Media Rights",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/fadel/rc-api/rights/search/20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fadel", "rc-api", "rights", "search", "20"]
+            },
+            "description": "Fetches media rights hierarchy (type 20). Returns all available media channel rights for filtering."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"attribute\": [\n    {\n      \"externalId\": \"1234\",\n      \"right\": {\n        \"description\": \"Digital\"\n      },\n      \"childrenLst\": []\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Fetch Market Rights",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/fadel/rc-api/rights/search/30",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fadel", "rc-api", "rights", "search", "30"]
+            },
+            "description": "Fetches market rights hierarchy (type 30). Returns all available market/territory rights for filtering."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"attribute\": [\n    {\n      \"externalId\": \"5678\",\n      \"right\": {\n        \"description\": \"United States\"\n      },\n      \"childrenLst\": []\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Asset Agreement List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/fadel/rc-api/assets/externalassets/fd6f8c14-e98c-46bc-925b-ba5da14e9f27",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fadel", "rc-api", "assets", "externalassets", "fd6f8c14-e98c-46bc-925b-ba5da14e9f27"]
+            },
+            "description": "Retrieves the list of agreements associated with an asset. Use the asset UUID without the 'urn:aaid:aem:' prefix."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"assetRightLst\": [\n    {\n      \"assetRightExtId\": \"prod_78476944\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "No Content",
+              "status": "No Content",
+              "code": 204,
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Get Agreement Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "session={{sessionCookie}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/fadel/rc-api/agreements/number/prod_78476944?loadAttachmentFile=false&loadAttachments=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "fadel", "rc-api", "agreements", "number", "prod_78476944"],
+              "query": [
+                {
+                  "key": "loadAttachmentFile",
+                  "value": "false"
+                },
+                {
+                  "key": "loadAttachments",
+                  "value": "false"
+                }
+              ]
+            },
+            "description": "Retrieves detailed information about a specific rights agreement by agreement number."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"agreementNumber\": \"prod_78476944\",\n  \"agreementType\": {...},\n  \"rightLst\": [...]\n}"
+            },
+            {
+              "name": "No Content",
+              "status": "No Content",
+              "code": 204,
+              "body": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

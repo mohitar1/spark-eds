@@ -1,0 +1,10 @@
+# Exclude migration data from git
+DATA/parsed/
+DATA/parsed-all.json
+DATA/enriched-all.json
+DATA/output/
+DATA/asset-cache/
+DATA/migration-summary.json
+
+# Configuration with credentials
+source.config

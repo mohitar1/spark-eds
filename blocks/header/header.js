@@ -1,0 +1,726 @@
+import { getMetadata } from '../../scripts/aem.js';
+import { fetchSpreadsheetData, loadFragment } from '../../scripts/scripts.js';
+import {
+  getAppLabel,
+  localizePath,
+  getCurrentLocale,
+  getExplicitLocalePrefix,
+  saveLocalePreference,
+} from '../../scripts/locale-utils.js';
+import showProfileModal from './profile.js';
+import { hasManageRightsPermission } from '../koassets-search/utils/permissions.js';
+
+// media query match that indicates mobile/tablet width
+const isDesktop = window.matchMedia('(min-width: 1440px)');
+
+function closeOnEscape(e) {
+  if (e.code === 'Escape') {
+    const nav = document.getElementById('nav');
+    const navSections = nav.querySelector('.nav-sections');
+    const navSectionExpanded = navSections.querySelector('[aria-expanded="true"]');
+    if (navSectionExpanded && isDesktop.matches) {
+      // eslint-disable-next-line no-use-before-define
+      toggleAllNavSections(navSections);
+      navSectionExpanded.focus();
+    } else if (!isDesktop.matches) {
+      // eslint-disable-next-line no-use-before-define
+      toggleMenu(nav, navSections);
+      nav.querySelector('button').focus();
+    }
+  }
+}
+
+function closeOnOutsideClick(e) {
+  const nav = document.getElementById('nav');
+  if (!nav || isDesktop.matches) return;
+  const navSections = nav.querySelector('.nav-sections');
+  const hamburger = nav.querySelector('.nav-hamburger');
+  const clickInSidebar = navSections?.contains(e.target);
+  const clickOnHamburger = hamburger?.contains(e.target);
+  if (navSections && !clickInSidebar && !clickOnHamburger) {
+    // eslint-disable-next-line no-use-before-define
+    toggleMenu(nav, navSections, false);
+  }
+}
+
+// Close desktop dropdowns when clicking outside the expanded top-level item
+function closeOnDesktopOutsideClick(e) {
+  if (!isDesktop.matches) return;
+  const nav = document.getElementById('nav');
+  if (!nav) return;
+  const navSections = nav.querySelector('.nav-sections');
+  if (!navSections) return;
+
+  const expanded = navSections.querySelector('.default-content-wrapper > ul > li[aria-expanded="true"]');
+  if (!expanded) return;
+
+  if (!expanded.contains(e.target)) {
+    // eslint-disable-next-line no-use-before-define
+    toggleAllNavSections(navSections);
+  }
+}
+
+function openOnKeydown(e) {
+  const focused = document.activeElement;
+  const isNavDrop = focused.className === 'nav-drop';
+  if (isNavDrop && (e.code === 'Enter' || e.code === 'Space')) {
+    const dropExpanded = focused.getAttribute('aria-expanded') === 'true';
+    // eslint-disable-next-line no-use-before-define
+    toggleAllNavSections(focused.closest('.nav-sections'));
+    focused.setAttribute('aria-expanded', dropExpanded ? 'false' : 'true');
+  }
+}
+
+function focusNavSection() {
+  document.activeElement.addEventListener('keydown', openOnKeydown);
+}
+
+/**
+ * Toggles all nav sections
+ * @param {Element} sections The container element
+ * @param {Boolean} expanded Whether the element should be expanded or collapsed
+ */
+function toggleAllNavSections(sections, expanded = false) {
+  sections.querySelectorAll('.nav-sections .default-content-wrapper > ul > li').forEach((section) => {
+    section.setAttribute('aria-expanded', expanded);
+  });
+}
+
+/**
+ * Toggles the entire nav
+ * @param {Element} nav The container element
+ * @param {Element} navSections The nav sections within the container element
+ * @param {*} forceExpanded Optional param to force nav expand behavior when not null
+ */
+function toggleMenu(nav, navSections, forceExpanded = null) {
+  const expanded = forceExpanded !== null ? !forceExpanded : nav.getAttribute('aria-expanded') === 'true';
+  const button = nav.querySelector('.nav-hamburger button');
+  document.body.style.overflowY = (expanded || isDesktop.matches) ? '' : 'hidden';
+  document.body.classList.toggle('nav-menu-open', !expanded && !isDesktop.matches);
+  nav.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+  // Keep all sections collapsed when toggling menu
+  toggleAllNavSections(navSections, false);
+  button.setAttribute('aria-label', expanded ? 'Open navigation' : 'Close navigation');
+  // enable nav dropdown keyboard accessibility
+  const navDrops = navSections.querySelectorAll('.nav-drop');
+  if (isDesktop.matches) {
+    navDrops.forEach((drop) => {
+      if (!drop.hasAttribute('tabindex')) {
+        drop.setAttribute('tabindex', 0);
+        drop.addEventListener('focus', focusNavSection);
+      }
+    });
+  } else {
+    navDrops.forEach((drop) => {
+      drop.removeAttribute('tabindex');
+      drop.removeEventListener('focus', focusNavSection);
+    });
+  }
+
+  // enable menu collapse on escape keypress
+  if (!expanded || isDesktop.matches) {
+    // collapse menu on escape press
+    window.addEventListener('keydown', closeOnEscape);
+    // collapse menu on outside click (mobile)
+    document.addEventListener('click', closeOnOutsideClick);
+  } else {
+    window.removeEventListener('keydown', closeOnEscape);
+    document.removeEventListener('click', closeOnOutsideClick);
+  }
+}
+
+async function createNavBar(t) {
+  // load nav as fragment
+  const navMeta = getMetadata('nav');
+  const navPath = navMeta ? new URL(navMeta, window.location).pathname : localizePath('/nav');
+  const fragment = await loadFragment(navPath);
+
+  // decorate nav DOM
+  const nav = document.createElement('nav');
+  nav.id = 'nav';
+  while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
+  const classes = ['brand', 'sections', 'tools'];
+  classes.forEach((c, i) => {
+    const section = nav.children[i];
+    if (section) section.classList.add(`nav-${c}`);
+  });
+
+  const navBrand = nav.querySelector('.nav-brand');
+  const brandLink = navBrand.querySelector('.button');
+  if (brandLink) {
+    brandLink.className = '';
+    brandLink.closest('.button-container').className = '';
+  }
+  // Remove button styling from all header links
+  nav.querySelectorAll('a.button').forEach((link) => link.classList.remove('button'));
+  // Ensure all brand links preserve current locale
+  navBrand.querySelectorAll('a[href]').forEach((link) => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('/')) {
+      link.setAttribute('href', localizePath(href));
+    }
+  });
+
+  const navSections = nav.querySelector('.nav-sections');
+  if (navSections) {
+    // Localize all nav links to preserve current locale
+    navSections.querySelectorAll('a[href]').forEach((link) => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('/')) {
+        link.setAttribute('href', localizePath(href));
+      }
+    });
+
+    navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
+      if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
+      navSection.addEventListener('click', (e) => {
+        if (!navSection.classList.contains('nav-drop')) return;
+        const childList = navSection.querySelector('ul');
+        if (childList && childList.contains(e.target)) return;
+
+        if (!isDesktop.matches) e.preventDefault();
+        const expanded = navSection.getAttribute('aria-expanded') === 'true';
+        toggleAllNavSections(navSections);
+        navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      });
+    });
+
+    // Mark active nav link based on current URL
+    const currentPath = window.location.pathname.replace(/\/$/, '');
+    navSections.querySelectorAll('a[href]').forEach((link) => {
+      try {
+        const hrefPath = new URL(link.getAttribute('href'), window.location.origin).pathname.replace(/\/$/, '');
+        if (hrefPath && hrefPath === currentPath) {
+          link.classList.add('active');
+          const li = link.closest('li');
+          if (li) li.classList.add('active');
+          const parentDrop = li?.closest('ul')?.closest('li.nav-drop') || link.closest('li.nav-drop');
+          if (parentDrop) parentDrop.classList.add('active');
+        }
+      } catch {
+        // ignore invalid URLs
+      }
+    });
+  }
+
+  document.addEventListener('click', closeOnDesktopOutsideClick);
+  const tools = nav.querySelector('.nav-tools');
+
+  // add shopping cart and download icons to nav-tools
+  if (tools) {
+    // Create wrapper div with flex layout
+    const iconsWrapper = document.createElement('div');
+    iconsWrapper.classList.add('nav-icons-wrapper');
+
+    // Create message icon (bell with circle)
+    const messageIcon = document.createElement('div');
+    messageIcon.classList.add('nav-message-icon');
+    messageIcon.setAttribute('data-tooltip', t('notifications', 'Notifications'));
+    messageIcon.setAttribute('data-tooltip-position', 'bottom');
+    messageIcon.innerHTML = `
+      <button type="button" aria-label="${t('notifications', 'Notifications')}">
+        <img src="/icons/bell-circle.svg" alt="${t('notifications', 'Notifications')}" />
+        <span class="message-badge" style="display: none;"></span>
+      </button>
+    `;
+
+    // Add click handler for message icon
+    messageIcon.addEventListener('click', () => {
+      window.location.href = localizePath('/my-dam/my-notifications');
+    });
+
+    // Create cart icon
+    const cartIcon = document.createElement('div');
+    cartIcon.classList.add('nav-cart-icon');
+    cartIcon.setAttribute('data-tooltip', t('shoppingCart', 'Cart'));
+    cartIcon.setAttribute('data-tooltip-position', 'bottom');
+    cartIcon.innerHTML = `
+      <button type="button" aria-label="${t('shoppingCart', 'Shopping Cart')}">
+        <img src="/icons/shopping-cart-icon.svg" alt="${t('shoppingCart', 'Shopping Cart')}" />
+        <span class="cart-badge" style="display: none;"></span>
+      </button>
+    `;
+
+    // Add click handler for cart icon
+    cartIcon.addEventListener('click', () => {
+      if (window.openCart && typeof window.openCart === 'function') {
+        window.openCart();
+      }
+    });
+
+    // Create download icon
+    const downloadIcon = document.createElement('div');
+    downloadIcon.classList.add('nav-download-icon');
+    downloadIcon.setAttribute('data-tooltip', t('download', 'Download'));
+    downloadIcon.setAttribute('data-tooltip-position', 'bottom');
+    downloadIcon.innerHTML = `
+      <button type="button" aria-label="${t('download', 'Download')}">
+        <img src="/icons/download-icon.svg" alt="${t('download', 'Download')}" />
+        <span class="download-badge" style="display: none;"></span>
+      </button>
+    `;
+
+    // Add click handler for download icon
+    downloadIcon.addEventListener('click', () => {
+      if (window.openDownloadPanel && typeof window.openDownloadPanel === 'function') {
+        window.openDownloadPanel();
+      }
+    });
+
+    // Create reports icon (only if user has admin-reports permission)
+    if (window.user?.permissions?.includes('admin-reports')) {
+      const reportsIcon = document.createElement('div');
+      reportsIcon.classList.add('nav-reports-icon');
+      reportsIcon.setAttribute('data-tooltip', t('reports', 'Reports'));
+      reportsIcon.setAttribute('data-tooltip-position', 'bottom');
+      reportsIcon.innerHTML = `
+        <button type="button" aria-label="Reports">
+          <img src="/icons/chart-circle.svg" alt="Reports" />
+        </button>
+      `;
+
+      // Add click handler for reports icon
+      reportsIcon.addEventListener('click', () => {
+        window.location.href = '/en/reports/report-hub';
+      });
+
+      iconsWrapper.appendChild(reportsIcon);
+    }
+
+    // Append icons to wrapper (message, download, cart)
+    iconsWrapper.appendChild(messageIcon);
+    iconsWrapper.appendChild(downloadIcon);
+    iconsWrapper.appendChild(cartIcon);
+
+    // Append wrapper to tools
+    tools.appendChild(iconsWrapper);
+
+    // Expose function to update message badge (shows red circle indicator)
+    window.updateMessageBadge = function (unreadCount) {
+      const badge = messageIcon.querySelector('.message-badge');
+      if (badge) {
+        if (unreadCount && unreadCount > 0) {
+          badge.style.display = 'block'; // Show red circle
+        } else {
+          badge.style.display = 'none'; // Hide circle
+        }
+      }
+    };
+
+    // Expose function to update cart badge
+    window.updateCartBadge = function (numCartAssetItems) {
+      const badge = cartIcon.querySelector('.cart-badge');
+      if (badge) {
+        if (numCartAssetItems && numCartAssetItems > 0) {
+          badge.textContent = numCartAssetItems;
+          badge.style.display = 'block';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+    };
+
+    // Expose function to update download badge
+    window.updateDownloadBadge = function (numDownloadAssetItems) {
+      const badge = downloadIcon.querySelector('.download-badge');
+      if (badge) {
+        if (numDownloadAssetItems && numDownloadAssetItems > 0) {
+          badge.textContent = numDownloadAssetItems;
+          badge.style.display = 'block';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+    };
+
+    // Update cart badge from localStorage (combined assets + templates count)
+    try {
+      const cartAssetItems = JSON.parse(localStorage.getItem('cartAssetItems') || '[]');
+      const cartTemplateItems = JSON.parse(localStorage.getItem('cartTemplateItems') || '[]');
+      window.updateCartBadge(cartAssetItems.length + cartTemplateItems.length);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error reading cart items from localStorage:', error);
+      window.updateCartBadge(0);
+    }
+
+    // Update download badge from localStorage
+    try {
+      const downloadAssetItems = JSON.parse(localStorage.getItem('downloadArchives') || '[]');
+      window.updateDownloadBadge(downloadAssetItems.length);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error reading download items from localStorage:', error);
+      window.updateDownloadBadge(0);
+    }
+  }
+
+  // hamburger for mobile
+  const hamburger = document.createElement('div');
+  hamburger.classList.add('nav-hamburger');
+  hamburger.innerHTML = `<button type="button" aria-controls="nav" aria-label="${t('openNavigation', 'Open navigation')}">
+      <span class="nav-hamburger-icon"></span>
+    </button>`;
+  hamburger.addEventListener('click', () => toggleMenu(nav, navSections));
+  nav.prepend(hamburger);
+  nav.setAttribute('aria-expanded', 'false');
+  // prevent mobile nav behavior on window resize
+  toggleMenu(nav, navSections, isDesktop.matches);
+  isDesktop.addEventListener('change', () => toggleMenu(nav, navSections, isDesktop.matches));
+
+  const navWrapper = document.createElement('div');
+  navWrapper.className = 'nav-wrapper';
+  navWrapper.append(nav);
+  return navWrapper;
+}
+
+function getUserInitials() {
+  if (!window.user || !window.user.name) {
+    return '';
+  }
+  return window.user.name.split(' ').filter((name) => /^[A-Za-z]/.test(name)).map((name) => name.charAt(0)).join('')
+    .toUpperCase();
+}
+
+// Map portal elements to their original menu containers for cleanup
+const portalOrigins = new WeakMap();
+
+/**
+ * Opens a dropdown menu as a fixed-position overlay on document.body,
+ * escaping the header-bar stacking context so menus render above the nav bar.
+ *
+ * @param {Element} triggerEl   The button that was clicked
+ * @param {Element} menuEl      The .dropdown-menu element containing the <ul>
+ * @param {string}  portalClass Extra class for type-specific styling (e.g. 'language-portal')
+ * @returns {{ portal: Element, close: Function }}
+ */
+function openDropdownPortal(triggerEl, menuEl, portalClass = '') {
+  // Close any existing dropdown portals and return their <ul> to original parents
+  document.querySelectorAll('.header-dropdown-portal').forEach((p) => {
+    const portalUl = p.querySelector('ul');
+    const originalParent = portalOrigins.get(p);
+    if (portalUl && originalParent) {
+      originalParent.appendChild(portalUl);
+    }
+    p.remove();
+  });
+
+  const ul = menuEl.querySelector('ul');
+  if (!ul) return { portal: null, close: () => {} };
+
+  // Compute position from trigger button
+  const rect = triggerEl.getBoundingClientRect();
+
+  const portal = document.createElement('div');
+  portal.className = `header-dropdown-portal${portalClass ? ` ${portalClass}` : ''}`;
+  portal.style.top = `${rect.bottom + 5}px`;
+  portal.style.left = `${rect.left + rect.width / 2}px`;
+  portal.style.transform = 'translateX(-50%)';
+  portalOrigins.set(portal, menuEl); // store reference for cleanup
+
+  // Move the <ul> from the in-DOM dropdown to the portal
+  portal.appendChild(ul);
+  document.body.appendChild(portal);
+
+  const close = () => {
+    // Move <ul> back to its original dropdown container
+    if (ul.parentElement === portal) {
+      menuEl.appendChild(ul);
+    }
+    portal.remove();
+  };
+
+  return { portal, close };
+}
+
+async function createHeaderBar(t) {
+  // Create TCCC primary header bar
+  const headerBar = document.createElement('div');
+  headerBar.className = 'header-bar';
+
+  // Portal state for all dropdowns (function-scoped so click-outside handler can access)
+  let activeLanguagePortal = null;
+  let activeHelpPortal = null;
+  let activeAccountPortal = null;
+
+  // Create language section with dropdown
+  const languageSection = document.createElement('div');
+  languageSection.className = 'language-selector';
+
+  const currentLocale = getCurrentLocale();
+  const localeConfig = {
+    en: { flag: 'country-flag-usa', label: 'EN' },
+    ja: { flag: 'country-flag-japan', label: 'JA' },
+  };
+  const currentConfig = localeConfig[currentLocale] || localeConfig.en;
+
+  const languageButton = document.createElement('div');
+  languageButton.className = 'language-selector-button';
+  languageButton.innerHTML = `
+    <span class="language-icon ${currentConfig.flag}"></span>
+    <span class="country-name">${currentConfig.label}</span>
+    <span class="down-arrow-icon"></span>
+  `;
+  languageSection.appendChild(languageButton);
+
+  // Create language dropdown menu
+  const languageMenu = document.createElement('div');
+  languageMenu.className = 'language-menu dropdown-menu';
+  languageMenu.innerHTML = `
+    <ul>
+      <li data-locale="en">
+        <a href="#">
+          <span class="language-icon country-flag-usa"></span>
+          <span>EN</span>
+        </a>
+      </li>
+      <li data-locale="ja">
+        <a href="#">
+          <span class="language-icon country-flag-japan"></span>
+          <span>JA</span>
+        </a>
+      </li>
+    </ul>
+  `;
+  languageSection.appendChild(languageMenu);
+
+  // Bind language selection once using event delegation (works regardless of portal state)
+  languageMenu.querySelector('ul').addEventListener('click', (ev) => {
+    const li = ev.target.closest('li[data-locale]');
+    if (!li) return;
+    ev.preventDefault();
+    const newLocale = li.dataset.locale;
+    if (newLocale !== currentLocale) {
+      saveLocalePreference(newLocale);
+      const { pathname, search, hash } = window.location;
+      const explicitPrefix = getExplicitLocalePrefix();
+      let newPath;
+      if (explicitPrefix) {
+        newPath = pathname.replace(explicitPrefix, `/${newLocale}`);
+      } else {
+        newPath = `/${newLocale}${pathname}`;
+      }
+      window.location.href = `${newPath}${search}${hash}`;
+    }
+    activeLanguagePortal?.close();
+    activeLanguagePortal = null;
+    languageButton.classList.remove('active');
+  });
+
+  // Toggle language dropdown via portal
+  languageButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = !!activeLanguagePortal;
+    if (isOpen) {
+      activeLanguagePortal.close();
+      activeLanguagePortal = null;
+      languageButton.classList.remove('active');
+    } else {
+      activeLanguagePortal = openDropdownPortal(languageButton, languageMenu, 'language-portal');
+      languageButton.classList.add('active');
+    }
+  });
+
+  // Close language dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (activeLanguagePortal && !languageButton.contains(e.target)
+      && !activeLanguagePortal.portal?.contains(e.target)) {
+      activeLanguagePortal.close();
+      activeLanguagePortal = null;
+      languageButton.classList.remove('active');
+    }
+  });
+
+  // Create upload button
+  const uploadButton = document.createElement('div');
+  uploadButton.className = 'header-upload-button';
+  uploadButton.innerHTML = `
+    <a class="upload-icon" href="${localizePath('/upload-details')}">${t('upload', 'Upload')}</a>
+  `;
+
+  // Create help section with dropdown
+  const helpSection = document.createElement('div');
+  helpSection.className = 'help-section';
+
+  const helpButton = document.createElement('div');
+  helpButton.className = 'help-section-button';
+  helpButton.innerHTML = `
+    ${t('help', 'Help')}
+    <span class="down-arrow-icon"></span>
+  `;
+
+  const helpMenu = document.createElement('div');
+  helpMenu.className = 'help-menu dropdown-menu';
+  helpMenu.innerHTML = `
+    <ul></ul>
+  `;
+
+  // Fetch help menu items
+  async function loadHelpMenu() {
+    try {
+      const configs = await fetchSpreadsheetData('configs', 'help-menu');
+      const menuItems = configs?.data || [];
+
+      const helpMenuList = helpMenu.querySelector('ul');
+
+      // Populate menu with items
+      helpMenuList.innerHTML = '';
+      menuItems.forEach((item) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="${item.link}">${item.title}</a>`;
+        helpMenuList.appendChild(li);
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error loading help menu:', error);
+    }
+  }
+
+  // Load help menu items
+  loadHelpMenu();
+
+  helpButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    // Only show dropdown if there are menu items
+    const helpMenuList = helpMenu.querySelector('ul');
+    if (!helpMenuList || helpMenuList.children.length === 0) {
+      return;
+    }
+    const isOpen = !!activeHelpPortal;
+    if (isOpen) {
+      activeHelpPortal.close();
+      activeHelpPortal = null;
+      helpButton.classList.remove('active');
+    } else {
+      // Close other portals properly (openDropdownPortal also handles orphaned portals)
+      if (activeLanguagePortal) { activeLanguagePortal.close(); activeLanguagePortal = null; }
+      languageButton.classList.remove('active');
+      if (activeAccountPortal) { activeAccountPortal.close(); activeAccountPortal = null; }
+      document.querySelector('.my-account-button')?.classList.remove('active');
+
+      activeHelpPortal = openDropdownPortal(helpButton, helpMenu, 'help-portal');
+      helpButton.classList.add('active');
+    }
+  });
+
+  helpSection.appendChild(helpButton);
+  helpSection.appendChild(helpMenu);
+
+  headerBar.append(languageSection, uploadButton, helpSection);
+
+  // Create user button (user dropdown)
+  // Note: window.user not defined aka logged out should normally not happen
+  //       as the user agent should be redirected to the login page before
+  if (window.user) {
+    const myAccount = document.createElement('div');
+    myAccount.className = 'my-account';
+    const myAccountButton = document.createElement('div');
+    myAccountButton.className = 'my-account-button';
+    const impersonationIndicator = window.user.su ? '<span class="impersonation-indicator"></span>' : '';
+    myAccountButton.innerHTML = `
+      <div class="avatar">
+        ${getUserInitials()}
+        ${impersonationIndicator}
+      </div>
+      ${t('myAccount', 'My Account')}
+      <span class="down-arrow-icon"></span>
+    `;
+
+    const myAccountMenu = document.createElement('div');
+    myAccountMenu.className = 'my-account-menu dropdown-menu';
+    const rightsReviewsItem = hasManageRightsPermission()
+      ? `<li><a href="${localizePath('/my-dam/my-rights-reviews')}">${t('myRightsReviews', 'My Rights Reviews')}</a></li>`
+      : '';
+    myAccountMenu.innerHTML = `
+      <ul>
+        <li><a href="#" id="my-profile-link">${t('myProfile', 'My Profile')}</a></li>
+        <li><a href="${localizePath('/my-dam/my-rights-requests')}">${t('myRightsRequests', 'My Rights Requests')}</a></li>
+        ${rightsReviewsItem}
+        <li><a href="${localizePath('/my-dam/my-saved-templates')}">${t('mySavedTemplates', 'My Saved Templates')}</a></li>
+        <li><a href="${localizePath('/my-dam/my-print-jobs')}">${t('myPrintJobs', 'My Print Jobs')}</a></li>
+        <li><a href="${localizePath('/my-dam/my-collections')}">${t('myCollections', 'My Collections')}</a></li>
+        <li><a href="${localizePath('/my-dam/my-saved-search')}">${t('mySavedSearches', 'My Saved Searches')}</a></li>
+        <li><a href="/auth/logout">${t('logOut', 'Log Out')}</a></li>
+      </ul>
+    `;
+
+    // Bind My Profile link handler once using event delegation (works regardless of portal state)
+    myAccountMenu.querySelector('ul').addEventListener('click', (ev) => {
+      const profileLink = ev.target.closest('#my-profile-link');
+      if (!profileLink) return;
+      ev.preventDefault();
+      showProfileModal();
+      activeAccountPortal?.close();
+      activeAccountPortal = null;
+      myAccountButton.classList.remove('active');
+    });
+
+    myAccountButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = !!activeAccountPortal;
+      if (isOpen) {
+        activeAccountPortal.close();
+        activeAccountPortal = null;
+        myAccountButton.classList.remove('active');
+      } else {
+        // Close other portals properly
+        if (activeLanguagePortal) { activeLanguagePortal.close(); activeLanguagePortal = null; }
+        languageButton.classList.remove('active');
+        if (activeHelpPortal) { activeHelpPortal.close(); activeHelpPortal = null; }
+        helpButton.classList.remove('active');
+
+        activeAccountPortal = openDropdownPortal(myAccountButton, myAccountMenu, 'my-account-portal');
+        myAccountButton.classList.add('active');
+      }
+    });
+    myAccount.appendChild(myAccountButton);
+    myAccount.appendChild(myAccountMenu);
+
+    headerBar.append(myAccount);
+  }
+
+  // Centralized click outside handler for help and my-account portaled dropdowns
+  // (language dropdown has its own handler above)
+  document.addEventListener('click', (e) => {
+    // Close help portal if clicking outside
+    if (activeHelpPortal
+      && !helpButton.contains(e.target)
+      && !activeHelpPortal.portal?.contains(e.target)) {
+      activeHelpPortal.close();
+      activeHelpPortal = null;
+      helpButton.classList.remove('active');
+    }
+
+    // Close my-account portal if clicking outside
+    const myAccountBtn = headerBar.querySelector('.my-account-button');
+    if (activeAccountPortal
+      && !myAccountBtn?.contains(e.target)
+      && !activeAccountPortal.portal?.contains(e.target)) {
+      activeAccountPortal.close();
+      activeAccountPortal = null;
+      myAccountBtn?.classList.remove('active');
+    }
+  });
+
+  return headerBar;
+}
+
+/**
+ * loads and decorates the header, mainly the nav
+ * @param {Element} block The header block element
+ */
+export default async function decorate(block) {
+  block.textContent = '';
+
+  if (getMetadata('header') === 'no') {
+    // quick hack for welcome page
+    block.parentElement.style.height = '60px';
+    return;
+  }
+
+  // Load localized labels
+  const t = await getAppLabel();
+
+  block.append(await createHeaderBar(t));
+  block.append(await createNavBar(t));
+}

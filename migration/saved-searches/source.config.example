@@ -1,0 +1,9 @@
+# AEM Author configuration for thumbnail asset ID lookups
+# Copy this file to source.config and fill in your values
+
+# AEM Author URL (e.g., https://author-pXXXXX-eYYYYYY.adobeaemcloud.com)
+AEM_AUTHOR=https://author-pXXXXX-eYYYYYY.adobeaemcloud.com
+
+# AEM Author cookie (copy from browser DevTools -> Application -> Cookies)
+# Format: name=value; name2=value2; ...
+AUTHOR_AUTH_COOKIE=your-cookie-here

@@ -1,0 +1,164 @@
+{
+  "_metadata": {
+    "description": "PERMANENT historical analytics data file",
+    "period": {
+      "start": "2025-09",
+      "end": "2025-11",
+      "totalMonths": 3
+    },
+    "dataStatus": {
+      "current": "REAL DATA - September and October 2025 from actual reports. November awaiting data.",
+      "planned": "November data to be added when available",
+      "lastUpdated": "2024-12-16",
+      "dataQuality": "real"
+    },
+    "replacementInstructions": "September and October are real data. November is zeroed out pending real report."
+  },
+  "monthlyData": {
+    "2025-09": {
+      "_status": "REAL DATA from September 2025 report",
+      "metrics": {
+        "uniqueUsers": 3693,
+        "uniqueDownloaders": 1386,
+        "firstTimeUsers": 292,
+        "firstTimeDownloaders": 350
+      },
+      "downloadsByRole": {
+        "associate": { "downloaders": 670, "downloads": 3685 },
+        "agency": { "downloaders": 310, "downloads": 3147 },
+        "bottler": { "downloaders": 391, "downloads": 5482 }
+      },
+      "downloadsByResourceType": {
+        "asset": 11657,
+        "template": 1160
+      },
+      "downloadsByGeo": {
+        "AFR": { "downloaders": 42, "assetDownloads": 330, "templateDownloads": 14 },
+        "ASP": { "downloaders": 89, "assetDownloads": 369, "templateDownloads": 45 },
+        "EME": { "downloaders": 25, "assetDownloads": 66, "templateDownloads": 33 },
+        "EU": { "downloaders": 205, "assetDownloads": 1139, "templateDownloads": 99 },
+        "GCM": { "downloaders": 22, "assetDownloads": 133, "templateDownloads": 5 },
+        "INSWA": { "downloaders": 21, "assetDownloads": 418, "templateDownloads": 7 },
+        "JSK": { "downloaders": 185, "assetDownloads": 2803, "templateDownloads": 59 },
+        "LA": { "downloaders": 139, "assetDownloads": 966, "templateDownloads": 65 },
+        "NA": { "downloaders": 654, "assetDownloads": 5379, "templateDownloads": 823 }
+      },
+      "firstTimeDownloadersByOU": {
+        "AFR": 9,
+        "ASP": 16,
+        "EME": 10,
+        "EURO": 20,
+        "GCM": 19,
+        "INSWA": 9,
+        "JSK": 11,
+        "LA": 19,
+        "NA": 26
+      },
+      "topCampaigns": [
+        { "name": "Christmas 2025", "brand": "Coca-Cola", "ousWithDownload": 9, "downloaders": 156, "assetsTemplatesDownloaded": 287, "totalDownloads": 1187 },
+        { "name": "FIFA World Cup 2026", "brand": "Coca-Cola", "ousWithDownload": 9, "downloaders": 88, "assetsTemplatesDownloaded": 202, "totalDownloads": 732 },
+        { "name": "It's That Fresh", "brand": "Sprite", "ousWithDownload": 8, "downloaders": 37, "assetsTemplatesDownloaded": 60, "totalDownloads": 267 },
+        { "name": "Halloween", "brand": "Fanta", "ousWithDownload": 7, "downloaders": 63, "assetsTemplatesDownloaded": 110, "totalDownloads": 238 },
+        { "name": "Holiday", "brand": "Portfolio", "ousWithDownload": 3, "downloaders": 26, "assetsTemplatesDownloaded": 132, "totalDownloads": 202 },
+        { "name": "Foodmarks", "brand": "Coca-Cola", "ousWithDownload": 7, "downloaders": 23, "assetsTemplatesDownloaded": 145, "totalDownloads": 198 },
+        { "name": "USA Sustaining", "brand": "Portfolio", "ousWithDownload": 1, "downloaders": 37, "assetsTemplatesDownloaded": 51, "totalDownloads": 146 },
+        { "name": "Hurts Real Good", "brand": "Sprite", "ousWithDownload": 9, "downloaders": 31, "assetsTemplatesDownloaded": 64, "totalDownloads": 111 },
+        { "name": "Brand Identity", "brand": "Schweppes", "ousWithDownload": 7, "downloaders": 17, "assetsTemplatesDownloaded": 55, "totalDownloads": 107 },
+        { "name": "Recipe for Magic 2025", "brand": "Coca-Cola", "ousWithDownload": 5, "downloaders": 24, "assetsTemplatesDownloaded": 52, "totalDownloads": 98 }
+      ]
+    },
+    "2025-10": {
+      "_status": "REAL DATA from October 2025 report",
+      "metrics": {
+        "uniqueUsers": 3982,
+        "uniqueDownloaders": 1525,
+        "firstTimeUsers": 328,
+        "firstTimeDownloaders": 132
+      },
+      "downloadsByRole": {
+        "associate": { "downloaders": 749, "downloads": 3637 },
+        "agency": { "downloaders": 346, "downloads": 3428 },
+        "bottler": { "downloaders": 407, "downloads": 5601 }
+      },
+      "downloadsByResourceType": {
+        "asset": 11709,
+        "template": 1289
+      },
+      "downloadsByGeo": {
+        "AFR": { "downloaders": 50, "assetDownloads": 356, "templateDownloads": 11 },
+        "ASP": { "downloaders": 108, "assetDownloads": 589, "templateDownloads": 52 },
+        "EME": { "downloaders": 24, "assetDownloads": 101, "templateDownloads": 5 },
+        "EU": { "downloaders": 237, "assetDownloads": 1262, "templateDownloads": 139 },
+        "GCM": { "downloaders": 21, "assetDownloads": 80, "templateDownloads": 2 },
+        "INSWA": { "downloaders": 29, "assetDownloads": 185, "templateDownloads": 15 },
+        "JSK": { "downloaders": 192, "assetDownloads": 2450, "templateDownloads": 104 },
+        "LA": { "downloaders": 171, "assetDownloads": 784, "templateDownloads": 85 },
+        "NA": { "downloaders": 690, "assetDownloads": 5871, "templateDownloads": 877 }
+      },
+      "firstTimeDownloadersByOU": {
+        "AFR": 10,
+        "ASP": 16,
+        "EME": 11,
+        "EURO": 21,
+        "GCM": 20,
+        "INSWA": 9,
+        "JSK": 12,
+        "LA": 20,
+        "NA": 27
+      },
+      "topCampaigns": [
+        { "name": "Christmas 2025", "brand": "Coca-Cola", "ousWithDownload": 9, "downloaders": 339, "assetsTemplatesDownloaded": 340, "totalDownloads": 1210 },
+        { "name": "FIFA World Cup 2026", "brand": "Coca-Cola", "ousWithDownload": 9, "downloaders": 147, "assetsTemplatesDownloaded": 291, "totalDownloads": 968 },
+        { "name": "Year of Cherry", "brand": "Coca-Cola", "ousWithDownload": 2, "downloaders": 28, "assetsTemplatesDownloaded": 159, "totalDownloads": 303 },
+        { "name": "It's That Fresh", "brand": "Sprite", "ousWithDownload": 8, "downloaders": 50, "assetsTemplatesDownloaded": 65, "totalDownloads": 280 },
+        { "name": "Hurts Real Good", "brand": "Sprite", "ousWithDownload": 8, "downloaders": 32, "assetsTemplatesDownloaded": 90, "totalDownloads": 179 },
+        { "name": "Holiday", "brand": "Portfolio", "ousWithDownload": 2, "downloaders": 33, "assetsTemplatesDownloaded": 83, "totalDownloads": 157 },
+        { "name": "Foodmarks", "brand": "Coca-Cola", "ousWithDownload": 5, "downloaders": 20, "assetsTemplatesDownloaded": 100, "totalDownloads": 130 },
+        { "name": "FIFA World Cup 2026", "brand": "Powerade", "ousWithDownload": 7, "downloaders": 39, "assetsTemplatesDownloaded": 37, "totalDownloads": 128 },
+        { "name": "Halloween 2025", "brand": "Fanta", "ousWithDownload": 6, "downloaders": 40, "assetsTemplatesDownloaded": 73, "totalDownloads": 118 },
+        { "name": "Evered", "brand": "Coca-Cola", "ousWithDownload": 3, "downloaders": 6, "assetsTemplatesDownloaded": 91, "totalDownloads": 93 }
+      ]
+    },
+    "2025-11": {
+      "_status": "NO DATA - Awaiting real November 2025 report",
+      "metrics": {
+        "uniqueUsers": 0,
+        "uniqueDownloaders": 0,
+        "firstTimeUsers": 0,
+        "firstTimeDownloaders": 0
+      },
+      "downloadsByRole": {
+        "associate": { "downloaders": 0, "downloads": 0 },
+        "agency": { "downloaders": 0, "downloads": 0 },
+        "bottler": { "downloaders": 0, "downloads": 0 }
+      },
+      "downloadsByResourceType": {
+        "asset": 0,
+        "template": 0
+      },
+      "downloadsByGeo": {
+        "AFR": { "downloaders": 0, "assetDownloads": 0, "templateDownloads": 0 },
+        "ASP": { "downloaders": 0, "assetDownloads": 0, "templateDownloads": 0 },
+        "EME": { "downloaders": 0, "assetDownloads": 0, "templateDownloads": 0 },
+        "EU": { "downloaders": 0, "assetDownloads": 0, "templateDownloads": 0 },
+        "GCM": { "downloaders": 0, "assetDownloads": 0, "templateDownloads": 0 },
+        "INSWA": { "downloaders": 0, "assetDownloads": 0, "templateDownloads": 0 },
+        "JSK": { "downloaders": 0, "assetDownloads": 0, "templateDownloads": 0 },
+        "LA": { "downloaders": 0, "assetDownloads": 0, "templateDownloads": 0 },
+        "NA": { "downloaders": 0, "assetDownloads": 0, "templateDownloads": 0 }
+      },
+      "firstTimeDownloadersByOU": {
+        "AFR": 0,
+        "ASP": 0,
+        "EME": 0,
+        "EURO": 0,
+        "GCM": 0,
+        "INSWA": 0,
+        "JSK": 0,
+        "LA": 0,
+        "NA": 0
+      },
+      "topCampaigns": []
+    }
+  }
+}

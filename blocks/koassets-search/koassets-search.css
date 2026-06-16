@@ -1,0 +1,363 @@
+/* KOAssets Search Block - Main Styles */
+
+/* Import sub-styles */
+@import url('./styles/theme.css');
+@import url('./styles/main-app.css');
+@import url('./styles/image-gallery.css');
+@import url('./styles/asset-card.css');
+@import url('./styles/search-panel.css');
+@import url('./styles/facets.css');
+@import url('./styles/asset-preview.css');
+@import url('./styles/asset-details.css');
+@import url('./styles/action-button.css');
+@import url('./styles/adobe-pdf-viewer.css');
+@import url('./styles/template-modals.css');
+@import url('../../scripts/share/share-asset-button.css');
+
+/* ========================================
+   Container Styles (equivalent to React .container)
+   ======================================== */
+
+/* Main layout */
+.koassets-search {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  box-sizing: border-box;
+  min-height: 100vh;
+  background-color: white;
+  width: 100%;
+}
+
+/* Override EDS section container constraints to make block full-width */
+main > .section > .koassets-search-wrapper {
+  max-width: 100%;
+  padding: 0;
+}
+
+main > .section:has(.koassets-search) {
+  padding: 0;
+  margin: 0;
+}
+
+main > .section > div:has(.koassets-search) {
+  max-width: 100%;
+  padding: 0;
+}
+
+.koassets-search,
+.koassets-search * {
+  font-family: "TCCC UnityText Regular", "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+/* Link styles */
+.koassets-search a {
+  text-decoration: none;
+}
+
+/* Heading styles */
+.koassets-search h1,
+.koassets-search h2,
+.koassets-search h3,
+.koassets-search h4,
+.koassets-search h5 {
+  font-weight: 700;
+  line-height: 1.2857em;
+}
+
+.koassets-search h3 {
+  font-size: 1.2857rem;
+}
+
+.koassets-search h3 a {
+  font-family: "TCCC UnityHeadline", sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 19px;
+}
+
+.koassets-search a:hover {
+  text-decoration: none;
+  color: var(--primary-color);
+}
+
+/* Remove default heading underlines */
+:is(.koassets-search h1, .koassets-search h2, .koassets-search h3, .koassets-search h4, .koassets-search h5, .koassets-search h6)::after,
+:is(.portal-modal h1, .portal-modal h2, .portal-modal h3, .portal-modal h4, .portal-modal h5, .portal-modal h6)::after {
+  content: inherit;
+  display: inherit;
+  width: inherit;
+  height: inherit;
+  margin-top: inherit;
+  margin-bottom: inherit;
+  background-color: inherit;
+}
+
+/* ========================================
+   Global button styling
+   ======================================== */
+.koassets-search button {
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.koassets-search a.button:any-link,
+.koassets-search button {
+  margin: 0;
+}
+
+.koassets-search a.button:hover,
+.koassets-search a.button:focus,
+.koassets-search button:hover,
+.koassets-search button:focus {
+  cursor: pointer;
+}
+
+.koassets-search button:disabled,
+.koassets-search button:disabled:hover {
+  cursor: not-allowed;
+  background-color: var(--primary-color-disabled);
+}
+
+/* ========================================
+   Add to Cart Button
+   ======================================== */
+.koassets-search .add-to-cart-btn {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.koassets-search .add-to-cart-btn::before {
+  display: none;
+}
+
+.koassets-search .add-to-cart-btn:hover {
+  background-color: var(--primary-color);
+}
+
+.koassets-search .add-to-cart-btn:active {
+  transform: translateY(1px);
+}
+
+.koassets-search .add-to-cart-btn:disabled {
+  background-color: #bdc3c7;
+  color: #ecf0f1;
+  cursor: not-allowed;
+}
+
+.koassets-search .add-to-cart-btn.pop-effect {
+  animation: pop 0.3s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* ========================================
+   Metadata Labels & Values
+   ======================================== */
+.koassets-search .asset-card-view-grid .tccc-metadata-label,
+.koassets-search .asset-card-view-list .tccc-metadata-label {
+  color: #707070;
+  font-size: .6875rem;
+  font-weight: 400;
+  line-height: 1rem;
+  letter-spacing: 0.5px;
+  font-family: "TCCC UnityText Regular", "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.koassets-search .tccc-metadata-value {
+  color: #0e202e;
+  font-size: .75rem;
+  font-weight: 600;
+  line-height: .9rem;
+  font-family: "TCCC UnityText Medium", sans-serif;
+  overflow-wrap: break-word;
+}
+
+/* ========================================
+   Tags
+   ======================================== */
+.koassets-search .tccc-tag {
+  background: #fff0da;
+  color: #a46801;
+  font-family: "TCCC UnityHeadline", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  overflow-wrap: break-word;
+
+}
+
+.koassets-search .product-tags .tccc-tag {
+  &.empty {
+    visibility: hidden;
+  }
+
+  &::after {
+    content: '';
+    font-family: FontAwesome, sans-serif;
+    display: none;
+    margin-left: 4px;
+  }
+
+  &:hover {
+    text-decoration: underline;
+
+    &::after {
+      content: "\f08e";
+      font-family: FontAwesome, sans-serif;
+      display: inline-block;
+      margin-left: 4px;
+    }
+  }
+}
+
+/* ========================================
+   Breadcrumb Navigation
+   ======================================== */
+.koassets-search .breadcrumbs {
+  padding: 10px;
+  background-color: #f5f5f5;
+  margin-bottom: 10px;
+}
+
+.koassets-search .breadcrumb-link {
+  cursor: pointer;
+  color: #f81c04;
+}
+
+.koassets-search .breadcrumb-separator {
+  margin: 0 5px;
+}
+
+/* ========================================
+   Image Layout Containers
+   ======================================== */
+.koassets-search .images-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.koassets-search .images-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.koassets-search .images-content-wrapper .footer {
+  width: 100%;
+  flex-shrink: 0;
+  margin-top: 20px;
+}
+
+.koassets-search .images-content-row {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  min-height: 0;
+  align-items: flex-start;
+}
+
+/* ========================================
+   Item Thumbnails (Cart, Renditions, etc.)
+   ======================================== */
+.item-thumbnail {
+  font-size: 12px;
+  object-fit: contain;
+}
+
+.koassets-search .download-renditions-title,
+.koassets-search .cart-panel .asset-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+  font-family: "TCCC UnityText Regular", sans-serif;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.koassets-search .cart-panel .asset-type {
+  font-size: 12px;
+  color: #666;
+  font-weight: 600;
+}
+
+.koassets-search .cart-panel .asset-type .type-val {
+  color: #0e202e;
+  font-family: "TCCC UnityText Medium", sans-serif;
+}
+
+/* Picture background for non-missing images */
+.koassets-search picture:not(.missing) {
+  background-color: rgb(249 249 249);
+}
+
+/* ========================================
+   Portal Modal Styles
+   ======================================== */
+.portal-modal .modal-title {
+  overflow-wrap: break-word;
+  margin: 0;
+  color: #1e1e1e;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.575rem;
+  font-family: "TCCC UnityText Medium", sans-serif;
+  max-width: 90%;
+}
+
+.portal-modal .modal-description {
+  margin: 0;
+  overflow-wrap: break-word;
+  color: #1e1e1e;
+  font-size: .875rem;
+  font-weight: 400;
+  line-height: 1.4rem;
+}
+
+/* .portal-modal h1,
+.portal-modal h2,
+.portal-modal h3,
+.portal-modal h4,
+.portal-modal h5 {
+  line-height: 1.2857em;
+}
+
+.portal-modal h3 {
+  font-size: 1.2857rem;
+}
+
+.portal-modal h3 a {
+  font-family: "TCCC UnityHeadline", sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 19px;
+} */
+
+/* Responsive layout is defined in styles/main-app.css */

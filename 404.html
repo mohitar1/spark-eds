@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Page not found</title>
+  <script type="text/javascript">
+    window.isErrorPage = true;
+    window.errorCode = '404';
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta property="og:title" content="Page not found">
+  <link rel="stylesheet" href="/styles/styles.css">
+  <script src="/scripts/scripts.js" type="module"></script>
+  <script type="module">
+    import { sampleRUM } from '/scripts/aem.js';
+    sampleRUM('404', { source: document.referrer });
+  </script>
+</head>
+
+<body>
+  <header></header>
+  <main>
+    <div class="section">
+      <p>Loading...</p>
+    </div>
+  </main>
+  <footer></footer>
+</body>
+
+</html>

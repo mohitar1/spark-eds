@@ -1,0 +1,133 @@
+.columns > div {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.columns img {
+  width: 100%;
+}
+
+.columns > div > div {
+  margin-right: 16px;
+  order: 1;
+}
+
+.columns > div > .columns-img-col {
+  order: 0;
+}
+
+.columns > div > .columns-img-col img {
+  display: block;
+}
+
+@media (width >= 900px) {
+  .columns > div {
+    align-items: center;
+    flex-direction: unset;
+    gap: 24px;
+  }
+
+  .columns > div > div {
+    flex: 1;
+    order: unset;
+  }
+}
+
+/* LoginPage specific styles */
+
+/* Help section: remove full-width light-blue, let collapsible container handle it */
+main:has(.columns.loginpage) > .section.light-blue {
+  background-color: transparent;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.columns.loginpage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.columns.loginpage > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;
+  min-height: 500px;
+}
+
+.columns.loginpage > div > div:first-child {
+  flex: 1;
+  max-width: 500px;
+}
+
+.columns.loginpage > div > .columns-img-col {
+  flex: 1;
+}
+
+.columns.loginpage h1 {
+  font-family: "TCCC UnityHeadline", sans-serif;
+  font-size: 2.05rem;
+  font-weight: 400;
+  padding-top: 0;
+}
+
+.columns.loginpage p {
+  font-family: "TCCC UnityText Regular", sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.columns.loginpage .button-container {
+  margin-bottom: 16px;
+}
+
+.columns.loginpage .button-container a.button {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  border: 2px solid var(--primary-color) !important;
+  margin: 0;
+}
+
+.columns.loginpage .button-container a.button.secondary {
+  border: 2px solid #ddd !important;
+}
+
+.columns.loginpage .button-container a.button.secondary:hover {
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+  background-color: white;
+}
+
+.columns.loginpage .columns-img-col img {
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 10%);
+}
+
+/* Mobile responsive */
+@media (width <= 768px) {
+  .columns.loginpage > div {
+    flex-direction: column;
+    gap: 40px;
+    min-height: unset;
+  }
+
+  .columns.loginpage > div > div:first-child {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .columns.loginpage > div > .columns-img-col {
+    order: 1;
+    width: 100%;
+  }
+
+  .columns.loginpage .button-container a.button {
+    display: block;
+    width: 100%;
+  }
+}

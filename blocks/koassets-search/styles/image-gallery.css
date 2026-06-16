@@ -1,0 +1,316 @@
+/* Image Gallery Styles */
+
+/* Main gallery container */
+.koassets-search .images-main {
+  flex: 3 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+}
+
+.koassets-search .image-gallery {
+  display: flex;
+  flex-direction: column;
+  margin: 0 16px;
+  min-height: 0;
+  flex: 1;
+}
+
+/* Gallery Title / Accordion */
+.koassets-search .gallery-title {
+  background-color: rgb(106 201 206 / 10.2%);
+  padding: 0 16px 0 0;
+  margin: 32px 16px 0 0;
+  border-radius: .5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.koassets-search .gallery-title.expanded {
+  border-radius: .5rem .5rem 0 0;
+}
+
+.koassets-search .gallery-title-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+}
+
+.koassets-search .gallery-title-icon {
+  width: 18px;
+  height: 20px;
+  flex-shrink: 0;
+  background-image: url('/icons/info.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.koassets-search .gallery-title h3 {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  color: #1e1e1e;
+  font-family: "TCCC UnityHeadline", "Helvetica Neue", Arial, Helvetica, sans-serif;
+  line-height: 1.4285em;
+}
+
+.koassets-search .gallery-title h3 p {
+  margin: 0;
+  display: inline-block;
+  vertical-align: middle;
+  font-family: "TCCC UnityHeadline", "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.koassets-search .gallery-title-toggle {
+  width: 20px;
+  height: 20px;
+  border: none;
+  cursor: pointer;
+  transition: none;
+  background-repeat: no-repeat;
+  background-position: center center;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.koassets-search .gallery-title-toggle.collapsed {
+  background-image: url("/icons/Arrow_Down.svg");
+}
+
+.koassets-search .gallery-title-toggle.expanded {
+  background-image: url("/icons/Arrow_up.svg");
+}
+
+.koassets-search .gallery-title-toggle:hover {
+  opacity: 0.7;
+}
+
+.koassets-search .gallery-title-expanded {
+  background-color: rgb(106 201 206 / 10.2%);
+  border-radius: 0 0 .5rem .5rem;
+  padding: 16px;
+  margin: 0 16px 0 0;
+  animation: expand-down 0s ease-out;
+}
+
+/* Typography for gallery-title-expanded content */
+.koassets-search .gallery-title-expanded p,
+.koassets-search .gallery-title-expanded li,
+.koassets-search .gallery-title-expanded b,
+.koassets-search .gallery-title-expanded a,
+.koassets-search .gallery-title-expanded strong
+{
+  font-size: 16px;
+  color: #1e1e1e;
+  font-family: "TCCC UnityHeadline", "Helvetica Neue", Arial, Helvetica, sans-serif;
+  line-height: 1.4285em;
+}
+
+.koassets-search .gallery-title-expanded p {
+  margin: 0 0 8px;
+}
+
+.koassets-search .gallery-title-expanded li p {
+  margin: 0;
+}
+
+.koassets-search .gallery-title-expanded p:last-child {
+  margin-bottom: 0;
+}
+
+.koassets-search .gallery-title-expanded b {
+  font-weight: 600;
+}
+
+.koassets-search .gallery-title-expanded ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.koassets-search .gallery-title-expanded li {
+  margin: 4px 0;
+}
+
+.koassets-search .gallery-title-expanded a {
+  color: #1e1e1e;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.koassets-search .gallery-title-expanded a:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+@keyframes expand-down {
+  from {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  to {
+    max-height: 100px;
+    opacity: 1;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+}
+
+/* Image Grid */
+.koassets-search .image-grid-wrapper {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+}
+
+/* Search Overlay */
+.koassets-search .search-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgb(255 255 255 / 70%);
+  z-index: 10;
+}
+
+.koassets-search .image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-auto-rows: auto;
+  gap: 26px;
+  padding: 20px 20px 20px 16px;
+  flex: 1;
+}
+
+.koassets-search .image-grid-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: minmax(192px, auto);
+  gap: 20px;
+  padding: 20px 20px 20px 16px;
+  flex: 1;
+}
+
+/* Loading States */
+.koassets-search .loading-container,
+.koassets-search .no-images {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  flex: 1;
+  position: relative;
+
+}
+
+.koassets-search .no-images {
+  padding: 24px;
+  margin-top: 24px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+  align-items: center;
+  border-radius: 8px;
+}
+
+.koassets-search .no-images a {
+  text-decoration: underline;
+  color: var(--primary-color);
+}
+
+.koassets-search .no-images p {
+  text-align: center;
+}
+
+.koassets-search .no-images img {
+  margin: auto;
+}
+
+.koassets-search .loading-container p {
+  margin: 0;
+  margin-top: 15px;
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+  text-align: center;
+}
+
+.koassets-search .loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+/* Loading more for pagination */
+.koassets-search .loading-more-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  margin-top: 20px;
+}
+
+.koassets-search .loading-more-container p {
+  margin-top: 16px;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Load More Button */
+.koassets-search .load-more-button-container {
+  padding-bottom: 50px;
+  padding-top: 30px;
+}
+
+.koassets-search .load-more-button {
+  align-items: center;
+  background: none;
+  border: 1px solid #ed0000;
+  border-radius: 50px;
+  color: #ed0000;
+  cursor: pointer;
+  display: flex;
+  font-family: "TCCC UnityHeadline", "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  height: 50px;
+  left: 50%;
+  line-height: 19.3px;
+  padding: 20px 24px !important;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: auto !important;
+  text-transform: capitalize;
+}
+
+.koassets-search .load-more-button:hover {
+  background-color: transparent;
+  color: #ed0000;
+  transition: all 0.3s ease;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

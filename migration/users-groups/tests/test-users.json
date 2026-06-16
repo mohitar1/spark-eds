@@ -1,0 +1,340 @@
+[
+    {
+        "email": "achase@coca-cola.com",
+        "employeeType": "10",
+        "countries": ["US"],
+        "expectations": {
+            "source": "companies.json (bottler + employee) + users.json",
+            "roles": ["bottler", "employee", "admin"],
+            "countries": ["us"],
+            "customers": [],
+            "skipCountryFilter": true,
+            "authBehavior": "Sees everything — admin bypasses all filters"
+        }
+    },
+    {
+        "email": "luvalero@coca-cola.com",
+        "employeeType": "11",
+        "countries": ["US"],
+        "expectations": {
+            "source": "companies.json (bottler + contingent-worker) + users.json",
+            "roles": ["bottler", "contingent-worker", "admin"],
+            "countries": ["us"],
+            "customers": ["mcdonald-s"],
+            "skipCountryFilter": true,
+            "authBehavior": "Sees everything — admin bypasses all filters. Also gets contingent-worker from companies (type=11 match) and mcdonald-s customer from users.json"
+        }
+    },
+    {
+        "email": "bchastain@160over90.com",
+        "employeeType": "99",
+        "countries": ["US"],
+        "expectations": {
+            "source": "companies.json (agency)",
+            "roles": ["agency"],
+            "countries": [],
+            "customers": [],
+            "skipCountryFilter": true,
+            "authBehavior": "Agency via companies domain — skips country filter, sees non-customer content only"
+        }
+    },
+    {
+        "email": "carlos@oleopr.com",
+        "employeeType": "99",
+        "countries": ["US"],
+        "expectations": {
+            "source": "users.json",
+            "roles": ["bottler"],
+            "countries": ["pr"],
+            "customers": [],
+            "skipCountryFilter": false,
+            "authBehavior": "Bottler (individual override) with country PR — country filter (pr + all-countries), no customer content"
+        }
+    },
+    {
+        "email": "aemtestbottler@gmail.com",
+        "employeeType": "99",
+        "countries": ["GB"],
+        "expectations": {
+            "source": "users.json",
+            "roles": ["bottler"],
+            "countries": ["us"],
+            "customers": [],
+            "skipCountryFilter": false,
+            "authBehavior": "Bottler with country US from users.json (GB in IDP ignored since sheet has countries) — country filter (us + all-countries)"
+        }
+    },
+    {
+        "email": "akhlestov@loweadventa.ru",
+        "employeeType": "Bottler",
+        "countries": ["Legacy - Unknown"],
+        "expectations": {
+            "source": "users.json",
+            "roles": ["bottler"],
+            "countries": ["legacy - unknown"],
+            "customers": [],
+            "skipCountryFilter": false,
+            "authBehavior": "Bottler with no sheet countries — IDP fallback to 'Legacy - Unknown' (invalid). Country filter (legacy - unknown + all-countries) effectively limits to all-countries assets only"
+        }
+    },
+    {
+        "email": "aadam@abartacocacola.com",
+        "employeeType": "99",
+        "countries": ["US"],
+        "expectations": {
+            "source": "companies.json (bottler) + users.json",
+            "roles": ["bottler"],
+            "countries": ["us"],
+            "customers": [],
+            "skipCountryFilter": false,
+            "authBehavior": "Bottler via companies domain abartacocacola.com (empty countries in companies sheet), countries 'us' from users.json — country filter (us + all-countries)"
+        }
+    },
+    {
+        "email": "lotte.verboven@kandesign.com",
+        "employeeType": "99",
+        "countries": ["BE"],
+        "expectations": {
+            "source": "companies.json (agency) + users.json",
+            "roles": ["agency", "admin"],
+            "countries": [],
+            "customers": [],
+            "skipCountryFilter": true,
+            "authBehavior": "Sees everything — admin bypasses all filters. Agency from companies (kandesign.com), admin from users.json"
+        }
+    },
+    {
+        "email": "seira.yoshimura@bredgedesign.com",
+        "employeeType": "99",
+        "countries": ["JP"],
+        "expectations": {
+            "source": "users.json",
+            "roles": ["agency", "bottler"],
+            "countries": ["jp"],
+            "customers": [],
+            "skipCountryFilter": true,
+            "authBehavior": "Agency+bottler from users.json — agency skips country filter, sees non-customer content only"
+        }
+    },
+    {
+        "email": "a.ortiz@coca-cola.com",
+        "employeeType": "Employee",
+        "countries": [],
+        "expectations": {
+            "source": "companies.json (bottler) + users.json",
+            "roles": ["bottler"],
+            "countries": [],
+            "customers": ["mcdonald-s"],
+            "skipCountryFilter": false,
+            "authBehavior": "Bottler from companies (coca-cola.com), no roles in users.json but has mcdonald-s customer. No countries from any source (empty IDP) — country filter with only all-countries. Sees all-countries assets + mcdonald-s customer content"
+        }
+    },
+    {
+        "email": "customer2@mcdonalds.com",
+        "employeeType": "Customer",
+        "countries": ["CA"],
+        "expectations": {
+            "source": "companies.json (customer)",
+            "roles": [],
+            "countries": [],
+            "customers": ["mcdonald-s"],
+            "skipCountryFilter": false,
+            "authBehavior": "BLOCKED — customer domain gives mcdonald-s customer but no roles. Zero roles triggers match-nothing filter"
+        }
+    },
+    {
+        "email": "michal.mukawa@gmail.com",
+        "employeeType": "99",
+        "countries": ["PL"],
+        "expectations": {
+            "source": "users.json",
+            "roles": ["agency", "bottler", "employee"],
+            "countries": ["gb", "in", "it", "jp", "us"],
+            "customers": [],
+            "skipCountryFilter": true,
+            "authBehavior": "Agency+bottler+employee — employee (and agency) skips country filter, sees non-customer content only"
+        }
+    },
+    {
+        "email": "aemtestprintshopemployee@gmail.com",
+        "employeeType": "99",
+        "countries": [],
+        "expectations": {
+            "source": "users.json",
+            "roles": ["bottler", "contingent-worker"],
+            "countries": ["us"],
+            "customers": [],
+            "skipCountryFilter": true,
+            "authBehavior": "Bottler+contingent-worker — contingent-worker skips country filter, sees non-customer content only"
+        }
+    },
+    {
+        "email": "abienert@ccep.com",
+        "employeeType": "99",
+        "countries": ["ES"],
+        "expectations": {
+            "source": "companies.json (bottler) + users.json",
+            "roles": ["bottler"],
+            "countries": ["es", "pt"],
+            "customers": [],
+            "skipCountryFilter": false,
+            "authBehavior": "Bottler from companies (ccep.com), countries es+pt from users.json — country filter (es, pt + all-countries), no customer content"
+        }
+    },
+    {
+        "email": "brandonh@fairlife.com",
+        "employeeType": "Employee",
+        "countries": ["US"],
+        "expectations": {
+            "source": "companies.json (agency) + users.json",
+            "roles": ["agency", "employee"],
+            "countries": [],
+            "customers": [],
+            "skipCountryFilter": true,
+            "authBehavior": "Agency from companies (fairlife.com), employee from users.json — employee+agency skips country filter, sees non-customer content only"
+        }
+    },
+    {
+        "email": "kolathap@adobe.com",
+        "employeeType": "99",
+        "countries": ["IN"],
+        "expectations": {
+            "source": "companies.json (agency) + users.json",
+            "roles": ["agency", "admin", "contingent-worker"],
+            "countries": [],
+            "customers": [],
+            "skipCountryFilter": true,
+            "authBehavior": "Sees everything — admin bypasses all filters. Agency from companies (adobe.com), admin+contingent-worker from users.json"
+        }
+    },
+    {
+        "email": "ktyree@coca-cola.com",
+        "employeeType": "10",
+        "countries": ["US"],
+        "expectations": {
+            "source": "companies.json (bottler + employee)",
+            "roles": ["bottler", "employee"],
+            "countries": ["us"],
+            "customers": [],
+            "skipCountryFilter": true,
+            "authBehavior": "Employee via companies (coca-cola.com, type=10 match) + bottler — employee skips country filter. IDP country US used as bottler fallback"
+        }
+    },
+    {
+        "email": "jambaird@coca-cola.com",
+        "employeeType": "10",
+        "countries": ["AU"],
+        "expectations": {
+            "source": "companies.json (bottler + employee)",
+            "roles": ["bottler", "employee"],
+            "countries": ["au"],
+            "customers": [],
+            "skipCountryFilter": true,
+            "authBehavior": "Employee via companies (coca-cola.com, type=10 match) + bottler — employee skips country filter. IDP country AU used as bottler fallback"
+        }
+    },
+    {
+        "email": "antaruc@coca-cola.com",
+        "employeeType": "10",
+        "countries": ["PH"],
+        "expectations": {
+            "source": "companies.json (bottler + employee) + users.json",
+            "roles": ["bottler", "employee"],
+            "countries": ["ph"],
+            "customers": ["mcdonald-s"],
+            "skipCountryFilter": true,
+            "authBehavior": "Employee via companies (coca-cola.com, type=10 match) + bottler — employee skips country filter. Has mcdonald-s customer from users.json — sees customer content too"
+        }
+    },
+    {
+        "email": "koassetstest123@gmail.com",
+        "employeeType": "99",
+        "countries": ["JP"],
+        "expectations": {
+            "source": "users.json",
+            "roles": ["bottler"],
+            "countries": ["jp"],
+            "customers": [],
+            "skipCountryFilter": false,
+            "authBehavior": "Bottler-only with country JP — country filter (jp + all-countries), no customer content"
+        }
+    },
+    {
+        "email": "ben.shapcott@organicandraw.com.au",
+        "employeeType": "Bottler",
+        "countries": ["AU"],
+        "expectations": {
+            "source": "users.json",
+            "roles": ["bottler"],
+            "countries": ["au"],
+            "customers": [],
+            "skipCountryFilter": false,
+            "authBehavior": "Bottler-only with country AU — country filter (au + all-countries), no customer content"
+        }
+    },
+    {
+        "email": "aapereira@solarbr.com.br",
+        "employeeType": "99",
+        "countries": ["BR"],
+        "expectations": {
+            "source": "companies.json (bottler)",
+            "roles": ["bottler"],
+            "countries": ["br"],
+            "customers": [],
+            "skipCountryFilter": false,
+            "authBehavior": "Bottler via companies domain solarbr.com.br (countries=br) — country filter (br + all-countries), no customer content"
+        }
+    },
+    {
+        "email": "amnat.ba@thainamthip.co.th",
+        "employeeType": "Bottler",
+        "countries": ["TH"],
+        "expectations": {
+            "source": "companies.json (bottler)",
+            "roles": ["bottler"],
+            "countries": ["th"],
+            "customers": [],
+            "skipCountryFilter": false,
+            "authBehavior": "Bottler via companies domain thainamthip.co.th (countries=th) — country filter (th + all-countries), no customer content"
+        }
+    },
+    {
+        "email": "aastuy@ccep.com",
+        "employeeType": "99",
+        "countries": ["ES"],
+        "expectations": {
+            "source": "companies.json (bottler) + users.json",
+            "roles": ["bottler"],
+            "countries": ["es"],
+            "customers": [],
+            "skipCountryFilter": false,
+            "authBehavior": "Bottler via companies domain ccep.com, country es from users.json — country filter (es + all-countries), no customer content, no restricted brand CUG"
+        }
+    },
+    {
+        "email": "jkircher@coca-cola.com",
+        "employeeType": "10",
+        "countries": ["US"],
+        "expectations": {
+            "source": "companies.json (bottler + employee) + users.json",
+            "roles": ["bottler", "employee"],
+            "countries": ["us"],
+            "customers": [],
+            "skipCountryFilter": true,
+            "authBehavior": "Employee via companies (coca-cola.com, type=10 match) + bottler — employee skips country filter. In Aloe Gloe CUG — sees aloe-gloe restricted brand assets. Not admin."
+        }
+    },
+    {
+        "email": "shibinose@gmail.com",
+        "employeeType": "99",
+        "countries": ["US"],
+        "expectations": {
+            "source": "users.json",
+            "roles": ["bottler"],
+            "countries": ["us"],
+            "customers": ["mcdonald-s"],
+            "skipCountryFilter": false,
+            "authBehavior": "Bottler with country US + mcdonald-s customer from users.json — country filter (us + all-countries), sees customer content. In Aloe Gloe CUG — sees aloe-gloe restricted brand assets."
+        }
+    }
+]

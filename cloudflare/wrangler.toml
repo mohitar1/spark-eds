@@ -1,0 +1,55 @@
+# configure worker name and Cloudflare account
+name = "spark-eds"
+account_id = "416763c051f214053e34078d4302780d"
+
+# do not change these unless code changes require it
+main = "src/index.js"
+compatibility_date = "2025-08-16"
+
+workers_dev = true
+preview_urls = true
+
+[observability.logs]
+enabled = true
+
+[vars]
+HELIX_ORIGIN = "https://main--spark-eds--mohitar1.aem.live"
+AEM_ENV_ID = "p203220-e2129061"
+
+DISABLE_AUTHENTICATION = "true"
+
+HELIX_PUSH_INVALIDATION = "disabled"
+
+SQIDS_ALPHABET = "8gGQeDOJsS069Pod4mU2BKWRXjpiThLkZEHCantwuV7IrcqfAzMbN3vx1YlF5y"
+
+DEBUG_HTTP_DM_SEARCH = "true"
+
+MICROSOFT_ENTRA_TENANT_ID = "983cbc50-8ad1-4dde-b705-7c80477a4186"
+MICROSOFT_ENTRA_CLIENT_ID = "ff0a24dc-b377-4edf-b6c6-b5ac3510c446"
+MICROSOFT_ENTRA_JWKS_URL = "https://login.microsoftonline.com/common/discovery/keys"
+
+SESSION_COOKIE_EXPIRATION = "6h"
+
+[[secrets_store_secrets]]
+store_id = "175ef141dbe74cbf9c04cff9bb45b9c8"
+binding = "COOKIE_SECRET"
+secret_name = "SANTANDER_COOKIE_SECRET"
+
+[[secrets_store_secrets]]
+store_id = "175ef141dbe74cbf9c04cff9bb45b9c8"
+binding = "HELIX_ORIGIN_AUTHENTICATION"
+secret_name = "SANTANDER_HELIX_ORIGIN_AUTHENTICATION"
+
+[[secrets_store_secrets]]
+store_id = "175ef141dbe74cbf9c04cff9bb45b9c8"
+binding = "DM_CLIENT_ID"
+secret_name = "SANTANDER_DM_CLIENT_ID"
+
+[[secrets_store_secrets]]
+store_id = "175ef141dbe74cbf9c04cff9bb45b9c8"
+binding = "DM_CLIENT_SECRET"
+secret_name = "SANTANDER_DM_CLIENT_SECRET"
+
+[[kv_namespaces]]
+binding = "AUTH_TOKENS"
+id = "c87b67da2f294dc8a7ea5ea6332f2b2e"

@@ -1,0 +1,6 @@
+# User mapping for saved searches migration
+# Maps old system usernames to new system email addresses
+# Copy to user-mapping.csv and fill in actual mappings
+username,email
+olduser1,newuser1@example.com
+olduser2,newuser2@example.com

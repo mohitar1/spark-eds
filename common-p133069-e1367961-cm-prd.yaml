@@ -1,0 +1,394 @@
+apiVersion: skyline.adobe.com/v1alpha1
+kind: SkylineFastlyService
+metadata:
+  annotations:
+    cdn-operator.skyline.adobe.com/cdnconfig-hash: 7dc2db8ada545499594938a69ac21e081b8d8d50
+    cm.adobe.com/correlationId: 3PNQFzrtMpsoKRNMoF6nQkt4xToijLnE
+    cm.adobe.com/environmentId: "1367961"
+    cm.adobe.com/environmentKind: SKYLINE
+    cm.adobe.com/programId: "133069"
+    cm.adobe.com/tenant: santanderemea
+    environmentId: "1367961"
+    programId: "133069"
+    tenant: santanderemea
+  creationTimestamp: "2024-06-04T11:31:37Z"
+  generation: 133
+  labels:
+    cdn-operator.skyline.adobe.com/transaction-open: "true"
+  name: common-p133069-e1367961-cm-prd
+  namespace: ns-team-aem-cm-prd-n130207
+  ownerReferences:
+    - apiVersion: skyline.adobe.com/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: SkylineEnvironmentDomain
+      name: cm-p133069-e1367961
+      uid: 5a971470-8c11-450f-b59f-4db15f376645
+  resourceVersion: "6937365128"
+  uid: 29d5ebc8-1816-42f3-ba6a-ce6847bb1c9b
+spec:
+  data:
+    dns:
+      domains:
+        - fqdn: preview-p133069-e1367961.adobeaemcloud.net
+          target: ingress.ethos18-prod-nld2.ethos.adobe.net
+          type: CNAME
+        - fqdn: author-p133069-e1367961.adobeaemcloud.net
+          target: ingress.ethos18-prod-nld2.ethos.adobe.net
+          type: CNAME
+        - fqdn: publish-p133069-e1367961.adobeaemcloud.net
+          target: ingress.ethos18-prod-nld2.ethos.adobe.net
+          type: CNAME
+    forceApply: 1743607086
+    monitoring:
+      monitors:
+        - name: https://author-p133069-e1367961.adobeaemcloud.com/systemready
+        - name: https://publish-p133069-e1367961.adobeaemcloud.com/systemready
+    service:
+      backends:
+        - host: preview-p133069-e1367961.adobeaemcloud.net
+          name: preview
+        - host: author-p133069-e1367961.adobeaemcloud.net
+          name: author
+        - host: publish-p133069-e1367961.adobeaemcloud.net
+          name: publish
+        - host: sa0133069013679610b62322.blob.core.windows.net
+          name: azure-blob
+        - host: api.adobeaemcloud.com
+          name: apirouter
+        - host: cluster-shield-prd.adobeaemcloud.com
+          name: cluster-shield
+        - healthcheck:
+            enabled: true
+            headers:
+              - 'x-sky-shield-debug: blob-check=sa0133069013679610b62322'
+              - 'x-sky-shield: aem_service=cm-p133069-e1367961'
+            health_check_url: /
+          host: blob-shield-ethos18-prod-nld2-prd.adobeaemcloud.com
+          name: blob-shield
+      cluster: ethos18-prod-nld2
+      cmInstanceName: prd
+      custom_config:
+        url: https://configserviceprod.blob.core.windows.net/prod/cm-p133069-e1367961/23/cdn.zip
+      domains:
+        - name: preview-p133069-e1367961.adobeaemcloud.com
+          tier: preview
+        - name: author-p133069-e1367961.adobeaemcloud.com
+          tier: author
+        - name: publish-p133069-e1367961.adobeaemcloud.com
+          tier: publish
+        - name: static-p133069-e1367961.adobeaemcloud.com
+          tier: static
+        - name: delivery-p133069-e1367961.adobeaemcloud.com
+          tier: delivery
+        - name: assets.santandermedia.com
+          tier: delivery
+      enable_purge_api: true
+      enable_variables_dict: true
+      environmentId: 1367961
+      environmentKind: SKYLINE
+      environmentType: prod
+      imsOrg: 99AA1E5065DE1CC90A495CE1@AdobeOrg
+      logging:
+        adobeDaaSAzureBlob:
+          enabled: true
+        adobeHttps:
+          enabled: true
+        adobeSpacecatAwsS3:
+          authMethod: role
+          enabled: true
+        adobeSplunk:
+          enabled: true
+      name: common-p133069-e1367961-cm-prd
+      namespace: ns-team-aem-cm-prd-n130207
+      programId: 133069
+      programType: SKYLINE_REGULAR
+      tenantId: santanderemea
+      toupdate: true
+      useHttpsLogging: true
+      vcl:
+        blueprint: BasicCommon
+        blueprint_branch: default
+        blueprint_values:
+          apifirst:
+            backend_host: api.adobeaemcloud.com
+          apirouter:
+            backend_host: api.adobeaemcloud.com
+            enabled: true
+          author:
+            domains:
+              - name: author-p133069-e1367961.adobeaemcloud.com
+            skyline_backend_host: author-p133069-e1367961.adobeaemcloud.net
+          azure_container_id: sa0133069013679610b62322
+          azure_path_pattern: ^/aem-blob-ns-team-aem-cm-prd-n130207-cm-p133069-e1367961.*
+          azure_redirect_url_pattern: ^https://(sa0133069013679610b62322.blob.core.windows.net|author-p133069-e1367961.adobeaemcloud.com)/aem-blob-ns-team-aem-cm-prd-n130207-cm-p133069-e1367961.*
+          backend_share_key: 50f24a9b73a6bf23596eb1e607a82306
+          blob_overridden_headers:
+            - sunset
+          block_ddos:
+            blocked_ips:
+              - 77.244.210.247
+            rate_limiter:
+              rules:
+                - block: true
+                  count_responses: true
+                  limit: 50
+                  name: resp_ip50rps
+                  penalty: 1m
+                  type: ip
+                - block: true
+                  limit: 1000
+                  name: ip1000rps
+                  type: ip
+                - limit: 500
+                  name: ip500rps
+                  type: ip
+                - block: true
+                  limit: 1000
+                  name: tls1000rps
+                  type: tls
+                - limit: 500
+                  name: tls500rps
+                  type: tls
+          block_purge:
+            key: c06b2aa878d693cf43c7c3be481fef4c0ba87b345f986ed68c8525f53c6e8b4a
+          block_weak_ciphers: true
+          byoc: false
+          customConfigVersion: d2f4bf91-6b0c-453e-88af-e05c428a154d
+          debugHeaders: false
+          delivery:
+            domains:
+              - name: delivery-p133069-e1367961.adobeaemcloud.com
+              - name: assets.santandermedia.com
+          disable_setcookie_caching: true
+          dm_config:
+            backend_host: assets.adobeaemcloud.com
+            dm_service_access_key_name: dm_access_key_prd
+          eaas_proxy:
+            global_key:
+              key1: true
+          enable_ddos_alerts: true
+          enable_setcookie_removal_from_cache: true
+          enable_unlocked_byocdn: true
+          forceTls: true
+          forceVersion: 1776155622
+          health_check_url: /systemready
+          ignoreMarketingParams: true
+          messageVersion: 4d498f1c-1521-4257-95f0-9ea7bfd51d8b
+          preview:
+            domains:
+              - name: preview-p133069-e1367961.adobeaemcloud.com
+            skyline_backend_host: preview-p133069-e1367961.adobeaemcloud.net
+            whitelist_ip:
+              - cidr:
+                  - ip: 0.0.0.0
+                    mask: 32
+                name: generated
+                url: /
+          publish:
+            domains:
+              - name: publish-p133069-e1367961.adobeaemcloud.com
+            skyline_backend_host: publish-p133069-e1367961.adobeaemcloud.net
+          purge_proxy:
+            enabled: true
+            global_key:
+              skyPurgeKey: INJECT_GLOBAL_KEY
+          rules:
+            - action: log
+              name: sre-delivery-log
+              when:
+                equals: delivery
+                reqProperty: tier
+          rum:
+            enabled: true
+          shielding:
+            blob_proxy:
+              caching: true
+              enabled: true
+              host: blob-shield-ethos18-prod-nld2-prd.adobeaemcloud.com
+            cluster_proxy:
+              caching: false
+              enabled: false
+              host: cluster-shield-prd.adobeaemcloud.com
+            enabled: true
+          sky_edge_key1: e7f-c77f01c13418190b9fda25361677385416c8cc237447f803f515744cf9cf5073
+          sky_edge_key2: 706-d652da35f654b1d43de8d32b65fd4b4fcbbde7515a0a1f5718616eed85cc5a87
+          static:
+            domains:
+              - name: static-p133069-e1367961.adobeaemcloud.com
+          tokowaka:
+            backend_host: live.edgeoptimize.net
+            enabled: true
+          useSplunkAlt: true
+          use_explicit_assets_content_disposition: true
+          waf:
+            dynamic_snippets: true
+            enabled: true
+            host: se--adobeaem--6481ae9bfa189a2cfe6d208e.edgecompute.app
+            traffic: 100
+          x-edge-key: 10211d2885196b97b1c78e1672f3f68ae97c294596ef2b7fd890cbd30a3427bf
+      waf: waf-prod
+    state:
+      dns:
+        domains:
+          - changeId: /change/C0859669275ZNLY1XLWOG
+            fqdn: author-p133069-e1367961.adobeaemcloud.net
+            sha1: 1c678ef3d506761983a30f1c1c28379868d39a74
+            submittedAt: "2024-06-04T11:31:42.741Z"
+            target: ingress.ethos18-prod-nld2.ethos.adobe.net
+            type: CNAME
+            zoneid: Z1H6OV713OOQRA
+          - changeId: /change/C06642872G0KWENRGAOJ3
+            fqdn: preview-p133069-e1367961.adobeaemcloud.net
+            sha1: 1c678ef3d506761983a30f1c1c28379868d39a74
+            submittedAt: "2025-03-25T11:16:59.914Z"
+            target: ingress.ethos18-prod-nld2.ethos.adobe.net
+            type: CNAME
+            zoneid: Z1H6OV713OOQRA
+          - changeId: /change/C06642872G0KWENRGAOJ3
+            fqdn: publish-p133069-e1367961.adobeaemcloud.net
+            sha1: 1c678ef3d506761983a30f1c1c28379868d39a74
+            submittedAt: "2025-03-25T11:16:59.914Z"
+            target: ingress.ethos18-prod-nld2.ethos.adobe.net
+            type: CNAME
+            zoneid: Z1H6OV713OOQRA
+      monitoring:
+        monitors:
+          - alertCondition: 41995987
+            created_at: "2024-06-04T11:31:52.092Z"
+            monitorId: ed0bb52b-b29d-4882-a7bf-e6370100953b
+            monitorType: AUTHOR
+            name: https://author-p133069-e1367961.adobeaemcloud.com/systemready
+          - alertCondition: 41995987
+            created_at: "2025-03-25T11:17:48.529Z"
+            monitorId: b2d7edbf-0bb2-4e2e-b6fd-8aef4a505573
+            monitorType: PUBLISH
+            name: https://publish-p133069-e1367961.adobeaemcloud.com/systemready
+        policies:
+          - serviceEdge: 5360726
+        tags:
+          aem_hipaa: false
+          aem_multi_region: false
+          aem_sla_9999: false
+      service:
+        backends:
+          - name: preview
+            sha1: 6e96cb854cfc31d1a1c1df8da5ffe55ca09f6e87
+          - name: author
+            sha1: 5278c878a70b0b076a92eaf6b6b6764995df7b9c
+          - name: publish
+            sha1: 2ca38ddb812d9a7a238d256d784434efdd0e3aa3
+          - name: apirouter
+            sha1: aac555476a9c27d471e3e1ca6c94e114417f9b16
+          - name: cluster-shield
+            sha1: 9b8ca832f7ab232d686f9fb167951346b31051db
+        currentversion: 74
+        customConfigVersion: d2f4bf91-6b0c-453e-88af-e05c428a154d
+        dictionaries:
+          sky_cli_injected_secrets:
+            fastlyid: QrxTsTRZj0kCyW18mRS0S5
+            keys:
+              - eaas_proxy.env_key.key1
+              - purge_proxy.global_key.skyPurgeKey
+              - purge_api_fastly_key
+            sha1: 8948b32892313d0b82eafc16bdf4254153b6196b
+          sky_cli_injected_variables:
+            fastlyid: wkvLkGAzFS4D6h76wGK6x4
+            keys:
+              - SKY_ENVINFO
+            sha1: c5a248cd6d9efefaa227155bcf0e0af9bdf26423
+        domains:
+          - fastly_created_at: "2024-06-04T11:31:43Z"
+            name: author-p133069-e1367961.adobeaemcloud.com
+          - fastly_created_at: "2024-09-24T09:08:23Z"
+            name: delivery-p133069-e1367961.adobeaemcloud.com
+          - fastly_created_at: "2025-03-25T11:17:02Z"
+            name: preview-p133069-e1367961.adobeaemcloud.com
+          - fastly_created_at: "2025-03-25T11:17:03Z"
+            name: publish-p133069-e1367961.adobeaemcloud.com
+          - fastly_created_at: "2025-03-25T11:17:03Z"
+            name: static-p133069-e1367961.adobeaemcloud.com
+          - fastly_created_at: "2025-03-27T12:07:51Z"
+            name: assets.santandermedia.com
+        fastlyid: oNRcA7G5NKPGxDelMy5vY0
+        logging:
+          adobeDaaSAzureBlob:
+            created_at: "2025-03-25T11:17:05Z"
+            sha1: abbb2060f6489c3ec4747b9cbd53084631d2c650
+            updated_at: "2025-03-25T11:17:05Z"
+          adobeHttps:
+            created_at: "2024-11-21T16:26:40Z"
+            sha1: 78ff15e1167ef501f8b2d2fc210b2372afd37188
+            updated_at: "2024-11-21T16:26:40Z"
+          adobeSpacecatAwsS3:
+            created_at: "2025-10-06T12:41:52Z"
+            sha1: 91b132ad0a4d1cdc5ef41fb4859eefa8342ab0dc
+            updated_at: "2026-03-23T18:34:47Z"
+          adobeSplunk:
+            created_at: "2024-11-21T16:26:40Z"
+            sha1: e350e2f1137c1b4172c6297b96bdfeb70674fc43
+            updated_at: "2024-11-21T16:26:40Z"
+        messageVersion: 4d498f1c-1521-4257-95f0-9ea7bfd51d8b
+        vcl:
+          blueprintInfo: default|886732e0225c8eae1125b4c9e46b8b7063b01ece
+          cliInfo:
+            imageVersion: latest-93920c8
+            packageVersion: 0.0.25
+          lastApplied: "2026-04-08T11:52:24Z"
+          sha1: 37d5afecdd0e0107d1e1206658d7c46cb02ce011
+        waf:
+          dynamic_snippets: true
+          workspace: waf-prod
+      sha1: 0ae863cad2ea5c71b568db466d85f29a01effda0
+      tls:
+        certificates:
+          - chain_sha1: b0002b4b3b72a19cf958dbd1eff4136872a62bb8
+            fastly_created_at: "2025-03-27T12:07:48.000Z"
+            fastly_updated_at: "2026-02-16T09:56:58.000Z"
+            fastlyid: pA1FC787tdhG2LN5YWV6u5
+            name: cmcert-p133069-96cabeb2a03b40f2e2be0bce87010947
+        keys:
+          - fastly_created_at: not_available
+            fastly_public_key_sha1: 6d3e5171c36ed8d16cbbe4b28aec2aacb9b3b312
+            fastlyid: QRTkptSqI1BwyLrSd2bHd1
+            name: key-6d3e5171c36ed8d16cbbe4b28aec2aacb9b3b312
+    tls:
+      certificates:
+        - cert: '---REDACTEDCERT---'
+          chain_sha1: b0002b4b3b72a19cf958dbd1eff4136872a62bb8
+          domains:
+            - assets.santandermedia.com
+            - www.assets.santandermedia.com
+          external_fingerprint: 6df01ab1819fa4b551d483f6893fc1365394ddd3-720e85d1a1ed5d605e3b92440d962092f9ea0ce7
+          external_name: cmcert-p133069-96cabeb2a03b40f2e2be0bce87010947
+          fingerprint: 6df01ab1819fa4b551d483f6893fc1365394ddd3
+          intermediate: '---REDACTEDCERT---'
+          name: cmcert-p133069-96cabeb2a03b40f2e2be0bce87010947
+          not_after: Feb 11 23:59:59 2027 GMT
+          not_before: Feb 11 00:00:00 2026 GMT
+          original_external_name: cert-p133069-n108134-cm-prd
+          pubkey_sha1: 6d3e5171c36ed8d16cbbe4b28aec2aacb9b3b312
+      keys:
+        - name: key-6d3e5171c36ed8d16cbbe4b28aec2aacb9b3b312
+          pem: '---REDACTEDKEY---'
+          pubkey_sha1: 6d3e5171c36ed8d16cbbe4b28aec2aacb9b3b312
+      links:
+        - fingerprint: 6df01ab1819fa4b551d483f6893fc1365394ddd3-720e85d1a1ed5d605e3b92440d962092f9ea0ce7
+          name: cmcert-p133069-96cabeb2a03b40f2e2be0bce87010947
+          original_external_name: cert-p133069-n108134-cm-prd
+    updates:
+      sre:
+        service:
+          domains:
+            - name: delivery-p133069-e1367961.adobeaemcloud.com
+              tier: delivery
+    version: 4d498f1c-1521-4257-95f0-9ea7bfd51d8b
+  retries: 3
+status:
+  appliedCustomConfigVersion: d2f4bf91-6b0c-453e-88af-e05c428a154d
+  appliedVersion: 4d498f1c-1521-4257-95f0-9ea7bfd51d8b
+  observedCustomConfigVersion: d2f4bf91-6b0c-453e-88af-e05c428a154d
+  observedGeneration: 132
+  observedVersion: 4d498f1c-1521-4257-95f0-9ea7bfd51d8b
+  retryCount: 0
+  state: applied

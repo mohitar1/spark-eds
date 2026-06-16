@@ -1,0 +1,53 @@
+.template-adapt {
+  width: 100%;
+}
+
+.template-adapt iframe {
+  display: block;
+  width: 100%;
+  min-height: calc(100vh - 100px);
+  border: 0;
+  overflow: hidden;
+}
+
+/* Loader overlay (mirrors koassets-search/styles/template-modals.css) */
+.template-adaptation-loader {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(255 255 255 / 85%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: fade-in 0.2s ease;
+}
+
+.template-adaptation-loader .loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.template-adaptation-loader .loader-spinner {
+  width: 256px;
+  height: 256px;
+  object-fit: contain;
+}
+
+.template-adaptation-loader .loader-text {
+  color: #1e1e1e;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Override EDS section container constraints to make block full-width */
+main > .section > .template-adapt-wrapper {
+  max-width: 100%;
+  padding: 0;
+}
+
+main > .section:has(.template-adapt) {
+  padding: 0;
+  margin: 0;
+}

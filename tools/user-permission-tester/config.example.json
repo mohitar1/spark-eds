@@ -1,0 +1,18 @@
+{
+  "oldSystem": {
+    "baseUrl": "https://assets.coke.com",
+    "searchPath": "/content/share/us/en/search-assets.html",
+    "publishApiUser": "SET_VIA_ENV_VAR_KOASSETS_PUBLISH_API_USER_PROD"
+  },
+  "newSystem": {
+    "baseUrl": "https://koassets.adobecocacola.workers.dev",
+    "searchPath": "/api/adobe/assets/contentai/search",
+    "sessionCookie": "PASTE_SESSION_JWT_HERE"
+  },
+  "newSearchLimit": 50,
+  "results": {
+    "outputDir": "./test-results",
+    "maxRetentionDays": 3,
+    "maxRetentionRunsPerDay": 5
+  }
+}

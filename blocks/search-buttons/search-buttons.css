@@ -1,0 +1,140 @@
+/* Search Buttons Block Styles */
+.search-buttons .search-buttons-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  list-style: none;
+  padding: 24px 0;
+}
+
+.search-buttons .search-button {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 16px;
+  padding-right: 40px;
+  border-radius: 30px;
+  border: 1px solid var(--primary-color);
+  font-family: var(--heading-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0;
+  min-height: 48px;
+  height: auto;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Add styling for the text span */
+.search-buttons .search-button span {
+  flex: 1;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  text-align: left;
+}
+
+/* Active state (red background, white text) */
+.search-buttons .search-button:not(.disabled):hover,
+.search-buttons .search-button:not(.disabled):focus {
+  background-color: #ED0000;
+  color: white;
+  border-color: #ED0000;
+}
+
+/* Inactive state with links (white background, red border) */
+.search-buttons .search-button:not(.disabled) {
+  background-color: white;
+  color: #333;
+  border-color: #ED0000;
+}
+
+/* Disabled state (light gray background, gray border) */
+.search-buttons .search-button.disabled {
+  background-color: #f5f5f5;
+  color: #666;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Keep the arrow positioned absolutely but adjust its vertical position */
+.search-buttons .search-button::after {
+  content: '›';
+  font-size: 14px;
+  font-weight: bold;
+  transition: color 0.3s ease;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Active state arrow color */
+.search-buttons .search-button:not(.disabled):hover::after,
+.search-buttons .search-button:not(.disabled):focus::after {
+  color: white;
+}
+
+/* Inactive state arrow color */
+.search-buttons .search-button:not(.disabled)::after {
+  color: #333;
+}
+
+/* Disabled state arrow color */
+.search-buttons .search-button.disabled::after {
+  color: #666;
+}
+
+/* Disabled button icon using :before pseudo-selector */
+.search-buttons .search-button.disabled::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  background-image: url('/icons/eye-slash-icon.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.6;
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Responsive design */
+@media (width < 1200px) {
+  .search-buttons .search-buttons-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width < 768px) {
+  .search-buttons .search-buttons-container {
+    grid-template-columns: 1fr;
+  }
+
+  .search-buttons .search-button {
+    font-size: 16px;
+    padding: 14px 18px;
+  }
+}
+
+/* Focus styles for accessibility */
+.search-buttons .search-button:focus {
+  outline: 2px solid #ED0000;
+  outline-offset: 2px;
+}
+
+.search-buttons .search-button.disabled:focus {
+  outline: none;
+}
+
+/* Add margin-left to the text span for disabled buttons */
+.search-buttons .search-button.disabled span {
+  margin-left: 24px;
+}
+

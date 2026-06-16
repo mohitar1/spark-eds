@@ -1,0 +1,14 @@
+# Cloudflare KV Configuration
+# Copy this file to 'config' and fill in your credentials
+
+# Cloudflare Account ID (from dashboard URL or API)
+CF_ACCOUNT_ID=d3259185ae56522248254092489d6755
+
+# Cloudflare API Token with KV write permissions
+# Create at: https://dash.cloudflare.com/profile/api-tokens
+# Required permissions: Account.Workers KV Storage:Edit
+CF_API_TOKEN=your-api-token-here
+
+# KV Namespace ID for SAVED_SEARCHES
+# From wrangler.toml: [[kv_namespaces]] binding = "SAVED_SEARCHES"
+CF_KV_NAMESPACE_ID=807e73a238b9450ab866fe2892158c6a

@@ -1,0 +1,12 @@
+# Input data (CRX package export)
+tccc-groups/
+tccc-groups.zip
+
+# Output data (generated CSVs)
+csv/
+
+# Output data (generated sheets)
+sheets/
+
+# Example/base data
+example/

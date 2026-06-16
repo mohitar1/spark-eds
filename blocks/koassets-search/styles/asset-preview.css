@@ -1,0 +1,372 @@
+/* Asset Preview Modal Styles - Aligned with React */
+
+.asset-preview-modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(0 0 0 / 80%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Card preview modal: generous padding and rounded corners on all four sides */
+.asset-preview-modal-inner {
+    padding: 32px;
+    background: white;
+    border-radius: 20px;
+    max-width: 35%;
+    max-height: 80vh;
+    overflow: hidden auto;
+    position: relative;
+    box-shadow: 0 20px 40px rgb(0 0 0 / 30%);
+
+}
+
+@media (width <= 1400px) {
+  .asset-preview-modal-inner {
+    max-width: 50%;
+  }
+}
+
+.asset-preview-modal-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+.asset-preview-modal .modal-header {
+    padding-right: 24px;
+}
+
+.asset-preview-modal .preview-tags {
+    margin-bottom: 10px;
+}
+
+.asset-preview-modal-container .modal-header .modal-title {
+  font-size: 14px;
+  padding-top: 0
+}
+
+.asset-preview-modal .preview-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    overflow-wrap: break-word;
+}
+
+.asset-preview-modal .preview-tag.tccc-tag {
+    background: #fff0da;
+    color: #a46801;
+    font-family: "TCCC UnityHeadline", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+
+    &::after {
+        content: '';
+        font-family: FontAwesome, sans-serif;
+        display: none;
+        margin-left: 4px;
+    }
+
+    &.empty {
+        visibility: hidden;
+    }
+
+    &:hover {
+        text-decoration: underline;
+
+        &::after {
+            content: "\f08e";
+            font-family: FontAwesome, sans-serif;
+            display: inline-block;
+            margin-left: 4px;
+        }
+    }
+}
+
+/* Modal title styling handled by global .portal-modal .modal-title in koassets-search.css */
+
+/* Background box for image - defined container with padding where the preview image is placed (square corners) */
+.asset-preview-modal .modal-image-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 380px;
+    max-height: 50vh;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    border: 2px solid #e0e0e0;
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
+.asset-preview-modal .modal-image-container picture {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+}
+
+.asset-preview-modal .modal-image-container .modal-image {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 50vh;
+    object-fit: contain;
+    border-radius: 0;
+}
+
+/* PDF Preview Magnifying Glass Button */
+.asset-preview-modal .pdf-preview-magnify-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    background-color: rgb(74 74 74 / 90%);
+    border: 1px solid rgb(0 0 0 / 10%);
+    border-radius: 6px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+    padding: 0;
+}
+
+.asset-preview-modal .pdf-preview-magnify-button:hover {
+    opacity: 1;
+    background-color: #c8102e;
+}
+
+.asset-preview-modal .pdf-preview-magnify-button img {
+    width: 18px;
+    height: 18px;
+    filter: brightness(0) invert(1);
+}
+
+.asset-preview-modal .preview-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+.asset-preview-modal .preview-modal-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.asset-preview-modal .preview-metadata-label {
+    color: #707070;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1rem;
+    letter-spacing: 0.8px;
+    font-family: "TCCC UnityText Regular", "Helvetica Neue", Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+}
+
+.asset-preview-modal .preview-metadata-value {
+    color: #0e202e;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 0.9rem;
+    font-family: "TCCC UnityHeadline", "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.asset-preview-modal .product-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-top: 20px;
+    border-top: 1px solid #e1e1e1;
+}
+
+.asset-preview-modal .left-buttons-wrapper,
+.asset-preview-modal .right-buttons-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+}
+
+.asset-preview-modal .modal-close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgb(0 0 0 / 70%);
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    color: white;
+    transition: background-color 0.2s;
+    padding: 0;
+    margin: 0;
+}
+
+.asset-preview-modal .modal-close-button:hover {
+    background: rgb(0 0 0 / 90%);
+}
+
+.asset-preview-modal .modal-add-to-cart-button {
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 0 12px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s, width 0.2s;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.asset-preview-modal .modal-add-to-cart-button:hover {
+    background-color: var(--primary-color);
+}
+
+.asset-preview-modal .modal-add-to-cart-button:active {
+    transform: translateY(1px);
+}
+
+/* Template cart icon button in preview modal (same as template card add-template-to-cart-btn) */
+.asset-preview-modal .add-template-to-cart-btn {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  flex-shrink: 0;
+  overflow: visible;
+  font-size: 0;
+  line-height: 1;
+}
+
+.asset-preview-modal .add-template-to-cart-btn::after {
+  content: "";
+  display: block;
+  width: 42px;
+  height: 42px;
+  background: url('/icons/add-cart-circle.svg') no-repeat center / contain;
+}
+
+.asset-preview-modal .add-template-to-cart-btn:hover::after {
+  background-image: url('/icons/add-cart-circle-red.svg');
+}
+
+.asset-preview-modal .add-template-to-cart-btn.in-cart {
+  background: rgb(237 0 0 / 8%);
+}
+
+.asset-preview-modal .add-template-to-cart-btn.in-cart::after {
+  background-image: url('/icons/remove-cart-circle-red.svg');
+}
+
+.asset-preview-modal .add-template-to-cart-btn.in-cart:hover::after {
+  background-image: url('/icons/remove-cart-circle-red.svg');
+}
+
+.asset-preview-modal .modal-customize-button {
+    height: 42px;
+    min-width: 120px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive Modal */
+@media (width <= 768px) {
+    .asset-preview-modal .asset-preview-modal-inner {
+        margin: 10px;
+        max-height: 95vh;
+    }
+
+    .asset-preview-modal .preview-modal-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+}
+
+/* PDF Modal Styles */
+.pdf-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgb(0 0 0 / 95%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+    box-sizing: border-box;
+    pointer-events: auto;
+}
+
+.pdf-modal-content {
+    background: white;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 1000px;
+    height: 100%;
+    max-height: 800px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 40px rgb(0 0 0 / 30%);
+    overflow: hidden;
+}
+
+/* Responsive - Mobile */
+@media (width <= 768px) {
+    .pdf-modal-overlay {
+        padding: 0;
+    }
+
+    .pdf-modal-content {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
+    }
+}
+
+/* Responsive - Tablet */
+@media (width >= 769px) and (width <= 1024px) {
+    .pdf-modal-content {
+        width: 90%;
+        height: 90%;
+        max-width: 900px;
+        max-height: 750px;
+    }
+}
