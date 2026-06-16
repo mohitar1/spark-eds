@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { convertRows, convertToMap, handleArrays } from '../helixutil.js';
+import { describe, it, expect } from 'vitest';
+import { handleArrays, convertToMap, convertRows } from '../helixutil.js';
 
 describe('helixutil', () => {
   describe('handleArrays', () => {
@@ -148,3 +148,4 @@ describe('helixutil', () => {
     });
   });
 });
+

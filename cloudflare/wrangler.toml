@@ -2,7 +2,6 @@
 name = "spark-eds"
 account_id = "416763c051f214053e34078d4302780d"
 
-# do not change these unless code changes require it
 main = "src/index.js"
 compatibility_date = "2025-08-16"
 
@@ -30,6 +29,16 @@ MICROSOFT_ENTRA_JWKS_URL = "https://login.microsoftonline.com/common/discovery/k
 
 SESSION_COOKIE_EXPIRATION = "6h"
 
+# Stub vars for koassets features not used in this demo
+FADEL_ORIGIN = ""
+DOMAIN_URL = ""
+SMTP_HOST = ""
+SMTP_PORT = ""
+SMTP_FROM_NAME = ""
+SMTP_FROM_EMAIL = ""
+ANALYTICS_ACCOUNT_ID = ""
+
+# Secrets (Santander secret store)
 [[secrets_store_secrets]]
 store_id = "175ef141dbe74cbf9c04cff9bb45b9c8"
 binding = "COOKIE_SECRET"
