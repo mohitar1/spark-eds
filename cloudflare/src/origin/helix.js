@@ -55,9 +55,11 @@ export async function originHelix(request, env) {
   }
   searchParams.sort();
 
-  const helixOrigin = request.helixOrigin || env.HELIX_ORIGIN;
-  if (!helixOrigin.match(/^http:\/\/localhost:\d+$/)
-      && !helixOrigin.match(/^https:\/\/.*--.*--.*\.(?:aem|hlx)\.(live|page)$/)) {
+  const helixOrigin = env.HELIX_ORIGIN;
+  if (
+    helixOrigin !== 'http://localhost:3000' &&
+    !helixOrigin.match(/^https:\/\/.*--.*--.*\.(?:aem|hlx)\.(live|page)$/)
+  ) {
     return new Response('Invalid HELIX_ORIGIN', { status: 500 });
   }
   const protocolAndHost = helixOrigin.split('://');
@@ -74,10 +76,7 @@ export async function originHelix(request, env) {
   req.headers.set('user-agent', req.headers.get('user-agent'));
   req.headers.set('x-forwarded-host', req.headers.get('host'));
   req.headers.set('x-byo-cdn-type', 'cloudflare');
-  // Local aem up manages its own Helix token (.hlx/.hlx-token); forwarding a
-  // worker secret to localhost causes token-mismatch errors upstream.
-  const isLocalHelix = /^http:\/\/localhost:\d+$/.test(helixOrigin);
-  if (env.HELIX_ORIGIN_AUTHENTICATION && !isLocalHelix) {
+  if (env.HELIX_ORIGIN_AUTHENTICATION) {
     req.headers.set('authorization', `token ${await env.HELIX_ORIGIN_AUTHENTICATION.get()}`);
   }
   const pushInvalidation = env.HELIX_PUSH_INVALIDATION !== 'disabled';
@@ -120,4 +119,4 @@ export async function originHelix(request, env) {
   resp.headers.delete('age');
   resp.headers.delete('x-robots-tag');
   return resp;
-};
+}

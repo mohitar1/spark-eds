@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { setCookie, deleteCookie, isValidUrl } from '../http.js';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { deleteCookie, isValidUrl, setCookie } from '../http.js';
 
 describe('http utilities', () => {
   describe('setCookie', () => {
@@ -122,4 +122,3 @@ describe('http utilities', () => {
     });
   });
 });
-

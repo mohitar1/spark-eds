@@ -1,14 +1,7 @@
 import { Router } from 'itty-router';
 import { createRemoteJWKSet, jwtVerify, SignJWT } from 'jose';
 import { createSession, getUser } from './user.js';
-import {
-  createSignedCookie,
-  deleteCookie,
-  isValidUrl,
-  setCookie,
-  validateSignedCookie,
-} from './util/http.js';
-import { maskEmail } from './util/log-utils.js';
+import { createSignedCookie, deleteCookie, isValidUrl, setCookie, validateSignedCookie } from './util/http.js';
 
 /* Configure the path of a custom login/welcome page here.
    If not set (= undefined), unauthenticated users will always be redirected directly to the IDP login page.
@@ -25,11 +18,7 @@ const COOKIE_LOGIN_VISITED = 'LoginVisited';
 const ORIGINAL_URL_PARAM = 'url';
 
 /* Required Cloudflare configuration = env variables */
-const REQUIRED_ENV_VARS = [
-  'MICROSOFT_ENTRA_TENANT_ID',
-  'MICROSOFT_ENTRA_CLIENT_ID',
-  'COOKIE_SECRET',
-];
+const REQUIRED_ENV_VARS = ['MICROSOFT_ENTRA_TENANT_ID', 'MICROSOFT_ENTRA_CLIENT_ID', 'COOKIE_SECRET'];
 
 async function createSessionJWT(request, env, session) {
   const payload = {
@@ -47,7 +36,7 @@ async function createSessionJWT(request, env, session) {
     // use same audience as MS entra IDP app
     .setAudience(env.MICROSOFT_ENTRA_CLIENT_ID)
     .setExpirationTime(env.SESSION_COOKIE_EXPIRATION || '6h')
-    .setNotBefore("0m")
+    .setNotBefore('0m')
     .sign(key);
 
   return jwt;
@@ -63,7 +52,6 @@ async function validateSessionJWT(request, env, sessionJWT) {
       clockTolerance: 5,
     });
     return payload;
-
   } catch (error) {
     request.error = `Invalid ${COOKIE_SESSION} cookie: ${error.message}`;
     return null;
@@ -114,7 +102,6 @@ async function validateIdToken(request, rawIdToken, env, nonce) {
       return null;
     }
     return payload;
-
   } catch (error) {
     request.error = `OIDC error: Invalid id_token: ${error.message}`;
     return null;
@@ -160,9 +147,7 @@ function redirectToLoginPage(request, seenBefore = request.cookies[COOKIE_LOGIN_
 function getOriginalRedirectUrl(request, originalUrl) {
   let redirectUrl = `${request.uri.origin}/`;
   // get original redirect url from url param (if present)
-  if (originalUrl?.startsWith('/')
-      && originalUrl !== LOGIN_PAGE
-      && originalUrl !== `${AUTH_PREFIX}/login`) {
+  if (originalUrl?.startsWith('/') && originalUrl !== LOGIN_PAGE && originalUrl !== `${AUTH_PREFIX}/login`) {
     redirectUrl = originalUrl;
   }
   return redirectUrl;
@@ -172,15 +157,8 @@ function getOriginalRedirectUrl(request, originalUrl) {
 export async function withAuthentication(request, env) {
   request.uri = new URL(request.url);
 
-  if (env.DISABLE_AUTHENTICATION === 'true') {
-    request.user = {
-      email: 'dev@localhost',
-      name: 'Local Dev',
-      roles: ['admin', 'employee'],
-      permissions: ['preview', 'admin-reports', 'manage-rights', 'admin-rights', 'sudo'],
-      countries: ['us'],
-      koid: 'local-dev',
-    };
+  if (env.DISABLE_AUTHENTICATION) {
+    request.user = {};
     console.warn('Authentication is disabled because DISABLE_AUTHENTICATION is set');
     return;
   }
@@ -219,14 +197,14 @@ export const authRouter = Router({
         console.error(`Missing required environment variables: ${missing.join(', ')}`);
         return new Response('Service Unavailable', { status: 503 });
       }
-    }
+    },
   ],
 });
 
 authRouter
   // middleware for login page special cases
   .get(LOGIN_PAGE, async (request, env) => {
-    if (env.DISABLE_AUTHENTICATION !== 'true') {
+    if (!env.DISABLE_AUTHENTICATION) {
       // a) if no session cookie, but has seenBefore cookie, redirect to MS login directly
       const sessionJWT = request.cookies[COOKIE_SESSION];
       if (!sessionJWT && request.cookies[COOKIE_LOGIN_VISITED]) {
@@ -236,12 +214,7 @@ authRouter
       // b) if valid session cookie, redirect to url param or main page
       const session = await validateSessionJWT(request, env, sessionJWT);
       if (session) {
-        return redirect(
-          getOriginalRedirectUrl(
-            request,
-            request.uri.searchParams.get(ORIGINAL_URL_PARAM)
-          )
-        );
+        return redirect(getOriginalRedirectUrl(request, request.uri.searchParams.get(ORIGINAL_URL_PARAM)));
       }
 
       // c) otherwise show login page = do nothing here and pass through
@@ -274,7 +247,8 @@ authRouter
     };
 
     // redirect to MS login page
-    const authorizeUrl = `https://login.microsoftonline.com/${env.MICROSOFT_ENTRA_TENANT_ID}/oauth2/v2.0/authorize?` +
+    const authorizeUrl =
+      `https://login.microsoftonline.com/${env.MICROSOFT_ENTRA_TENANT_ID}/oauth2/v2.0/authorize?` +
       new URLSearchParams({
         client_id: env.MICROSOFT_ENTRA_CLIENT_ID,
         response_type: 'id_token',
@@ -333,37 +307,6 @@ authRouter
 
     const sessionJWT = await createSessionJWT(request, env, session);
 
-    // Track login analytics event
-    if (!session.koid) {
-      console.warn(
-        '[Analytics] Login event written with no KOID — user may be missing User ID in IDP token.',
-        `email=${maskEmail(session.email)}`,
-        `company=${session.company}`,
-      );
-    }
-    const { trackAnalyticsEvent } = await import('./util/analytics-helper.js');
-    await trackAnalyticsEvent(env, 'login', {
-      koid: session.koid,
-      country: session.country,
-      employeeType: session.employeeType,
-      company: session.company,
-      roles: session.roles || [],
-    });
-
-    // Store/update user login for reporting
-    const { upsertUserLogin } = await import('./api/user-logins.js');
-    await upsertUserLogin(env, {
-      email: session.email,
-      koid: session.koid,
-      fullName: session.name,
-      title: session.title,
-      country: session.country,
-      employeeType: session.employeeType,
-      company: session.company,
-      roles: session.roles || [],
-      permissions: session.permissions || [],
-    });
-
     // get original redirect url from state parameter (if present)
     const redirectUrl = getOriginalRedirectUrl(request, state.state.split('|')[1]);
 
@@ -387,9 +330,10 @@ authRouter
     console.log('User logout:', request.user.email);
 
     // redirect to MS logout page
-    const logoutUrl = `https://login.microsoftonline.com/${env.MICROSOFT_ENTRA_TENANT_ID}/oauth2/logout?` +
+    const logoutUrl =
+      `https://login.microsoftonline.com/${env.MICROSOFT_ENTRA_TENANT_ID}/oauth2/logout?` +
       new URLSearchParams({
-        post_logout_redirect_uri: `${request.uri.origin}/en/`,
+        post_logout_redirect_uri: `${request.uri.origin}/`,
       });
 
     const response = redirect(logoutUrl);

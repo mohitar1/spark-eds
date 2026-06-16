@@ -9,7 +9,7 @@
 
 /**
  * Convert repo:ancestors array to taxonomy path format used in authClauses.
- * Example: ["tccc", "brand", "dr-pepper-ko"] => "tccc:brand/dr-pepper-ko"
+ * Example: ["custom", "brand", "dr-pepper-ko"] => "custom:brand/dr-pepper-ko"
  * @param {string[]} ancestors - The repo:ancestors array from asset metadata
  * @returns {string} The taxonomy path string
  */
@@ -31,22 +31,22 @@ function ancestorsToTaxonomyPath(ancestors) {
  * @returns {string[]} Array of taxonomy paths
  *
  * @example
- * // Simple string (e.g., tccc:contentType)
+ * // Simple string (e.g., custom:contentType)
  * extractTaxonomyPaths("marketing")
  * // Returns: ["marketing"]
  *
  * @example
- * // Simple string array (e.g., tccc:intendedBottlerCountry)
+ * // Simple string array (e.g., custom:intendedBottlerCountry)
  * extractTaxonomyPaths(["us", "ca", "mx"])
  * // Returns: ["us", "ca", "mx"]
  *
  * @example
- * // Objects with repo:ancestors (e.g., tccc:brand)
+ * // Objects with repo:ancestors (e.g., custom:brand)
  * extractTaxonomyPaths([
- *   { "repo:ancestors": ["tccc", "brand", "dr-pepper-ko"] },
- *   { "repo:ancestors": ["tccc", "brand", "diet-dr-pepper-ko"] }
+ *   { "repo:ancestors": ["custom", "brand", "dr-pepper-ko"] },
+ *   { "repo:ancestors": ["custom", "brand", "diet-dr-pepper-ko"] }
  * ])
- * // Returns: ["tccc:brand/dr-pepper-ko", "tccc:brand/diet-dr-pepper-ko"]
+ * // Returns: ["custom:brand/dr-pepper-ko", "custom:brand/diet-dr-pepper-ko"]
  */
 function extractTaxonomyPaths(fieldValue) {
   if (!fieldValue) return [];
@@ -72,10 +72,10 @@ function extractTaxonomyPaths(fieldValue) {
  * - `term` clauses: Asset must have at least one of the specified values (allowance)
  *
  * Asset metadata fields can have different formats:
- * - `tccc:brand`: Array of objects with repo:ancestors
- * - `tccc:intendedBottlerCountry`: Array of strings like ["us", "ca", "mx"]
- * - `tccc:intendedCustomers`: Array of strings like ["none"]
- * - `tccc:contentType`: Simple string like "marketing"
+ * - `custom:brand`: Array of objects with repo:ancestors
+ * - `custom:intendedBottlerCountry`: Array of strings like ["us", "ca", "mx"]
+ * - `custom:intendedCustomers`: Array of strings like ["none"]
+ * - `custom:contentType`: Simple string like "marketing"
  *
  * @param {Object[]} authClauses - Array of authorization clauses from search filter
  * @param {Object} assetMetadata - The assetMetadata object from API response
@@ -84,21 +84,21 @@ function extractTaxonomyPaths(fieldValue) {
  * @example
  * // authClauses from search filter
  * const authClauses = [
- *   { not: [{ term: { 'assetMetadata.tccc:brand': ['tccc:brand/dr-pepper-ko'] } }] },
- *   { not: [{ term: { 'assetMetadata.tccc:contentType': ['customers'] } }] },
- *   { term: { 'assetMetadata.tccc:intendedBottlerCountry': ['us', 'all-countries'] } }
+ *   { not: [{ term: { 'assetMetadata.custom:brand': ['custom:brand/dr-pepper-ko'] } }] },
+ *   { not: [{ term: { 'assetMetadata.custom:contentType': ['customers'] } }] },
+ *   { term: { 'assetMetadata.custom:intendedBottlerCountry': ['us', 'all-countries'] } }
  * ];
  *
  * // assetMetadata from response (different field formats)
  * const assetMetadata = {
- *   'tccc:brand': [{ 'repo:ancestors': ['tccc', 'brand', 'dr-pepper-ko'] }],
- *   'tccc:intendedBottlerCountry': ['us', 'ca', 'mx'],
- *   'tccc:intendedCustomers': ['none'],
- *   'tccc:contentType': 'marketing'
+ *   'custom:brand': [{ 'repo:ancestors': ['custom', 'brand', 'dr-pepper-ko'] }],
+ *   'custom:intendedBottlerCountry': ['us', 'ca', 'mx'],
+ *   'custom:intendedCustomers': ['none'],
+ *   'custom:contentType': 'marketing'
  * };
  *
  * const result = checkAssetMetadataAuthorization(authClauses, assetMetadata);
- * // result: { violated: true, reason: 'Denied tccc:brand -- Asset has "tccc:brand/dr-pepper-ko" which is in denied list [...]' }
+ * // result: { violated: true, reason: 'Denied custom:brand -- Asset has "custom:brand/dr-pepper-ko" which is in denied list [...]' }
  */
 function checkAssetMetadataAuthorization(authClauses, assetMetadata) {
   if (!authClauses || authClauses.length === 0) {
@@ -126,7 +126,7 @@ function checkAssetMetadataAuthorization(authClauses, assetMetadata) {
       for (const notClause of clause.not) {
         if (notClause.term) {
           for (const [fieldPath, deniedValues] of Object.entries(notClause.term)) {
-            // Field path is like 'assetMetadata.tccc:brand', extract the field name
+            // Field path is like 'assetMetadata.custom:brand', extract the field name
             const fieldName = fieldPath.replace(/^assetMetadata\./, '');
             const assetPaths = extractTaxonomyPaths(assetMetadata[fieldName]);
 
@@ -148,7 +148,7 @@ function checkAssetMetadataAuthorization(authClauses, assetMetadata) {
     // Handle TERM clauses - asset must have at least one of the allowed values
     if (clause.term) {
       for (const [fieldPath, allowedValues] of Object.entries(clause.term)) {
-        // Field path is like 'assetMetadata.tccc:intendedBottlerCountry', extract the field name
+        // Field path is like 'assetMetadata.custom:intendedBottlerCountry', extract the field name
         const fieldName = fieldPath.replace(/^assetMetadata\./, '');
         const assetPaths = extractTaxonomyPaths(assetMetadata[fieldName]);
 

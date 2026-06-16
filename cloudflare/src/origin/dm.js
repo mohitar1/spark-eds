@@ -4,15 +4,13 @@
  * This module handles all interactions with Adobe Dynamic Media (AEM Assets) including:
  * - IMS token management and caching
  * - Search request proxying and authorization
- * - Collection access control (owner/editor/viewer roles)
+ * - Collection access control (owner/viewer roles)
  *
  * Key Features:
  * - Transparent proxy to Adobe AEM Cloud delivery endpoints
- * - Role-based access control for assets (brands, bottler countries, customers)
+ * - Role-based access control for assets (bottler countries)
  * - Collection-level ACL enforcement (CRUD operations)
  * - Automatic IMS token caching with expiry handling
- *
- * Analytics tracking (downloads, archives, searches) is handled by dm-analytics.js.
  *
  * @module origin/dm
  * @requires ../user
@@ -21,16 +19,13 @@
  */
 
 import { decodeJwt } from 'jose';
-import { ROLE, getRestrictedBrands } from '../user';
 import {
-  extractSearchContext,
-  handleArchiveAnalytics,
-  handleDownloadAnalytics,
-  handleSearchAnalytics,
-} from './dm-analytics.js';
-import {
-  enforceAssetMetadataAuthorization,
-} from './asset-access.js';
+  CollectionCreatedByMeVisibility,
+  CollectionListSegment,
+} from '../../../scripts/collections/collection-search-constants.js';
+import { decodePathIds, replaceMatchTextWithAssetTerm } from '../util/sqids-search-utils.js';
+import { decodeToAssetUrn, encodeId } from '../util/sqids-utils.js';
+import { enforceAssetMetadataAuthorization } from './asset-access.js';
 
 // ==========================================
 // IMS Authentication Constants
@@ -93,20 +88,52 @@ const PATH_COLLECTIONS = '/adobe/assets/collections';
 // Collection ACL Constants
 // ==========================================
 
-/** ACL field name for collection owner
- * @constant {string}
- */
-const ACL_OWNER = 'tccc:assetCollectionOwner';
+/** ACL field names (generic `custom` namespace; ContentAI + API must match) */
+const ACL_OWNER = 'custom:assetCollectionOwner';
+const ACL_VIEWER = 'custom:assetCollectionViewer';
 
-/** ACL field name for collection editors
- * @constant {string}
- */
-const ACL_EDITOR = 'tccc:assetCollectionEditor';
+/** ContentAI term path for collection access level (private | public) */
+const CONTENTAI_COLLECTION_ACCESS_LEVEL = 'collectionMetadata.accessLevel';
 
-/** ACL field name for collection viewers
- * @constant {string}
+/** ContentAI term paths for collection ACL in search queries (`custom` metadata, aligned with API ACL keys) */
+const CONTENTAI_COLLECTION_SEARCH_ACL = {
+  owner: `collectionMetadata.custom:metadata.custom:acl.${ACL_OWNER}`,
+  viewer: `collectionMetadata.custom:metadata.custom:acl.${ACL_VIEWER}`,
+};
+
+/**
+ * Resolve collection ACL object from metadata (`custom` namespace only).
+ * @param {Object} metadata - collectionMetadata from API
+ * @returns {Object|null}
  */
-const ACL_VIEWER = 'tccc:assetCollectionViewer';
+function getCollectionAclFromMetadata(metadata) {
+  return metadata?.['custom:metadata']?.['custom:acl'] || null;
+}
+
+/**
+ * Check if the asset metadata response represents a sponsorship asset.
+ * Asset metadata fields can be a single string or an array of strings.
+ * @param {Object|null|undefined} metadataData - JSON body of an asset metadata response
+ * @returns {boolean}
+ */
+function isSponsorshipMetadata(metadataData) {
+  const product = metadataData?.assetMetadata?.product;
+  if (Array.isArray(product)) {
+    return product.some((v) => typeof v === 'string' && v.toLowerCase() === 'sponsorship');
+  }
+  return typeof product === 'string' && product.toLowerCase() === 'sponsorship';
+}
+
+function collectionAclOwnerLower(acl) {
+  if (!acl) return '';
+  const v = acl[ACL_OWNER];
+  return v ? String(v).toLowerCase() : '';
+}
+
+function collectionAclViewerList(acl) {
+  if (!acl) return [];
+  return acl[ACL_VIEWER] || [];
+}
 
 // ==========================================
 // Collection Roles
@@ -116,11 +143,6 @@ const ACL_VIEWER = 'tccc:assetCollectionViewer';
  * @constant {string}
  */
 const COLLECTION_ROLE_OWNER = 'owner';
-
-/** Collection editor role (read/write access)
- * @constant {string}
- */
-const COLLECTION_ROLE_EDITOR = 'editor';
 
 /** Collection viewer role (read-only access)
  * @constant {string}
@@ -183,6 +205,27 @@ const HEADER_HOST = 'host';
  * @constant {string}
  */
 const HEADER_COOKIE = 'cookie';
+
+/**
+ * Headers for the server-side collection metadata GET used in ACL checks.
+ * Must stay aligned with {@link originDynamicMedia} outbound requests (experimental flag, JSON negotiation, real UA).
+ *
+ * @param {string} imsToken - IMS bearer token
+ * @param {Request|undefined} incomingRequest - Original client request (optional User-Agent forward)
+ * @returns {Record<string, string>}
+ */
+function collectionMetadataAuthFetchHeaders(imsToken, incomingRequest) {
+  const headers = {
+    [HEADER_AUTHORIZATION]: `Bearer ${imsToken}`,
+    [HEADER_API_KEY]: ADOBE_API_KEY_COLLECTIONS,
+    [ADOBE_EXPERIMENTAL_HEADER]: '1',
+  };
+  const ua = incomingRequest?.headers?.get(HEADER_USER_AGENT);
+  if (ua) {
+    headers[HEADER_USER_AGENT] = ua;
+  }
+  return headers;
+}
 
 /**
  * Create IMS token using OAuth server-to-server credentials
@@ -253,12 +296,11 @@ async function getIMSToken(request, env) {
     const clientId = await env.DM_CLIENT_ID.get();
     const cachedTokenName = `dm-token-${clientId}`;
 
-
     // get cached token
     const { value: token, metadata } = await env.AUTH_TOKENS.getWithMetadata(cachedTokenName);
 
     // use token until 5 minutes before expiry
-    if (token && metadata?.expiration > (Math.floor(Date.now() / 1000) + IMS_TOKEN_EXPIRY_BUFFER)) {
+    if (token && metadata?.expiration > Math.floor(Date.now() / 1000) + IMS_TOKEN_EXPIRY_BUFFER) {
       return token;
     } else {
       const clientSecret = await env.DM_CLIENT_SECRET.get();
@@ -272,8 +314,8 @@ async function getIMSToken(request, env) {
       await env.AUTH_TOKENS.put(cachedTokenName, tokenData.access_token, {
         expiration,
         metadata: {
-          expiration
-        }
+          expiration,
+        },
       });
 
       return tokenData.access_token;
@@ -288,22 +330,25 @@ async function getIMSToken(request, env) {
  * Validate user access to a specific collection
  *
  * Fetches collection metadata from Adobe DM and checks ACL to determine if user
- * has required access level (owner/editor/viewer).
+ * has required access level.
  *
- * Role hierarchy:
- * - Owner: Full access (read + write)
- * - Editor: Read + write access
- * - Viewer: Read-only access
+ * READ: owner, named viewer, or accessLevel public (any authenticated user).
+ * WRITE / DELETE: collection owner only.
  *
  * @param {string} collectionId - Collection ID to check
  * @param {string} userEmail - User email (lowercase)
  * @param {string} requiredRole - Required permission level ('read' or 'write')
  * @param {string} imsToken - IMS access token for API auth
  * @param {string} dmOrigin - Dynamic Media origin URL
+ * @param {{ cloneResponseForReuse?: boolean, incomingRequest?: Request }} [options] - When true and access is allowed, response includes
+ *   `reuseMetadataResponse` (clone of the metadata GET) so the worker can skip a second identical origin fetch.
+ *   Pass `incomingRequest` so metadata sub-fetch matches client negotiation (User-Agent) and proxy headers (experimental, Accept).
  * @returns {Promise<Object>} Access result object
  * @returns {boolean} returns.allowed - Whether access is granted
- * @returns {string} returns.role - User's role if allowed (owner/editor/viewer)
+ * @returns {string} returns.role - User's role if allowed (owner/viewer)
  * @returns {string} returns.reason - Denial reason if not allowed
+ * @returns {number|undefined} returns.metadataStatus - When metadata GET failed (!ok), upstream HTTP status
+ * @returns {Response|undefined} returns.reuseMetadataResponse - Present only when allowed and clone was requested
  *
  * @example
  * const access = await validateCollectionAccess('col-123', 'user@example.com', 'read', token, origin);
@@ -311,43 +356,63 @@ async function getIMSToken(request, env) {
  *   console.log(`Access granted as ${access.role}`);
  * }
  */
-async function validateCollectionAccess(collectionId, userEmail, requiredRole, imsToken, dmOrigin) {
+async function validateCollectionAccess(collectionId, userEmail, requiredRole, imsToken, dmOrigin, options = {}) {
+  const { cloneResponseForReuse = false, incomingRequest } = options;
+
   // Fetch collection metadata
   const metadataUrl = `${dmOrigin}/adobe/assets/collections/${collectionId}`;
   const response = await fetch(metadataUrl, {
-    headers: {
-      [HEADER_AUTHORIZATION]: `Bearer ${imsToken}`,
-      [HEADER_API_KEY]: ADOBE_API_KEY_COLLECTIONS,
-    },
+    headers: collectionMetadataAuthFetchHeaders(imsToken, incomingRequest),
   });
 
   if (!response.ok) {
-    return { allowed: false, reason: `Failed to fetch collection metadata: ${metadataUrl} => ${response.status} ${response.statusText}` };
+    return {
+      allowed: false,
+      reason: `Failed to fetch collection metadata: ${metadataUrl} => ${response.status} ${response.statusText}`,
+      metadataStatus: response.status,
+    };
+  }
+
+  /** @type {Response|undefined} */
+  let reuseMetadataResponse;
+  if (cloneResponseForReuse) {
+    try {
+      reuseMetadataResponse = response.clone();
+    } catch (e) {
+      console.warn('[Collection auth] clone metadata response for reuse failed:', e);
+    }
   }
 
   const collection = await response.json();
-  const acl = collection?.collectionMetadata?.['tccc:metadata']?.['tccc:acl'];
+  const metadata = collection?.collectionMetadata || {};
+  const acl = getCollectionAclFromMetadata(metadata);
+  const accessLevel = String(metadata.accessLevel || 'private').toLowerCase();
+
+  const grantRead = (role) =>
+    reuseMetadataResponse ? { allowed: true, role, reuseMetadataResponse } : { allowed: true, role };
+
+  // Owner: read + write (only role that may mutate / delete)
+  if (collectionAclOwnerLower(acl) === userEmail) {
+    return grantRead(COLLECTION_ROLE_OWNER);
+  }
+
+  if (requiredRole === PERMISSION_WRITE) {
+    return { allowed: false, reason: 'no write permission' };
+  }
+
+  // READ: named viewer
+  const viewers = collectionAclViewerList(acl);
+  if (Array.isArray(viewers) && viewers.some((e) => e.toLowerCase() === userEmail)) {
+    return grantRead(COLLECTION_ROLE_VIEWER);
+  }
+
+  // READ: any authenticated user may open public collections
+  if (accessLevel === 'public') {
+    return grantRead(COLLECTION_ROLE_VIEWER);
+  }
 
   if (!acl) {
     return { allowed: false, reason: 'no ACL' };
-  }
-
-  // Check owner (has all permissions)
-  if (acl[ACL_OWNER]?.toLowerCase() === userEmail) {
-    return { allowed: true, role: COLLECTION_ROLE_OWNER };
-  }
-
-  // Check editor (write permission, also grants read)
-  if (Array.isArray(acl[ACL_EDITOR]) &&
-      acl[ACL_EDITOR].some((e) => e.toLowerCase() === userEmail)) {
-    return { allowed: true, role: COLLECTION_ROLE_EDITOR };
-  }
-
-  // Check viewer (read permission only)
-  if (requiredRole === PERMISSION_READ &&
-      Array.isArray(acl[ACL_VIEWER]) &&
-      acl[ACL_VIEWER].some((e) => e.toLowerCase() === userEmail)) {
-    return { allowed: true, role: COLLECTION_ROLE_VIEWER };
   }
 
   return { allowed: false, reason: 'not in ACL' };
@@ -360,10 +425,25 @@ async function validateCollectionAccess(collectionId, userEmail, requiredRole, i
  * @param {string} imsToken - IMS auth token
  * @param {string} origin - Origin URL
  * @param {string} resourceDescription - Description for logging (e.g., "collection", "collection items")
- * @returns {Response|null} Returns Response with 403 if denied, null if allowed
+ * @param {{ cloneResponseForReuse?: boolean, requiredRole?: typeof PERMISSION_READ | typeof PERMISSION_WRITE }} [authOptions]
+ *   - `cloneResponseForReuse`: when true, successful GET metadata may be returned for reuse (see validateCollectionAccess).
+ *   - `requiredRole`: override auto rule (GET => read, else write). Use for POST endpoints that only need read access
+ *     (e.g. ContentAI search assets in collection).
+ * @returns {Promise<Response|null|{ reuseMetadataResponse: Response }>}
+ *   `403` Response if denied by ACL; `404` when collection metadata is missing upstream; `null` if allowed (caller
+ *   should proxy); or `{ reuseMetadataResponse }` when the metadata GET body may be returned directly (avoids a
+ *   duplicate origin fetch).
  */
-async function checkCollectionAuthorization(collectionId, request, imsToken, origin, resourceDescription = 'collection') {
-  const requiredRole = (request.method === 'GET') ? PERMISSION_READ : PERMISSION_WRITE;
+async function checkCollectionAuthorization(
+  collectionId,
+  request,
+  imsToken,
+  origin,
+  resourceDescription = 'collection',
+  authOptions = {},
+) {
+  const { cloneResponseForReuse = false, requiredRole: requiredRoleOverride } = authOptions;
+  const requiredRole = requiredRoleOverride ?? (request.method === 'GET' ? PERMISSION_READ : PERMISSION_WRITE);
 
   const access = await validateCollectionAccess(
     collectionId,
@@ -371,19 +451,31 @@ async function checkCollectionAuthorization(collectionId, request, imsToken, ori
     requiredRole,
     imsToken,
     origin,
+    { cloneResponseForReuse, incomingRequest: request },
   );
 
   if (!access.allowed) {
-    console.warn(`[${request.user.email}] denied ${request.method} on ${resourceDescription} ${collectionId}: ${access.reason}`);
+    console.warn(
+      `[${request.user.email}] denied ${request.method} on ${resourceDescription} ${collectionId}: ${access.reason}`,
+    );
+    if (access.metadataStatus === 404) {
+      return new Response('Not Found', { status: 404 });
+    }
     return new Response('Forbidden', { status: 403 });
   }
 
-  console.log(`[${request.user.email}] allowed ${request.method} on ${resourceDescription} ${collectionId} as ${access.role}`);
-  return null; // null means authorized
+  console.log(
+    `[${request.user.email}] allowed ${request.method} on ${resourceDescription} ${collectionId} as ${access.role}`,
+  );
+
+  if (access.reuseMetadataResponse) {
+    return { reuseMetadataResponse: access.reuseMetadataResponse };
+  }
+  return null; // null means authorized — caller proxies the request
 }
 
 // ==========================================
-// ContentAI Search Authorization
+// ContentAI search authorization (assets vs collections)
 // ==========================================
 
 /**
@@ -510,15 +602,22 @@ function forceContentAISearchFilter(search, authClauses) {
  * @param {Object} env - Cloudflare environment bindings
  * @returns {Promise<Object[]>} Auth clauses array
  */
-async function buildAssetAuthClauses(request, env) {
+async function buildAssetAuthClauses(_request, _env) {
+  return []; // TPTODO: fix this once we have a proper roles attribute
+  /*
   const user = request.user;
+
+  if (!user.roles) {
+    console.warn(`[${user.email}] authz filter: no roles attribute (re-login required) => show all`);
+    return [];
+  }
 
   // if user has zero roles, make the search return nothing
   if (user.roles.length === 0) {
     // Return a filter that will match nothing
     const noResultsFilter = {
       term: {
-        'assetMetadata.tccc:brand': ['___does_not_exist___'],
+        'assetMetadata.custom:brand': ['___does_not_exist___'],
       },
     };
     console.log(`[${user.email}] authz filter: no roles => block search results`);
@@ -533,90 +632,20 @@ async function buildAssetAuthClauses(request, env) {
 
   const authClauses = [];
 
-  // RESTRICTED BRAND CHECK
-  // get list of all restricted brands from index
-  const restrictedBrands = Object.keys(await getRestrictedBrands(request, env));
-  // determine all restricted brands that the user has no access to
-  const deniedBrands = restrictedBrands.filter((b) => !user.brands.includes(b)) || [];
-  if (deniedBrands.length > 0) {
-    // NOT clause wraps a single term filter with all denied brands
-    authClauses.push({
-      not: [
-        {
-          term: {
-            'assetMetadata.tccc:brand': deniedBrands.map((brand) => `tccc:brand/${brand}`),
-          },
-        },
-      ],
-    });
-  }
-
-  // INTENDED BOTTLER COUNTRY CHECK
-  if (![ROLE.EMPLOYEE, ROLE.CONTINGENT_WORKER, ROLE.AGENCY].some((r) => user.roles.includes(r))) {
-    // These roles require bottler country filtering
-    const countries = [...(user.countries || [])];
-    if (user.roles.includes(ROLE.BOTTLER)) {
-      // bottlers can see content intended for all countries
-      countries.push('all-countries');
-    }
-    if (countries.length > 0) {
-      // only allow countries the user has access to
-      authClauses.push({
-        term: {
-          'assetMetadata.tccc:intendedBottlerCountry': countries,
-        },
-      });
-    } else {
-      // should normally not happen, but safety net to ensure no hits
-      authClauses.push({
-        term: {
-          'assetMetadata.tccc:intendedBottlerCountry': ['___does_not_exist___'],
-        },
-      });
-    }
-  }
-
-  // INTENDED CUSTOMER CHECK
-  // Logic: Show assets where:
-  // - tccc-contentType is NOT 'customers' OR
-  // - tccc-intendedCustomers matches one of user's customers
-  const customerClauses = [];
-  // Add NOT customers content type
-  customerClauses.push({
-    not: [
-      {
-        term: {
-          'assetMetadata.tccc:contentType': ['customers'],
-        },
-      },
-    ],
-  });
-  // Add user's allowed customers
-  if (user.customers && user.customers.length > 0) {
-    customerClauses.push({
-      term: {
-        'assetMetadata.tccc:intendedCustomers': user.customers,
-      },
-    });
-  }
-  // Add customer check - wrap in OR only if there are multiple clauses
-  if (customerClauses.length === 1) {
-    authClauses.push(customerClauses[0]);
-  } else if (customerClauses.length > 1) {
-    authClauses.push(chunkIntoOr(customerClauses));
-  }
-
   return authClauses;
+  */
 }
 
 /**
- * ContentAI Search: search authorization for assets
- * Mimics searchAuthorization logic but generates ContentAI query clauses
+ * ContentAI search authorization for **asset** searches only
+ * (`/adobe/assets/contentai/search` and `/adobe/assets/contentai/collections/{id}/search`).
+ * Collection catalog search uses {@link collectionsSearchContentAIAuthorization}.
+ * Mimics searchAuthorization logic but generates ContentAI query clauses.
  * @param {Object} request - Request object with user info
  * @param {Object} env - Environment object
  * @param {Object} search - ContentAI search object to modify
  */
-async function searchContentAIAuthorization(request, env, search) {
+async function assetsSearchContentAIAuthorization(request, env, search) {
   // ContentAI search request. Enforce filters that ensure only authorized assets are returned
   const authClauses = await buildAssetAuthClauses(request, env);
 
@@ -631,61 +660,186 @@ async function searchContentAIAuthorization(request, env, search) {
 }
 
 /**
- * ContentAI Search: search authorization for collections
- * Mimics collectionsSearchAuthorization logic but generates ContentAI query clauses
- * @param {Object} request - Request object with user info
- * @param {string} imsUserId - IMS user ID for system user filter
- * @param {Object} search - ContentAI search object to modify
- * @param {{ writeOnly?: boolean }} [options] - When writeOnly true, only owner/editor (exclude viewer)
+ * Coerce `relationship` to {@link CollectionListSegment}.
+ * Omitted or unrecognized values become {@link CollectionListSegment.PUBLIC}.
+ * @param {string|undefined} rel
+ * @returns {typeof CollectionListSegment[keyof typeof CollectionListSegment]}
  */
-function collectionsSearchContentAIAuthorization(request, imsUserId, search, options = {}) {
+function normalizeCollectionsSearchRelationship(rel) {
+  if (rel === CollectionListSegment.ALL) return CollectionListSegment.ALL;
+  if (rel === CollectionListSegment.CREATED_BY_ME) return CollectionListSegment.CREATED_BY_ME;
+  if (rel === CollectionListSegment.SHARED_WITH_ME) return CollectionListSegment.SHARED_WITH_ME;
+  if (rel === CollectionListSegment.PUBLIC_VIEW) return CollectionListSegment.PUBLIC_VIEW;
+  if (rel === CollectionListSegment.PUBLIC) return CollectionListSegment.PUBLIC;
+  return CollectionListSegment.PUBLIC;
+}
+
+/**
+ * ContentAI Search: search authorization for collections
+ * @param {Object} request - Request object with user info
+ * @param {Object} search - ContentAI search object to modify
+ * @param {{
+ *   relationship?: 'createdByMe' | 'sharedWithMe' | 'public',
+ *   visibility?: 'all' | 'private' | 'public',
+ * }} [options]
+ * - relationship: createdByMe = owner ACL + optional accessLevel; sharedWithMe = viewer ACL only;
+ *   public = accessLevel public only; omitted or invalid → public.
+ *   visibility: only for `createdByMe` (`all` | `private` | `public`); ignored otherwise → `all`.
+ */
+function collectionsSearchContentAIAuthorization(request, search, options = {}) {
   const user = request.user;
   const userEmailLower = user.email?.toLowerCase();
-  const writeOnly = options.writeOnly === true;
+  const relationship = normalizeCollectionsSearchRelationship(options.relationship);
+  let visibility = CollectionCreatedByMeVisibility.ALL;
+  if (relationship === CollectionListSegment.CREATED_BY_ME) {
+    visibility =
+      options.visibility === CollectionCreatedByMeVisibility.PRIVATE ||
+      options.visibility === CollectionCreatedByMeVisibility.READ_ONLY ||
+      options.visibility === CollectionCreatedByMeVisibility.PUBLIC ||
+      options.visibility === CollectionCreatedByMeVisibility.ALL
+        ? options.visibility
+        : CollectionCreatedByMeVisibility.ALL;
+  }
 
   if (!userEmailLower) {
-    // No email, block all results by adding impossible filter
-    forceContentAISearchFilter(search, [{
-      term: {
-        'collectionMetadata.tccc:metadata.tccc:acl.tccc:assetCollectionOwner': ['___does_not_exist___'],
+    forceContentAISearchFilter(search, [
+      {
+        term: {
+          [CONTENTAI_COLLECTION_SEARCH_ACL.owner]: ['___does_not_exist___'],
+        },
       },
-    }]);
+    ]);
     return;
   }
 
-  // System user filter: collections created by the technical account
-  const systemUserFilter = {
+  const userEmailUpper = userEmailLower.toUpperCase();
+  const emailVariants = [userEmailLower, userEmailUpper];
+
+  const searchOwnerClause = {
+    term: { [CONTENTAI_COLLECTION_SEARCH_ACL.owner]: emailVariants },
+  };
+  const searchViewerClause = {
+    term: { [CONTENTAI_COLLECTION_SEARCH_ACL.viewer]: emailVariants },
+  };
+  const accessPrivate = {
+    term: { [CONTENTAI_COLLECTION_ACCESS_LEVEL]: [CollectionCreatedByMeVisibility.PRIVATE] },
+  };
+  const accessReadOnly = {
+    term: { [CONTENTAI_COLLECTION_ACCESS_LEVEL]: [CollectionCreatedByMeVisibility.READ_ONLY] },
+  };
+  const accessPublic = {
+    term: { [CONTENTAI_COLLECTION_ACCESS_LEVEL]: [CollectionCreatedByMeVisibility.PUBLIC] },
+  };
+  // Both public access levels — used in ALL (accessible) relationship
+  const accessAnyPublic = {
     term: {
-      'repositoryMetadata.repo:createdBy': [imsUserId],
+      [CONTENTAI_COLLECTION_ACCESS_LEVEL]: [
+        CollectionCreatedByMeVisibility.PUBLIC,
+        CollectionCreatedByMeVisibility.READ_ONLY,
+      ],
     },
   };
 
-  // Build ACL filter: owner and editor always; include viewer only when not writeOnly
-  const userEmailUpper = userEmailLower.toUpperCase();
-  const emailVariants = [userEmailLower, userEmailUpper];
-  const aclClauses = [
-    {
-      term: {
-        'collectionMetadata.tccc:metadata.tccc:acl.tccc:assetCollectionOwner': emailVariants,
-      },
-    },
-    {
-      term: {
-        'collectionMetadata.tccc:metadata.tccc:acl.tccc:assetCollectionEditor': emailVariants,
-      },
-    },
-  ];
-  if (!writeOnly) {
-    aclClauses.push({
-      term: {
-        'collectionMetadata.tccc:metadata.tccc:acl.tccc:assetCollectionViewer': emailVariants,
-      },
-    });
-  }
-  const aclFilter = chunkIntoOr(aclClauses);
+  /** @type {Object[]} */
+  let authClauses;
 
-  forceContentAISearchFilter(search, [systemUserFilter, aclFilter]);
-  console.log(`[${userEmailLower}] collections search filter applied (ContentAI)${writeOnly ? ' [writeOnly]' : ''}`);
+  if (relationship === CollectionListSegment.ALL) {
+    // Everything the user can access: owned + any public access level + shared-with-me
+    authClauses = [{ or: [searchOwnerClause, accessAnyPublic, searchViewerClause] }];
+  } else if (relationship === CollectionListSegment.CREATED_BY_ME) {
+    authClauses = [searchOwnerClause];
+    if (visibility === CollectionCreatedByMeVisibility.PRIVATE) {
+      authClauses.push(accessPrivate);
+    } else if (visibility === CollectionCreatedByMeVisibility.READ_ONLY) {
+      authClauses.push(accessReadOnly);
+    } else if (visibility === CollectionCreatedByMeVisibility.PUBLIC) {
+      authClauses.push(accessPublic);
+    }
+  } else if (relationship === CollectionListSegment.SHARED_WITH_ME) {
+    authClauses = [searchViewerClause];
+  } else if (relationship === CollectionListSegment.PUBLIC_VIEW) {
+    authClauses = [accessReadOnly];
+  } else {
+    // PUBLIC — anyone can edit
+    authClauses = [accessPublic];
+  }
+
+  forceContentAISearchFilter(search, authClauses);
+  console.log(
+    `[${userEmailLower}] collections search filter applied (ContentAI)` +
+      `${relationship !== CollectionListSegment.PUBLIC ? ` [relationship=${relationship}]` : ''}` +
+      `${relationship === CollectionListSegment.CREATED_BY_ME && visibility !== CollectionCreatedByMeVisibility.ALL ? ` [visibility=${visibility}]` : ''}`,
+  );
+}
+
+/**
+ * Pretty-prints an outgoing DM search request to the console (debug only).
+ * Authorization header is redacted; body is pretty-printed JSON when parseable.
+ */
+function logDmRequest(method, url, headers, body) {
+  const logHeaders = {};
+  headers.forEach((v, k) => {
+    logHeaders[k] = k.toLowerCase() === 'authorization' ? '[REDACTED]' : v;
+  });
+  console.log(`[DM →] ${method} ${url.toString()}`);
+  console.log(`[DM →] Headers:\n${JSON.stringify(logHeaders, null, 2)}`);
+  if (!body) return;
+  try {
+    console.log(`[DM →] Body:\n${JSON.stringify(JSON.parse(body), null, 2)}`);
+  } catch {
+    console.log(`[DM →] Body: ${body}`);
+  }
+}
+
+/**
+ * Pretty-prints the DM search response (debug only). Body is truncated
+ * to keep log lines manageable.
+ */
+async function logDmResponse(response, elapsedMs) {
+  console.log(`[DM ←] ${response.status} ${response.statusText} (${elapsedMs}ms)`);
+  try {
+    const clone = response.clone();
+    const text = await clone.text();
+    let prettyBody;
+    try {
+      prettyBody = JSON.stringify(JSON.parse(text), null, 2);
+      if (prettyBody.length > 4000) prettyBody = `${prettyBody.slice(0, 4000)}\n… [truncated]`;
+    } catch {
+      prettyBody = text.length > 2000 ? `${text.slice(0, 2000)}… [truncated]` : text;
+    }
+    console.log(`[DM ←] Body:\n${prettyBody}`);
+  } catch {
+    console.log('[DM ←] Body: (could not read)');
+  }
+}
+
+/**
+ * Buffer a JSON search response, apply encodeHit to each item in hits[], and re-stream.
+ */
+async function encodeHitsResponse(response, encodeHit) {
+  // Clone before reading — response.json() drains the body stream; if it throws
+  // we return the clone so the browser still gets the original payload.
+  const clone = response.clone();
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    const cloneHeaders = new Headers(clone.headers);
+    cloneHeaders.delete('content-encoding');
+    cloneHeaders.delete('content-length');
+    return new Response(clone.body, { status: clone.status, headers: cloneHeaders });
+  }
+  // DM ContentAI search returns hits.results[], not hits[] directly
+  const results = data?.hits?.results;
+  if (Array.isArray(results)) data.hits.results = results.map(encodeHit);
+  const headers = new Headers(response.headers);
+  // Workers transparently decompress the body but preserve Content-Encoding on the
+  // Response object. The new body is uncompressed JSON, so strip both headers to
+  // avoid browser decode failures and Content-Length mismatches.
+  headers.delete('content-encoding');
+  headers.delete('content-length');
+  headers.set('Content-Type', 'application/json');
+  return new Response(JSON.stringify(data), { status: response.status, headers });
 }
 
 /**
@@ -696,7 +850,6 @@ function collectionsSearchContentAIAuthorization(request, imsUserId, search, opt
  * 2. Authenticates requests with cached IMS tokens
  * 3. Applies role-based authorization filters for searches
  * 4. Enforces collection-level ACL for CRUD operations
- * 5. Tracks download and search analytics (fire-and-forget)
  *
  * URL transformation:
  * - Incoming: <host>/api/adobe/assets/...
@@ -707,7 +860,6 @@ function collectionsSearchContentAIAuthorization(request, imsUserId, search, opt
  * @param {Object} env - Cloudflare environment bindings
  * @param {string} env.AEM_ENV_ID - AEM environment ID (format: pXXXXX-eYYYYY)
  * @param {KVNamespace} env.AUTH_TOKENS - KV store for IMS token caching
- * @param {AnalyticsEngine} env.KO_ANALYTICS_ENGINE_TEST - Analytics Engine binding
  * @param {ExecutionContext} ctx - Cloudflare execution context (for waitUntil)
  * @returns {Promise<Response>} Proxied response from Adobe Dynamic Media
  *
@@ -717,7 +869,7 @@ function collectionsSearchContentAIAuthorization(request, imsUserId, search, opt
  *
  * @see {@link https://developers.cloudflare.com/workers/runtime-apis/fetch-event/}
  */
-export async function originDynamicMedia(request, env, ctx) {
+export async function originDynamicMedia(request, env, _ctx) {
   // incoming url:
   //   <host>/api/adobe/assets/...
   // origin url:
@@ -735,6 +887,12 @@ export async function originDynamicMedia(request, env, ctx) {
 
   // remove /api from path
   url.pathname = url.pathname.replace(PATH_API_PREFIX, '');
+
+  // Decode Sqids tokens in URL path segments back to real DM IDs.
+  // Must run before any path-based ACL checks or rewrites.
+  const sqidsAlphabet = env.SQIDS_ALPHABET || null;
+  if (sqidsAlphabet) url.pathname = decodePathIds(url.pathname, sqidsAlphabet);
+  const originalPathname = url.pathname;
 
   const headers = new Headers(request.headers);
   // Convert body to string immediately so we can log it later
@@ -755,9 +913,12 @@ export async function originDynamicMedia(request, env, ctx) {
   headers.set(HEADER_AUTHORIZATION, `Bearer ${imsToken}`);
   headers.delete(HEADER_COOKIE);
 
-  // Handle Tags API (GET, no body) - rewrite path only
-  if (url.pathname === '/adobe/assets/contentai/tags') {
-    url.pathname = '/adobe/experimental/tags-expires-20261130/tags';
+  // Handle Tags API (GET, no body) - rewrite path prefix
+  if (url.pathname.startsWith('/adobe/assets/contentai/tags')) {
+    url.pathname = url.pathname.replace(
+      '/adobe/assets/contentai/tags',
+      '/adobe/experimental/tags-expires-20261130/tags',
+    );
   }
 
   // Handle search requests (POST with body)
@@ -773,12 +934,9 @@ export async function originDynamicMedia(request, env, ctx) {
     body = body.replaceAll(TEMPLATE_SYSTEM_USER_ID, imsUserId);
 
     const search = JSON.parse(body);
-    extractSearchContext(request, search);
-    await searchContentAIAuthorization(request, env, search);
-    forceContentAISearchFilter(search, [
-      { term: { 'assetMetadata.tccc:includeInSearch': ['true'] } },
-      { term: { 'assetMetadata.tccc:assetStatus': ['approved'] } },
-    ]);
+    if (sqidsAlphabet) replaceMatchTextWithAssetTerm(search, (s) => decodeToAssetUrn(s, sqidsAlphabet));
+    await assetsSearchContentAIAuthorization(request, env, search);
+    forceContentAISearchFilter(search, []);
     url.pathname = '/adobe/assets/search';
     body = JSON.stringify(search);
   } else if (url.pathname === '/adobe/assets/contentai/collections/search') {
@@ -790,14 +948,40 @@ export async function originDynamicMedia(request, env, ctx) {
     body = body.replaceAll(TEMPLATE_SYSTEM_USER_ID, imsUserId);
 
     const search = JSON.parse(body);
-    const writeOnly = search.writeOnly === true;
-    if (writeOnly) delete search.writeOnly; // do not forward to upstream
-    extractSearchContext(request, search);
-    collectionsSearchContentAIAuthorization(request, imsUserId, search, { writeOnly });
+    const relationship = search.relationship;
+    const normalizedRelationship = normalizeCollectionsSearchRelationship(relationship);
+    const visibility =
+      normalizedRelationship === CollectionListSegment.CREATED_BY_ME &&
+      (search.visibility === CollectionCreatedByMeVisibility.PRIVATE ||
+        search.visibility === CollectionCreatedByMeVisibility.READ_ONLY ||
+        search.visibility === CollectionCreatedByMeVisibility.PUBLIC ||
+        search.visibility === CollectionCreatedByMeVisibility.ALL)
+        ? search.visibility
+        : CollectionCreatedByMeVisibility.ALL;
+    if (search.relationship !== undefined) delete search.relationship;
+    if (search.visibility !== undefined) delete search.visibility;
+    collectionsSearchContentAIAuthorization(request, search, {
+      relationship,
+      visibility,
+    });
     url.pathname = '/adobe/experimental/collectionsearch-expires-20260915/assets/collections/search';
     body = JSON.stringify(search);
   } else if (collectionAssetMatch) {
-    // Search assets in a collection
+    // Search assets in a collection — require same collection read ACL as metadata before proxying search
+    const collectionId = collectionAssetMatch[1];
+    const collectionSearchAuth = await checkCollectionAuthorization(
+      collectionId,
+      request,
+      imsToken,
+      url.origin,
+      'collection asset search',
+      { requiredRole: PERMISSION_READ },
+    );
+    if (collectionSearchAuth?.reuseMetadataResponse) {
+      return collectionSearchAuth.reuseMetadataResponse;
+    }
+    if (collectionSearchAuth) return collectionSearchAuth;
+
     headers.set('x-ch-request', 'search');
     headers.set('x-polaris-search-provider', '3');
 
@@ -805,14 +989,11 @@ export async function originDynamicMedia(request, env, ctx) {
     body = body.replaceAll(TEMPLATE_SYSTEM_USER_ID, imsUserId);
 
     const search = JSON.parse(body);
-    extractSearchContext(request, search);
-    const collectionId = collectionAssetMatch[1];
-    await searchContentAIAuthorization(request, env, search);
+    if (sqidsAlphabet) replaceMatchTextWithAssetTerm(search, (s) => decodeToAssetUrn(s, sqidsAlphabet));
+    await assetsSearchContentAIAuthorization(request, env, search);
     url.pathname = `/adobe/experimental/collectionsearch-expires-20260915/assets/collections/${collectionId}/search`;
     body = JSON.stringify(search);
   }
-
-  handleArchiveAnalytics(url, request, headers, env, ctx);
 
   // access to experimental APIs
   headers.set(ADOBE_EXPERIMENTAL_HEADER, '1');
@@ -827,8 +1008,17 @@ export async function originDynamicMedia(request, env, ctx) {
   // Exclude /adobe/assets/collections/search (search endpoint, not a collectionId)
   if (url.pathname.match(/^\/adobe\/assets\/collections\/(?!search$)[^/]+$/)) {
     const collectionId = url.pathname.split('/').pop();
-    const authResponse = await checkCollectionAuthorization(collectionId, request, imsToken, url.origin, 'collection');
-    if (authResponse) return authResponse;
+    // Reuse the metadata GET used for ACL when the browser does an unconditional GET, so we do not fetch twice.
+    // Skip reuse when the client sends validators (304 semantics must match forwarded headers).
+    const cloneResponseForReuse =
+      request.method === 'GET' && !request.headers.get('if-none-match') && !request.headers.get('if-modified-since');
+    const authResult = await checkCollectionAuthorization(collectionId, request, imsToken, url.origin, 'collection', {
+      cloneResponseForReuse,
+    });
+    if (authResult?.reuseMetadataResponse) {
+      return authResult.reuseMetadataResponse;
+    }
+    if (authResult) return authResult;
   }
 
   // Authorization check for collection items endpoint
@@ -836,27 +1026,44 @@ export async function originDynamicMedia(request, env, ctx) {
   // This applied for BOTH Algolia search and ContentAI search
   if (url.pathname.match(/^\/adobe\/assets\/collections\/[^/]+\/items$/)) {
     const collectionId = url.pathname.split('/')[4];
-    const authResponse = await checkCollectionAuthorization(collectionId, request, imsToken, url.origin, 'collection items');
-    if (authResponse) return authResponse;
+    const authResult = await checkCollectionAuthorization(
+      collectionId,
+      request,
+      imsToken,
+      url.origin,
+      'collection items',
+    );
+    if (authResult) return authResult;
   }
 
-  // console.log('>>>', request.method, url, headers);
-
-  // TPTODO: Keep this curl command for debugging, comment out when committing
+  // // TPTODO: Keep this curl command for debugging, comment out when committing
   // const debugHeaders = [
-  //   'x-api-key', 'authorization', 'x-ch-request', 'x-polaris-search-provider', 'x-adobe-accept-experimental', 'if-match',
+  //   'x-api-key',
+  //   'authorization',
+  //   'x-ch-request',
+  //   'x-polaris-search-provider',
+  //   'x-adobe-accept-experimental',
+  //   'if-match',
   // ];
   // const curlHeaders = [...headers.entries()]
   //   .filter(([k]) => debugHeaders.includes(k.toLowerCase()))
   //   .map(([k, v]) => `-H '${k}: ${v}'`)
   //   .join(' \\\n  ');
   // const curlBody = body ? `-d '${body.replace(/'/g, "\\'")}'` : '';
-  // console.warn(`[DEBUG CURL]\ncurl -X ${request.method} '${url}' \\\n  ${curlHeaders}${curlBody ? ` \\\n  ${curlBody}` : ''}`);
+  // console.warn(
+  //   `[DEBUG CURL]\ncurl -X ${request.method} '${url}' \\\n  ${curlHeaders}${curlBody ? ` \\\n  ${curlBody}` : ''}`,
+  // );
 
   // The browser's Referer can be enormous (search URLs with many facet filters
   // easily reach 3KB+) and push total headers past the upstream's 8KB limit → 400.
   headers.delete('referer');
 
+  const isSearchCall =
+    request.method === 'POST' && originalPathname.includes('/contentai/') && originalPathname.endsWith('/search');
+  const debugDM = isSearchCall && env.DEBUG_HTTP_DM_SEARCH === 'true';
+  if (debugDM) logDmRequest(request.method, url, headers, body);
+
+  const dmStart = debugDM ? Date.now() : 0;
   const response = await fetch(url, {
     method: request.method,
     headers: headers,
@@ -875,19 +1082,66 @@ export async function originDynamicMedia(request, env, ctx) {
     if (authResponse.status === 403) {
       return authResponse;
     }
+
+    // SPONSORSHIP DISCLAIMER GATE
+    // For sponsorship assets, withhold metadata until the user accepts a disclaimer.
+    // The UI is expected to:
+    //   1. Issue an initial GET without `x-disclaimer-accepted`. If the asset is a
+    //      sponsorship, the worker responds 200 with `{ requiresDisclaimer: true, reason: 'sponsorship' }`
+    //      and `x-requires-disclaimer: sponsorship` header instead of the real metadata.
+    //   2. Show the disclaimer to the user. On Accept, re-issue the GET with
+    //      `x-disclaimer-accepted: true`. The worker then returns metadata as normal.
+    const disclaimerAccepted = request.headers.get('x-disclaimer-accepted') === 'true';
+    if (!disclaimerAccepted) {
+      let metadataData;
+      try {
+        metadataData = await response.clone().json();
+      } catch {
+        // Non-JSON response: pass through unchanged.
+      }
+      if (metadataData && isSponsorshipMetadata(metadataData)) {
+        console.log(`[${request.user.email}] sponsorship disclaimer required for ${url.pathname}`);
+        return new Response(JSON.stringify({ requiresDisclaimer: true, reason: 'sponsorship' }), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-requires-disclaimer': 'sponsorship',
+            'Cache-Control': 'no-store',
+          },
+        });
+      }
+    }
   }
 
-  handleDownloadAnalytics(url, request, response, env, ctx);
-  handleSearchAnalytics(url, request, response, env, ctx);
+  // Encode IDs in search responses so browser URLs show Sqids tokens, not raw UUIDs.
+  if (sqidsAlphabet && response.ok) {
+    const encodeAssetHit = (hit) => ({
+      ...hit,
+      ...(hit.assetId ? { assetId: encodeId(hit.assetId, sqidsAlphabet) } : {}),
+    });
+
+    if (originalPathname === '/adobe/assets/contentai/search') {
+      const encoded = await encodeHitsResponse(response, encodeAssetHit);
+      if (debugDM) await logDmResponse(encoded, Date.now() - dmStart);
+      return encoded;
+    }
+    // Assets loaded within a collection detail page
+    if (originalPathname.match(/^\/adobe\/assets\/contentai\/collections\/[^/]+\/search$/)) {
+      const encoded = await encodeHitsResponse(response, encodeAssetHit);
+      if (debugDM) await logDmResponse(encoded, Date.now() - dmStart);
+      return encoded;
+    }
+    // Collection search hits (hit.id) are opaque DM strings, not UUIDs — no encoding needed.
+  }
+
+  if (debugDM) await logDmResponse(response, Date.now() - dmStart);
 
   // Paths that must never be served from Cloudflare's edge cache.
   // These are mutable or short-lived endpoints where a stale cached response
-  // would break functionality (e.g. archive status polling returning PROCESSING
-  // forever because the first 200 was cached with cacheEverything:true on custom
-  // zone domains — workers.dev bypasses edge cache automatically, custom zones do not).
+  // would break functionality (e.g. archive status polling).
   const noCachePaths = [
-    /^\/adobe\/assets\/archives(\/|$)/,  // archive creation + status polling
-    /^\/adobe\/assets\/[^/]+\/token$/,   // download tokens (short-lived, user-specific)
+    /^\/adobe\/assets\/archives(\/|$)/, // archive creation + status polling
+    /^\/adobe\/assets\/[^/]+\/token$/, // download tokens (short-lived, user-specific)
   ];
   const bypassEdgeCache = noCachePaths.some((pattern) => pattern.test(url.pathname));
 
@@ -906,19 +1160,21 @@ export async function originDynamicMedia(request, env, ctx) {
 // Export authorization functions for testing
 export {
   forceContentAISearchFilter,
-  searchContentAIAuthorization,
+  assetsSearchContentAIAuthorization,
   collectionsSearchContentAIAuthorization,
   // Asset metadata authorization
   buildAssetAuthClauses,
   // Query chunking utilities
   chunkIntoAnd,
   chunkIntoOr,
+  // IMS authentication (used by worker-proxied Adobe APIs)
+  getIMSToken,
 };
 
 // Re-export from asset-access.js for convenience
 export {
   ancestorsToTaxonomyPath,
-  extractTaxonomyPaths,
   checkAssetMetadataAuthorization,
   enforceAssetMetadataAuthorization,
+  extractTaxonomyPaths,
 } from './asset-access.js';
