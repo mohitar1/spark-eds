@@ -1,16 +1,8 @@
-import { defineWorkersConfig } from '@cloudflare/vitest-pool-workers/config';
+import { defineConfig } from 'vitest/config';
 
-export default defineWorkersConfig({
+export default defineConfig({
   test: {
-    poolOptions: {
-      workers: {
-        wrangler: { configPath: './wrangler.toml' },
-        miniflare: {
-          // Mock KV namespaces for testing
-          kvNamespaces: ['AUTH_TOKENS', 'SAVED_SEARCHES', 'RIGHTS_REQUESTS', 'RIGHTS_REQUEST_REVIEWS', 'RIGHTS_REQUEST_REMINDERS', 'MESSAGES'],
-        },
-      },
-    },
+    include: ['src/**/__tests__/**/*.test.js'],
+    environment: 'node',
   },
 });
-
