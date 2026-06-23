@@ -27,13 +27,13 @@ describe('processTopSearchData', () => {
   describe('field mapping', () => {
     it('maps searchTerm, searchType, uniqueSearchers and totalSearches', () => {
       const result = processTopSearchData({
-        searchTerm: 'coca cola',
+        searchTerm: 'sample brand',
         searchType: 'templates',
         uniqueSearchers: '7',
         totalSearches: '200',
       }, 0);
 
-      expect(result.searchTerm).toBe('coca cola');
+      expect(result.searchTerm).toBe('sample brand');
       expect(result.searchType).toBe('templates');
       expect(result.uniqueSearchers).toBe(7);
       expect(result.totalSearches).toBe(200);

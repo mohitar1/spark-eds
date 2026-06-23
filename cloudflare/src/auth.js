@@ -172,18 +172,18 @@ function getOriginalRedirectUrl(request, originalUrl) {
 export async function withAuthentication(request, env) {
   request.uri = new URL(request.url);
 
-  if (env.DISABLE_AUTHENTICATION === 'true') {
-    request.user = {
-      email: 'dev@localhost',
-      name: 'Local Dev',
-      roles: ['admin', 'employee'],
-      permissions: ['preview', 'admin-reports', 'manage-rights', 'admin-rights', 'sudo'],
-      countries: ['us'],
-      koid: 'local-dev',
-    };
-    console.warn('Authentication is disabled because DISABLE_AUTHENTICATION is set');
-    return;
-  }
+  // if (env.DISABLE_AUTHENTICATION === 'true') {
+  //   request.user = {
+  //     email: 'dev@localhost',
+  //     name: 'Local Dev',
+  //     roles: ['admin', 'employee'],
+  //     permissions: ['preview', 'admin-reports', 'manage-rights', 'admin-rights', 'sudo'],
+  //     countries: ['us'],
+  //     userId: 'local-dev',
+  //   };
+  //   console.warn('Authentication is disabled because DISABLE_AUTHENTICATION is set');
+  //   return;
+  // }
 
   const sessionJWT = request.cookies[COOKIE_SESSION];
   if (!sessionJWT) {
@@ -334,7 +334,7 @@ authRouter
     const sessionJWT = await createSessionJWT(request, env, session);
 
     // Track login analytics event
-    if (!session.koid) {
+    if (!session.userId) {
       console.warn(
         '[Analytics] Login event written with no KOID — user may be missing User ID in IDP token.',
         `email=${maskEmail(session.email)}`,
@@ -343,7 +343,7 @@ authRouter
     }
     const { trackAnalyticsEvent } = await import('./util/analytics-helper.js');
     await trackAnalyticsEvent(env, 'login', {
-      koid: session.koid,
+      userId: session.userId,
       country: session.country,
       employeeType: session.employeeType,
       company: session.company,
@@ -354,7 +354,7 @@ authRouter
     const { upsertUserLogin } = await import('./api/user-logins.js');
     await upsertUserLogin(env, {
       email: session.email,
-      koid: session.koid,
+      userId: session.userId,
       fullName: session.name,
       title: session.title,
       country: session.country,

@@ -1,4 +1,4 @@
-# KO Assets Pilot
+# Spark Pilot
 
 Astra Pilot for an Assets Share Portal built on Helix & Content Hub (Dynamic Media) APIs.
 
@@ -7,14 +7,14 @@ Astra Pilot for an Assets Share Portal built on Helix & Content Hub (Dynamic Med
 ### Main site (cloudflare worker):
 - Live: https://pilot.assets.coke.com
 - Preview: https://preview.assets.coke.com
-- Branch (preview): <https://{branch}-koassets.adobecocacola.workers.dev>
-- Branch (live): <https://{branch}-live-koassets.adobecocacola.workers.dev>
+- Branch (preview): <https://{branch}-spark-eds.workers.dev>
+- Branch (live): <https://{branch}-live-spark-eds.workers.dev>
 
 Note: For branch URLs to work, the branch names must be short and only include lowercase letters, numbers, and dashes characters. Due to [cloudflare worker alias limitations](https://developers.cloudflare.com/workers/configuration/previews/#rules-and-limitations).
 
 ### Helix origins
-- Live: https://main--koassets--the-coca-cola-company.aem.live
-- Preview: https://main--koassets--the-coca-cola-company.aem.page
+- Live: https://main--spark-eds--adobe.aem.live
+- Preview: https://main--spark-eds--adobe.aem.page
 
 ## Project structure
 
@@ -35,7 +35,7 @@ Before using the aem-boilerplate, we recommand you to go through the documentati
 
 ### KO-Asset Search Block
 
-The asset search functionality is implemented as a vanilla JS EDS block in `blocks/koassets-search/`.
+The asset search functionality is implemented as a vanilla JS EDS block in `blocks/search-results/`.
 
 ### Cloudflare Worker
 
@@ -68,12 +68,12 @@ Add `cloudflare/.secrets` file with the [required secrets](cloudflare/README.md#
 ```
 # Cookie authentication
 # For local development, not the same as production. generate using `openssl rand -base64 32`
-KOASSETS_COOKIE_SECRET="..."
+SPARK_COOKIE_SECRET="..."
 
 # DM IMS technical account token
 # Get from Adobe developer console project with access to AEM_ENV_ID delivery environment
-KOASSETS_DM_CLIENT_ID="..."
-KOASSETS_DM_CLIENT_SECRET="..."
+SPARK_DM_CLIENT_ID="..."
+SPARK_DM_CLIENT_SECRET="..."
 ```
 
 ### Run full stack locally
@@ -104,7 +104,7 @@ Environment variables supported by `npm run dev`:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `AEM_PAGES_URL` | EDS content URL | https://main--koassets--the-coca-cola-company.aem.page |
+| `AEM_PAGES_URL` | EDS content URL | https://main--spark-eds--adobe.aem.page |
 | `AEM_ENV_ID` | AEM Program + Environment ID | p64403-e544653 |
 | `DEV_BROWSER` | Browser to open. Mac OS only.<br><br>Options:<ul><li>`Google Chrome`</li><li>`Safari`</li><li>`Firefox`</li></ul> | - (system default) |
 | `AEM_LOG_LEVEL` | Set [`aem` log level](https://www.aem.live/developer/cli-reference#general-options). | `info` |
@@ -155,7 +155,7 @@ Test will also run during PR builds.
 ## SonarQube
 
 SonarQube analysis is configured in [sonar-project.properties](sonar-project.properties).
-Project on Hosted instance can be found at https://aem-assets.cq.corp.adobe.com/dashboard?id=koassets
+Project on Hosted instance can be found at https://aem-assets.cq.corp.adobe.com/dashboard?id=spark
 
 To run full project analysis and update hosted report, run from root:
 

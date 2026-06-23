@@ -295,13 +295,13 @@ function extractDownloadContext(url, _request) {
 
 /**
  * Extract common user data for analytics events
- * Note: koid replaces email as user identifier for privacy
+ * Note: userId replaces email as user identifier for privacy
  * @param {Object} user - User session data
  * @returns {Object} Common user data fields
  */
 function extractCommonUserData(user) {
   return {
-    koid: user.koid,
+    userId: user.userId,
     country: user.country,
     employeeType: user.employeeType,
     company: user.company,
@@ -329,7 +329,7 @@ function trackWithWaitUntil(ctx, analyticsPromise) {
  */
 async function trackDownloadAnalytics(user, downloadContext, env) {
   try {
-    if (!user?.koid) {
+    if (!user?.userId) {
       console.warn(
         '[Analytics] Download event written with no KOID — user may be missing User ID in IDP token.',
         `downloadItemId=${downloadContext.downloadItemId}`,
@@ -356,7 +356,7 @@ async function trackDownloadAnalytics(user, downloadContext, env) {
     await trackAnalyticsEvent(env, 'download', eventData);
 
     if (DEBUG_ANALYTICS) {
-      console.info(`[Analytics] Download tracked: ${user.koid} downloaded ${downloadContext.resourceType} (${downloadContext.rendition}) from ${downloadContext.campaign} (brand: ${downloadContext.brand})`);
+      console.info(`[Analytics] Download tracked: ${user.userId} downloaded ${downloadContext.resourceType} (${downloadContext.rendition}) from ${downloadContext.campaign} (brand: ${downloadContext.brand})`);
     }
   } catch (err) {
     console.error('[Analytics] Download tracking error:', err);
@@ -415,7 +415,7 @@ async function trackArchiveAnalytics(user, analyticsContext, env) {
         if (publicationId.startsWith('/')) {
           console.error(
             '[Analytics] publicationId is a DAM path — expected a UUID.',
-            `user=${commonUserData.koid || '(unknown)'}`,
+            `user=${commonUserData.userId || '(unknown)'}`,
             `publicationId=${publicationId}`,
             `assetId=${assetId}`,
             `resourceType=${analyticsContext.resourceType || 'asset'}`,
@@ -494,7 +494,7 @@ async function processSearchAnalytics(clonedResponse, user, searchContext, env) 
     const data = await clonedResponse.json();
     const resultCount = extractSearchResultCount(data);
 
-    if (!user?.koid) {
+    if (!user?.userId) {
       console.warn(
         '[Analytics] Search event written with no KOID — user may be missing User ID in IDP token.',
         `searchTerm="${searchContext.searchTerm}"`,
@@ -512,7 +512,7 @@ async function processSearchAnalytics(clonedResponse, user, searchContext, env) 
     });
 
     if (DEBUG_ANALYTICS) {
-      console.info(`[Analytics] Search tracked: ${user.koid} searched for "${searchContext.searchTerm}" (${searchContext.searchType}), ${resultCount} results`);
+      console.info(`[Analytics] Search tracked: ${user.userId} searched for "${searchContext.searchTerm}" (${searchContext.searchType}), ${resultCount} results`);
     }
   } catch (err) {
     console.error('[Analytics] Search processing error:', err);
@@ -539,13 +539,13 @@ export function extractSearchContext(request, search) {
   if (searchType === null) {
     const referer = request.headers.get(HEADER_REFERER) || '(none)';
     const userAgent = request.headers.get('user-agent') || '(none)';
-    const koid = request.user?.koid || '(unauthenticated)';
+    const userId = request.user?.userId || '(unauthenticated)';
     const searchTerm = findContentAISearchTerm(search.query)
       || search.requests?.[0]?.params?.query
       || '(unknown)';
     console.warn(
       '[Analytics] Search not from UI — skipping analytics.',
-      `user=${koid}`,
+      `user=${userId}`,
       `referer=${referer}`,
       `searchTerm="${searchTerm}"`,
       `userAgent=${userAgent}`,

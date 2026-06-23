@@ -14,25 +14,22 @@ import { error, Router, withCookies } from 'itty-router';
 import { authRouter, withAuthentication } from './auth';
 import { originDynamicMedia } from './origin/dm';
 import { originHelix } from './origin/helix';
-import { originFadel } from './origin/fadel';
-import { originPublish, originPublishPassthrough, originPublishChili } from './origin/publish';
-import { publishShareRouter } from './origin/publish-routes';
 import { parsePageExclusions, isUserExcluded } from './origin/page-access';
 import { cors } from './util/itty';
 import { apiUser } from './user';
-import { savedSearchesApi } from './api/savedsearches';
-import { rightsRequestsApi } from './api/rightsrequests';
 import { notificationsApi } from './api/notifications';
-import { analyticsApi } from './api/analytics';
+import { analyticsApi, searchMetricsApi } from './api/analytics';
 import { exportUserLoginsCSV } from './api/user-logins';
-import { collectionsApi } from './api/collections';
+import {
+  auditPostEvent, auditGetSummary, auditGetOrganisations, auditGetExportCsv,
+} from './api/audit';
 import { handleScheduledTokenRefresh } from './scheduled/token-refresh';
-import { handleStatusReminders, handleUsageRightsReminders } from './scheduled/rights-reminders';
 
 // Shared CORS origins
 const allowedOrigins = [
-  'https://spark-eds.adobesantander.workers.dev',
-  /https:\/\/.*-spark-eds\.adobesantander\.workers\.dev$/,
+  'https://spark.aem.media',
+  'https://spark-eds.sparkedsmedia.workers.dev',
+  /https:\/\/.*-spark-eds\.sparkedsmedia\.workers\.dev$/,
   /http:\/\/localhost:.*/,
 ];
 
@@ -56,8 +53,7 @@ function withTlsCheck(request) {
 /** Switch to AEM preview content for preview hostnames. */
 function withPreviewOrigin(request, env) {
   const { hostname } = new URL(request.url);
-  if (hostname === 'preview.assets.coke.com'
-      || (hostname.startsWith('preview-') && hostname.endsWith('.workers.dev'))) {
+  if (hostname.startsWith('preview-') && hostname.endsWith('.workers.dev')) {
     request.helixOrigin = env.HELIX_ORIGIN.replace('.aem.live', '.aem.page');
     console.info(`Preview hostname detected: ${hostname}, using Helix origin: ${request.helixOrigin}`);
   }
@@ -74,7 +70,6 @@ const router = Router({
   before: [withTlsCheck, preflight, withPreviewOrigin],
   finally: [corsify],
   catch: (err) => {
-    // log stack traces for debugging
     console.error('error', err);
     throw err;
   },
@@ -84,7 +79,6 @@ router
   // parse cookies (middleware)
   .all('*', (request) => {
     withCookies(request);
-    // decode cookie values, not done by itty-router withCookies()
     for (const key in request.cookies) {
       request.cookies[key] = decodeURIComponent(request.cookies[key]);
     }
@@ -93,9 +87,10 @@ router
   // login and logout flows (must come first)
   .all('*', authRouter.fetch)
 
-  // public content
-  .get('/public/download/original/*', originPublishPassthrough)
-  .get('/rendition/*', originPublishPassthrough)
+  // redirect bare root to the default locale home (search-first portal)
+  .get('/', (request) => Response.redirect(`${new URL(request.url).origin}/en/`, 302))
+
+  // public static assets
   .get('/public/*', originHelix)
   .get('/tools/*', originHelix)
   .get('/scripts/*', originHelix)
@@ -105,13 +100,6 @@ router
   .get('/icons/*', originHelix)
   .get('/favicon.ico', originHelix)
   .get('/robots.txt', originHelix)
-
-  // Chili rendering engine: proxy Basic Auth requests for DAM assets directly
-  // to AEM publish (bypasses Microsoft Entra auth which Chili can't provide)
-  .all('/content/dam/*', originPublishChili)
-
-  // SAML login: proxy Microsoft SAML POST to AEM publish for user provisioning
-  .post('/content/share/saml_login', originPublishPassthrough)
 
   // from here on authentication required (middleware)
   .all('*', withAuthentication)
@@ -126,23 +114,15 @@ router
   // user info
   .get('/api/user', apiUser)
 
-  // dynamic media
+  // dynamic media (asset proxy, search, metadata)
   .all('/api/adobe/assets/*', originDynamicMedia)
-
-  // fadel
-  .all('/api/fadel/*', originFadel)
-
-  // Saved Searches API
-  .all('/api/savedsearches/*', savedSearchesApi)
-
-  // Rights Requests API
-  .all('/api/rightsrequests/*', rightsRequestsApi)
 
   // Notifications API
   .all('/api/messages/*', notificationsApi)
   .all('/api/messages', notificationsApi)
 
   // Analytics API
+  .get('/api/analytics/search-metrics', searchMetricsApi)
   .get('/api/analytics/test', analyticsApi)
   .get('/api/analytics/report-metrics', analyticsApi)
   .get('/api/analytics/raw-downloads', analyticsApi)
@@ -150,37 +130,27 @@ router
   .all('/api/analytics/query', analyticsApi)
   .all('/api/analytics', analyticsApi)
 
-  // User Logins API
+  // User Logins CSV export (D1)
   .get('/api/user-logins/csv', exportUserLoginsCSV)
 
-  // Collections API (share-notify email)
-  .all('/api/collections/*', collectionsApi)
+  // Asset activity audit API (D1)
+  .post('/api/audit/event', auditPostEvent)
+  .get('/api/audit/summary', auditGetSummary)
+  .get('/api/audit/organisations', auditGetOrganisations)
+  .get('/api/audit/export.csv', auditGetExportCsv)
 
-  // future API routes
+  // catch-all for unknown API routes
   .all('/api/*', () => error(404))
 
-  // AEM CS Publish: /content/share/* handled by deny-by-default child router
-  // (search redirects, template/print-jobs allowlist, .html deny, non-HTML proxy)
-  .all('/content/share/*', publishShareRouter.fetch)
-  .all('/content/experience-fragments/*', originPublish)
-  .all('/content/dam/*', originPublish)
-  .get('/content/dam.downloadbinaries.json', originPublish)
-  .all('/home/users/*', originPublish)
-  .all('/etc.clientlibs/*', originPublish)
-  .all('/libs/*', originPublish)
-  .all('/bin/tccc/*', originPublish)
-  .get('/restricted/download/original/*', originPublish)
-
+  // all other routes: serve from Helix with page-level access control
   .all('*', async (request, env) => {
     const response = await originHelix(request, env);
 
-    // only enforce page access control on HTML pages for authenticated users
     const contentType = response.headers.get('content-type') || '';
     if (!contentType.includes('text/html') || !request.user) {
       return response;
     }
 
-    // admin bypass
     if (request.user.roles?.includes('admin')) {
       return response;
     }
@@ -197,27 +167,11 @@ router
 
 export default {
   ...router,
-  /**
-   * Scheduled handler for Cron Triggers
-   * Uses multiple cron schedules:
-   * - "0 0 1 * *" (1st of month at midnight UTC): OAuth token refresh
-   * - "5 0 * * *" (everyday at 12:05 AM UTC): Rights request reminders (status + usage)
-   * @see https://developers.cloudflare.com/workers/configuration/cron-triggers/
-   * @see https://developers.cloudflare.com/workers/examples/multiple-cron-triggers/
-   */
   async scheduled(controller, env, ctx) {
     switch (controller.cron) {
       case '0 0 1 * *':
         console.info('[Cron] Monthly token refresh triggered');
         await handleScheduledTokenRefresh(env, ctx);
-        break;
-
-      case '5 0 * * *':
-        console.warn('[Cron] Nightly reminders triggered');
-        await Promise.all([
-          handleStatusReminders(env, ctx),
-          handleUsageRightsReminders(env, ctx),
-        ]);
         break;
 
       default:

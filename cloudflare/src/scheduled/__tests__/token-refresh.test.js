@@ -84,7 +84,7 @@ describe('handleScheduledTokenRefresh', () => {
       // Should send simple notification
       expect(env.MESSAGES.put).toHaveBeenCalledTimes(1);
       const notification = JSON.parse(env.MESSAGES.put.mock.calls[0][1]);
-      expect(notification.subject).toBe('KO Assets: OAuth Token Renewed');
+      expect(notification.subject).toBe('Spark EDS: OAuth Token Renewed');
       expect(notification.message).toContain('successfully renewed');
       expect(notification.type).toBe('Notification');
       expect(notification.priority).toBe('normal');

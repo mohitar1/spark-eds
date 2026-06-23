@@ -1,6 +1,6 @@
 # Feature Documentation Guidelines
 
-This directory contains comprehensive documentation for major features in the KOAssets application. Each feature is organized in its own folder with supporting assets.
+This directory contains comprehensive documentation for major features in the Spark application. Each feature is organized in its own folder with supporting assets.
 
 **Quick Start:** New to documenting features? See [QUICK-START.md](./QUICK-START.md) or use the `/document-feature` command in Cursor.
 
@@ -377,8 +377,7 @@ Links to related docs
 
 Current feature documentation:
 
-- [Rights Requests](./rights-requests/README.md) - Comprehensive example with full workflow
-- _(Add more as features are documented)_
+- _(Add features as they are documented)_
 
 ## Questions?
 

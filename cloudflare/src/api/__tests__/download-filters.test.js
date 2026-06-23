@@ -220,7 +220,7 @@ describe('buildDownloadFilterConditions', () => {
     });
 
     it('should reject region with SQL injection attempt', () => {
-      expect(() => buildDownloadFilterConditions({ region: "'; DELETE FROM koassets_analyticstest; --" }))
+      expect(() => buildDownloadFilterConditions({ region: "'; DELETE FROM spark_analyticstest; --" }))
         .toThrow('Invalid region filter');
     });
 

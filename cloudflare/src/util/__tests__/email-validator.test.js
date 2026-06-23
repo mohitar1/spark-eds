@@ -195,9 +195,9 @@ describe('cleanAndValidateEmails', () => {
 
 describe('Real-world scenarios', () => {
   it('should handle permissions sheet email with semicolon', () => {
-    const email = 'sstults@coca-cola.com;';
+    const email = 'sstults@example.com;';
     
-    expect(cleanAndValidateEmail(email)).toBe('sstults@coca-cola.com');
+    expect(cleanAndValidateEmail(email)).toBe('sstults@example.com');
   });
 
   it('should handle copy-pasted email list', () => {

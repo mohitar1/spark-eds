@@ -1,6 +1,6 @@
 # User Permission Tester
 
-Tests whether each user can access the assets and templates they are expected to access — via **search** and via the **asset details** page — against the new system (koassets.adobecocacola.workers.dev) or the old system (assets.coke.com).
+Tests whether each user can access the assets and templates they are expected to access — via **search** and via the **asset details** page — against the new system (spark-eds.workers.dev) or the old system (assets.coke.com).
 
 The tool runs a test matrix of `user × asset × expected access (0 or 1)` entries, impersonating each user using SUDO cookies/headers, and asserts that results match the expected access. It generates an HTML report with per-user summaries, asset coverage, and individual test results with pass/fail coloring.
 
@@ -124,7 +124,7 @@ Credentials and endpoint configuration. Copy from `config.example.json` and fill
     "publishApiUser": "user:password"
   },
   "newSystem": {
-    "baseUrl": "https://koassets.adobecocacola.workers.dev",
+    "baseUrl": "https://spark-eds.workers.dev",
     "searchPath": "/api/adobe/assets/contentai/search",
     "sessionCookie": "eyJ..."
   },
@@ -139,7 +139,7 @@ Credentials and endpoint configuration. Copy from `config.example.json` and fill
 
 | Field | Description |
 |-------|-------------|
-| `oldSystem.publishApiUser` | AEM Basic auth credentials (`user:pass`), or omit and set `KOASSETS_PUBLISH_API_USER_PROD` env var |
+| `oldSystem.publishApiUser` | AEM Basic auth credentials (`user:pass`), or omit and set `SPARK_PUBLISH_API_USER_PROD` env var |
 | `newSystem.sessionCookie` | Session JWT from browser — must belong to an account with `sudo` permission |
 | `newSearchLimit` | Max results per search page (default 50) |
 | `results.outputDir` | Where to write results (default `./test-results`) |
@@ -158,7 +158,7 @@ cp config.example.json test-inputs/config.json
 # Edit test-inputs/config.json with real credentials
 ```
 
-Get the Session JWT from your browser's DevTools (Application → Cookies → `Session`) while logged into koassets with an account that has `sudo` permission.
+Get the Session JWT from your browser's DevTools (Application → Cookies → `Session`) while logged into spark with an account that has `sudo` permission.
 
 ---
 
@@ -402,7 +402,7 @@ The tool saves a ready-to-run `.sh` curl script for every request it makes (in `
 ### Old system — impersonated search
 
 ```bash
-curl -u "$KOASSETS_PUBLISH_API_USER_PROD" \
+curl -u "$SPARK_PUBLISH_API_USER_PROD" \
   "https://assets.coke.com/content/share/us/en/search-assets.html?fulltext={assetId}" \
   -b "sling.sudo={email}; dmex_login_visited=yes"
 ```
@@ -410,7 +410,7 @@ curl -u "$KOASSETS_PUBLISH_API_USER_PROD" \
 ### New system — impersonated search
 
 ```bash
-curl -X POST "https://koassets.adobecocacola.workers.dev/api/adobe/assets/contentai/search" \
+curl -X POST "https://spark-eds.workers.dev/api/adobe/assets/contentai/search" \
   -H "Content-Type: application/json" \
   -b "Session={jwt}; SUDO_EMAIL={email}; SUDO_EMPLOYEE_TYPE={empType}; SUDO_COUNTRY={country}; LoginVisited=1" \
   -d '{"query":[{"and":[{"term":{"assetId":["urn:aaid:aem:{uuid}"]}}]}],"limit":50}'
@@ -419,7 +419,7 @@ curl -X POST "https://koassets.adobecocacola.workers.dev/api/adobe/assets/conten
 ### New system — impersonated asset details
 
 ```bash
-curl "https://koassets.adobecocacola.workers.dev/api/adobe/assets/urn:aaid:aem:{uuid}/metadata" \
+curl "https://spark-eds.workers.dev/api/adobe/assets/urn:aaid:aem:{uuid}/metadata" \
   -b "Session={jwt}; SUDO_EMAIL={email}; SUDO_EMPLOYEE_TYPE={empType}; SUDO_COUNTRY={country}; LoginVisited=1"
 ```
 

@@ -6,7 +6,7 @@ import {
 } from '../global-modal.js';
 
 const DEFAULT_SUMMARY_MODAL_HEIGHT = '420px';
-const GENERIC_ALERT_DISMISS_KEY = 'koassets-priority-generic-alert-dismissed';
+const GENERIC_ALERT_DISMISS_KEY = 'spark-priority-generic-alert-dismissed';
 
 function getGenericAlertDismissStorageKey(userEmail = '') {
   const normalizedEmail = String(userEmail || '').trim().toLowerCase();

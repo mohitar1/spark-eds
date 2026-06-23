@@ -8,16 +8,15 @@ import {
   saveLocalePreference,
 } from '../../scripts/locale-utils.js';
 import showProfileModal from './profile.js';
-import { hasManageRightsPermission } from '../koassets-search/utils/permissions.js';
 
 // media query match that indicates mobile/tablet width
-const isDesktop = window.matchMedia('(min-width: 1440px)');
+const isDesktop = window.matchMedia('(min-width: 900px)');
 
 function closeOnEscape(e) {
   if (e.code === 'Escape') {
     const nav = document.getElementById('nav');
     const navSections = nav.querySelector('.nav-sections');
-    const navSectionExpanded = navSections.querySelector('[aria-expanded="true"]');
+    const navSectionExpanded = navSections?.querySelector('[aria-expanded="true"]');
     if (navSectionExpanded && isDesktop.matches) {
       // eslint-disable-next-line no-use-before-define
       toggleAllNavSections(navSections);
@@ -81,6 +80,7 @@ function focusNavSection() {
  * @param {Boolean} expanded Whether the element should be expanded or collapsed
  */
 function toggleAllNavSections(sections, expanded = false) {
+  if (!sections) return;
   sections.querySelectorAll('.nav-sections .default-content-wrapper > ul > li').forEach((section) => {
     section.setAttribute('aria-expanded', expanded);
   });
@@ -102,7 +102,7 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
   toggleAllNavSections(navSections, false);
   button.setAttribute('aria-label', expanded ? 'Open navigation' : 'Close navigation');
   // enable nav dropdown keyboard accessibility
-  const navDrops = navSections.querySelectorAll('.nav-drop');
+  const navDrops = navSections?.querySelectorAll('.nav-drop') || [];
   if (isDesktop.matches) {
     navDrops.forEach((drop) => {
       if (!drop.hasAttribute('tabindex')) {
@@ -129,6 +129,73 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
   }
 }
 
+function makeNavSection(role, nodes) {
+  const section = document.createElement('div');
+  section.classList.add(`nav-${role}`);
+  section.dataset.role = role;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'default-content-wrapper';
+  nodes.forEach((node) => wrapper.append(node));
+  section.append(wrapper);
+  return section;
+}
+
+function isBrandContent(node) {
+  if (node.nodeType !== Node.ELEMENT_NODE) return false;
+  if (node.tagName === 'UL') return false;
+  return Boolean(
+    node.querySelector?.('.icon-frescopa-icon')
+    || node.querySelector?.('a[href] .icon'),
+  );
+}
+
+function isToolsPlaceholder(node) {
+  if (node.nodeType !== Node.ELEMENT_NODE) return false;
+  if (node.tagName === 'UL') return false;
+  if (node.querySelector?.('.nav-icons-wrapper, .nav-cart-icon, .nav-message-icon')) return true;
+  return !node.textContent?.replace(/\u00a0/g, ' ').trim();
+}
+
+/**
+ * Nav is brand + tools (no link sections). DA often collapses both into one block
+ * or mislabels the logo as tools — rebuild from content, not section count or role.
+ */
+function normalizeNavLayout(nav) {
+  const nodes = [];
+  [...nav.children].forEach((section) => {
+    section.style.display = '';
+    const wrapper = section.querySelector('.default-content-wrapper') || section;
+    [...wrapper.children].forEach((child) => nodes.push(child));
+  });
+
+  const brandNodes = [];
+  const linkNodes = [];
+  const toolsNodes = [];
+
+  nodes.forEach((node) => {
+    if (node.tagName === 'UL') {
+      linkNodes.push(node);
+    } else if (isBrandContent(node)) {
+      brandNodes.push(node);
+    } else if (isToolsPlaceholder(node)) {
+      toolsNodes.push(node);
+    } else if (brandNodes.length === 0) {
+      brandNodes.push(node);
+    } else {
+      toolsNodes.push(node);
+    }
+  });
+
+  const layout = [
+    makeNavSection('brand', brandNodes),
+    makeNavSection('tools', toolsNodes),
+  ];
+  if (linkNodes.length) {
+    layout.splice(1, 0, makeNavSection('sections', linkNodes));
+  }
+  nav.replaceChildren(...layout);
+}
+
 async function createNavBar(t) {
   // load nav as fragment
   const navMeta = getMetadata('nav');
@@ -139,27 +206,35 @@ async function createNavBar(t) {
   const nav = document.createElement('nav');
   nav.id = 'nav';
   while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
-  const classes = ['brand', 'sections', 'tools'];
-  classes.forEach((c, i) => {
-    const section = nav.children[i];
-    if (section) section.classList.add(`nav-${c}`);
+
+  normalizeNavLayout(nav);
+
+  // Normalize file:// links that DA may emit on docx import (e.g. file:////en/search)
+  nav.querySelectorAll('a[href]').forEach((link) => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('file:')) {
+      link.setAttribute('href', href.replace(/^file:\/+/, '/'));
+    }
   });
 
   const navBrand = nav.querySelector('.nav-brand');
-  const brandLink = navBrand.querySelector('.button');
-  if (brandLink) {
-    brandLink.className = '';
-    brandLink.closest('.button-container').className = '';
+  if (navBrand) {
+    const brandLink = navBrand.querySelector('.button');
+    if (brandLink) {
+      brandLink.className = '';
+      brandLink.closest('.button-container').className = '';
+    }
+    // Ensure all brand links preserve current locale
+    navBrand.querySelectorAll('a[href]').forEach((link) => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('/')) {
+        link.setAttribute('href', localizePath(href));
+      }
+    });
   }
+
   // Remove button styling from all header links
   nav.querySelectorAll('a.button').forEach((link) => link.classList.remove('button'));
-  // Ensure all brand links preserve current locale
-  navBrand.querySelectorAll('a[href]').forEach((link) => {
-    const href = link.getAttribute('href');
-    if (href && href.startsWith('/')) {
-      link.setAttribute('href', localizePath(href));
-    }
-  });
 
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
@@ -333,11 +408,10 @@ async function createNavBar(t) {
       }
     };
 
-    // Update cart badge from localStorage (combined assets + templates count)
+    // Update cart badge from localStorage (asset count)
     try {
       const cartAssetItems = JSON.parse(localStorage.getItem('cartAssetItems') || '[]');
-      const cartTemplateItems = JSON.parse(localStorage.getItem('cartTemplateItems') || '[]');
-      window.updateCartBadge(cartAssetItems.length + cartTemplateItems.length);
+      window.updateCartBadge(cartAssetItems.length);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error reading cart items from localStorage:', error);
@@ -434,7 +508,7 @@ function openDropdownPortal(triggerEl, menuEl, portalClass = '') {
 }
 
 async function createHeaderBar(t) {
-  // Create TCCC primary header bar
+  // Create primary header bar
   const headerBar = document.createElement('div');
   headerBar.className = 'header-bar';
 
@@ -628,18 +702,10 @@ async function createHeaderBar(t) {
 
     const myAccountMenu = document.createElement('div');
     myAccountMenu.className = 'my-account-menu dropdown-menu';
-    const rightsReviewsItem = hasManageRightsPermission()
-      ? `<li><a href="${localizePath('/my-dam/my-rights-reviews')}">${t('myRightsReviews', 'My Rights Reviews')}</a></li>`
-      : '';
     myAccountMenu.innerHTML = `
       <ul>
         <li><a href="#" id="my-profile-link">${t('myProfile', 'My Profile')}</a></li>
-        <li><a href="${localizePath('/my-dam/my-rights-requests')}">${t('myRightsRequests', 'My Rights Requests')}</a></li>
-        ${rightsReviewsItem}
-        <li><a href="${localizePath('/my-dam/my-saved-templates')}">${t('mySavedTemplates', 'My Saved Templates')}</a></li>
-        <li><a href="${localizePath('/my-dam/my-print-jobs')}">${t('myPrintJobs', 'My Print Jobs')}</a></li>
-        <li><a href="${localizePath('/my-dam/my-collections')}">${t('myCollections', 'My Collections')}</a></li>
-        <li><a href="${localizePath('/my-dam/my-saved-search')}">${t('mySavedSearches', 'My Saved Searches')}</a></li>
+        <li><a href="${localizePath('/search-collections')}">${t('myCollections', 'My Collections')}</a></li>
         <li><a href="/auth/logout">${t('logOut', 'Log Out')}</a></li>
       </ul>
     `;

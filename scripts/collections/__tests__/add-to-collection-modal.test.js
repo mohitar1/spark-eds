@@ -31,11 +31,11 @@ vi.mock('../collections-utils.js', () => ({
   })),
 }));
 
-vi.mock('../../blocks/koassets-search/utils/config.js', () => ({
+vi.mock('../../blocks/search-results/utils/config.js', () => ({
   getHitsPerPage: vi.fn(() => 24),
 }));
 
-vi.mock('../../blocks/koassets-search/utils/dom-utils.js', () => ({
+vi.mock('../../blocks/search-results/utils/dom-utils.js', () => ({
   default: vi.fn(), // setButtonLoading
 }));
 

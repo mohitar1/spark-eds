@@ -444,7 +444,7 @@ cart-state.js (triggers setState)
 ### Subscribe to Cart Changes
 
 ```javascript
-import { subscribe } from '../koassets-search/koassets-search.js';
+import { subscribe } from '../search-results/search-results.js';
 
 subscribe((currentState, prevState, updates) => {
   if (updates.cartAssetItems) {
@@ -577,11 +577,11 @@ button.primary-button.primary-is-loading::before {
 
 | Component | Location | Usage |
 |-----------|----------|-------|
-| Asset Cards | `blocks/koassets-search/components/asset-card.js` | Simple add/remove |
-| Image Gallery | `blocks/koassets-search/components/image-gallery.js` | Button sync with view switching |
-| Cart Panel | `blocks/koassets-search/components/cart/cart-panel.js` | Get items, remove items |
+| Asset Cards | `blocks/search-results/components/asset-card.js` | Simple add/remove |
+| Image Gallery | `blocks/search-results/components/image-gallery.js` | Button sync with view switching |
+| Cart Panel | `blocks/search-results/components/cart/cart-panel.js` | Get items, remove items |
 | Rights Requests | `blocks/my-rights-requests/my-rights-requests.js` | Complex multi-asset button sync |
-| Collections Details | `blocks/my-collections-details/my-collections-details.js` | Button sync for collection assets |
+| Collection Details | `blocks/collection-details/collection-details.js` | Button sync for collection assets |
 | Asset Details | `blocks/asset-details/asset-details.js` | Add/remove with modal |
 | Add to Collection | `scripts/collections/add-to-collection-modal.js` | Loading states with cart service |
 

@@ -5,8 +5,8 @@
 
 // Constants
 const LOCALSTORAGE_KEYS = {
-  SYSTEM_NOTIFICATIONS_READ: 'koassets-system-notifications-read',
-  SYSTEM_NOTIFICATIONS_DELETED: 'koassets-system-notifications-deleted',
+  SYSTEM_NOTIFICATIONS_READ: 'spark-system-notifications-read',
+  SYSTEM_NOTIFICATIONS_DELETED: 'spark-system-notifications-deleted',
 };
 
 export const SYSTEM_MESSAGE_OWNER = 'SYSTEM';

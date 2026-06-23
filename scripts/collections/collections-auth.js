@@ -6,11 +6,10 @@
 /**
  * Get ACL object from collection metadata
  * @param {Object} apiCollection - The collection object from API
- * @returns {Object|null} ACL object with tccc:assetCollectionOwner, tccc:assetCollectionViewer,
- * tccc:assetCollectionEditor
+ * @returns {Object|null} ACL object with custom:assetCollectionOwner, custom:assetCollectionViewer
  */
 function getCollectionACL(apiCollection) {
-  return apiCollection?.collectionMetadata?.['tccc:metadata']?.['tccc:acl'] || null;
+  return apiCollection?.collectionMetadata?.['custom:metadata']?.['custom:acl'] || null;
 }
 
 /**
@@ -84,19 +83,19 @@ export function hasCollectionAccess(apiCollection, currentUser, action = 'read')
   }
 
   // Check owner (has all permissions)
-  if (acl['tccc:assetCollectionOwner'] && userMatchesEntry(userEmail, acl['tccc:assetCollectionOwner'])) {
+  if (acl['custom:assetCollectionOwner'] && userMatchesEntry(userEmail, acl['custom:assetCollectionOwner'])) {
     logAuth(collectionId, action, true, 'owner');
     return true;
   }
 
   // Check write permission (implies read)
-  if (userInArray(userEmail, acl['tccc:assetCollectionEditor'])) {
+  if (userInArray(userEmail, acl['custom:assetCollectionEditor'])) {
     logAuth(collectionId, action, true, 'write permission');
     return true;
   }
 
   // Check read permission (only for read action)
-  if (action === 'read' && userInArray(userEmail, acl['tccc:assetCollectionViewer'])) {
+  if (action === 'read' && userInArray(userEmail, acl['custom:assetCollectionViewer'])) {
     logAuth(collectionId, action, true, 'read permission');
     return true;
   }

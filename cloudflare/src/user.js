@@ -3,11 +3,25 @@ import { fetchHelixSheet } from './util/helixutil.js';
 
 export const ROLE = {
   ADMIN: 'admin',
-  EMPLOYEE: 'employee',
-  CONTINGENT_WORKER: 'contingent-worker',
-  AGENCY: 'agency',
-  BOTTLER: 'bottler',
 };
+
+/**
+ * User types for asset access control.
+ * These values are also used as asset metadata tag values on Content Hub assets:
+ *   custom:userType = 'internal' | 'external' | 'all'
+ */
+export const USER_TYPE = {
+  INTERNAL: 'internal',
+  EXTERNAL: 'external',
+  ALL: 'all', // asset sentinel — visible to both internal and external users
+};
+
+/**
+ * Adobe employee domains that are treated as internal users.
+ * Contractors and vendors on non-Adobe domains can be promoted to internal
+ * via the /config/access/users override sheet.
+ */
+const INTERNAL_DOMAINS = new Set(['adobe.com']);
 
 function getEmailDomain(email) {
   return email.split('@').pop().toLowerCase();
@@ -19,20 +33,23 @@ function pushUnique(array, items) {
 }
 
 /**
- * @param {Request|null} request - Cloudflare request object
- * @param {Object} env - Cloudflare environment bindings
+ * Resolve user type (internal vs external) from domain, with per-email/domain
+ * override support via the /config/access/users sheet.
+ *
+ * Internal: Adobe employees (adobe.com domain), or any email/domain explicitly
+ * marked as 'internal' in the users sheet.
+ * External: everyone else (agency partners, distributors, vendors, etc.).
+ *
+ * @param {string} domain - User's email domain (lowercase)
+ * @param {Object|undefined} userOverride - Row from /config/access/users for this email/domain
+ * @returns {string} USER_TYPE.INTERNAL or USER_TYPE.EXTERNAL
  */
-export async function getRestrictedBrands(request, env) {
-  const index = await fetchHelixSheet(request, env, '/config/access/restricted-brands-index.json', { params: { limit: 1000 } });
-  const restrictedBrands = {};
-  for (const entry of index?.data || []) {
-    const path = entry.path;
-    if (!path?.endsWith('.json')) continue;
-    // get filename without json == brand name
-    const brand = path.split('/').pop().replace('.json', '');
-    if (brand) restrictedBrands[brand] = path;
-  }
-  return restrictedBrands;
+function resolveUserType(domain, userOverride) {
+  // Explicit override takes precedence (allows promoting external users to internal for demos)
+  if (userOverride?.userType === USER_TYPE.INTERNAL) return USER_TYPE.INTERNAL;
+  if (userOverride?.userType === USER_TYPE.EXTERNAL) return USER_TYPE.EXTERNAL;
+  // Domain-based classification
+  return INTERNAL_DOMAINS.has(domain) ? USER_TYPE.INTERNAL : USER_TYPE.EXTERNAL;
 }
 
 async function getUserAttributes(request, env, user) {
@@ -41,54 +58,11 @@ async function getUserAttributes(request, env, user) {
 
   const attributes = {
     roles: [],
+    userType: null,
     countries: [],
-    customers: [],
-    brands: [],
   };
 
-  // detailed user attributes / permissions
-
-  const companies = await fetchHelixSheet(request, env, '/config/access/companies', {
-    params: {
-      limit: 2000,
-    },
-    sheets: {
-      customer: { key: 'domain' },
-      bottler:  { key: 'domain', arrays: ['countries'] },
-      agency:   { key: 'domain' },
-      employee: { key: 'domain' },
-      'contingent-worker': { key: 'domain' },
-    }
-  });
-
-  if (companies) {
-    if (companies.customer[domain]) {
-      pushUnique(attributes.customers, companies.customer[domain].name);
-    }
-
-    if (companies.bottler[domain]) {
-      pushUnique(attributes.roles, ROLE.BOTTLER);
-      pushUnique(attributes.countries, companies.bottler[domain].countries);
-    }
-
-    if (companies.agency[domain]) {
-      pushUnique(attributes.roles, ROLE.AGENCY);
-    }
-
-    if (companies.employee[domain]) {
-      if (user.employeeType === companies.employee[domain].employeeType) {
-        pushUnique(attributes.roles, ROLE.EMPLOYEE);
-      }
-    }
-
-    if (companies['contingent-worker'][domain]) {
-      if (user.employeeType === companies['contingent-worker'][domain].employeeType) {
-        pushUnique(attributes.roles, ROLE.CONTINGENT_WORKER);
-      }
-    }
-  }
-
-  const userArrays = ['roles', 'countries', 'customers'];
+  const userArrays = ['roles', 'countries'];
   const users = await fetchHelixSheet(request, env, '/config/access/users', {
     params: {
       limit: 50000,
@@ -98,74 +72,32 @@ async function getUserAttributes(request, env, user) {
       arrays: userArrays,
       merge: (existing, incoming) => {
         userArrays.forEach((f) => { pushUnique(existing[f], incoming[f]); });
+        // userType: first non-empty value wins
+        if (!existing.userType && incoming.userType) existing.userType = incoming.userType;
         return existing;
       },
     },
   });
 
-  const userOverride = users?.[email];
+  // email match takes precedence over domain match
+  const userOverride = users?.[email] || users?.[domain];
   if (userOverride) {
     pushUnique(attributes.roles, userOverride.roles);
     pushUnique(attributes.countries, userOverride.countries);
-    pushUnique(attributes.customers, userOverride.customers);
   }
 
-  // use country from IDP if not configured in EDS sheets
-  if (attributes.roles.includes(ROLE.BOTTLER) && attributes.countries.length === 0 && user.country) {
-    attributes.countries.push(user.country);
-  }
-
-  // make all country codes lowercase
-  attributes.countries = attributes.countries.map(c => c.toLowerCase());
-
-  const restrictedBrands = await getRestrictedBrands(request, env);
-  for (const brand in restrictedBrands) {
-    const path = restrictedBrands[brand];
-    const brandSheet = await fetchHelixSheet(request, env, path, {
-      sheets: {
-        users:     { key: 'email' },
-        countries: { key: 'country' },
-        roles:     { key: 'role' },
-      },
-      params: {
-        limit: 50000
-      }
-    });
-
-    if (!brandSheet?.users) continue;
-    if (brandSheet.users[email] || brandSheet.users[domain] || brandSheet.users['*']) {
-      pushUnique(attributes.brands, brand);
-    }
-    for (const country of attributes.countries) {
-      if (brandSheet.countries[country]) {
-        pushUnique(attributes.brands, brand);
-      }
-    }
-    for (const role of attributes.roles) {
-      if (brandSheet.roles[role]) {
-        pushUnique(attributes.brands, brand);
-      }
-    }
-  }
+  attributes.userType = resolveUserType(domain, userOverride);
 
   return attributes;
 }
 
 async function handleSudo(request, env, user) {
-  // check for any sudo request
-  if (['SUDO_NAME',
-       'SUDO_EMAIL',
-       'SUDO_COUNTRY',
-       'SUDO_EMPLOYEE_TYPE',
-       ].some(c => request.cookies[c])) {
-
-    // only certain super users are allowed to sudo
+  if (['SUDO_NAME', 'SUDO_EMAIL', 'SUDO_COUNTRY', 'SUDO_EMPLOYEE_TYPE'].some(c => request.cookies[c])) {
     if (!user.permissions.includes('sudo')) {
       console.warn('Sudo denied for user:', user.email);
       return user;
     }
 
-    // store original super user data
     user.su = {
       name: user.name,
       email: user.email,
@@ -178,18 +110,14 @@ async function handleSudo(request, env, user) {
     user.country = request.cookies.SUDO_COUNTRY || user.country;
     user.employeeType = request.cookies.SUDO_EMPLOYEE_TYPE || user.employeeType;
 
+    const sudoDomain = getEmailDomain(user.email);
     const attributes = await getUserAttributes(request, env, {
       email: user.email,
-      domain: getEmailDomain(user.email),
+      domain: sudoDomain,
       country: user.country,
       employeeType: user.employeeType,
     });
-    user = {
-      ...user,
-      ...attributes,
-    };
-
-    // console.log('User session after sudo:', JSON.stringify(user, null, 2));
+    user = { ...user, domain: sudoDomain, ...attributes };
   }
 
   return user;
@@ -198,10 +126,6 @@ async function handleSudo(request, env, user) {
 /**
  * Create the user session cookie payload.
  * Called upon login (OIDC callback).
- *
- * @param {Request} request cloudflare request object
- * @param {Object} env cloudflare environment
- * @returns {Object} session or false if user has no idToken or lacks required permissions
  */
 export async function createSession(request, env) {
   const idToken = request.idToken;
@@ -212,7 +136,6 @@ export async function createSession(request, env) {
   const email = idToken.email?.toLowerCase();
   const domain = getEmailDomain(email);
 
-  // basic access & permissions
   const access = await fetchHelixSheet(request, env, '/config/access/application', {
     sheet: { key: 'email', arrays: ['permissions'] },
   });
@@ -223,13 +146,10 @@ export async function createSession(request, env) {
     ...(access?.[email]?.permissions || []),
   ];
 
-  // check preview access
   const host = request.headers.get('host') || '';
   const liveHosts = [
     'localhost',
-    'assets.coke.com',
-    'pilot.assets.coke.com',
-    'koassets.adobecocacola.workers.dev',
+    'spark-eds.adobe.workers.dev',
   ];
   const isNonLiveHost = !liveHosts.some((h) => host === h || host.startsWith(`${h}:`));
   if (isNonLiveHost) {
@@ -239,7 +159,6 @@ export async function createSession(request, env) {
     }
   }
 
-  // build user attributes used for authorization
   const attributes = await getUserAttributes(request, env, {
     email,
     domain,
@@ -248,27 +167,20 @@ export async function createSession(request, env) {
   });
 
   const session = {
-    // user id in MS Entra IDP
     sub: idToken.oid,
-    // full name (first + last name)
     name: idToken.name,
-
-    // key IDP attributes (needed for sudo)
     email,
+    domain,
     country: idToken.ctry,
     employeeType: idToken.EmployeeType,
-
-    // informational
-    koid: idToken['User ID'],
+    userId: idToken['User ID'],
     company: idToken.Company,
     title: idToken.Title,
-
     permissions,
-
     ...attributes,
   };
 
-  console.log('New Session cookie:', session);
+  console.warn('New Session cookie:', session);
 
   return session;
 }
@@ -276,21 +188,13 @@ export async function createSession(request, env) {
 /**
  * Get the user object from the session cookie payload.
  * Called upon every request after validating the session cookie.
- *
- * @param {Request} request cloudflare request object
- * @param {Object} env cloudflare environment
- * @param {Object} session session payload from the JWT
- * @returns {Object} user or null/undefined if user is not allowed to access this application
  */
 export async function getUser(request, env, session) {
   return handleSudo(request, env, session);
 }
 
 /**
- * Request handler returning the user information as json API for the frontend.
- *
- * @param {Request} request cloudflare request object
- * @returns {Response} json http response
+ * Request handler returning the user information as JSON API for the frontend.
  */
 export async function apiUser(request, env) {
   const user = {
@@ -301,7 +205,6 @@ export async function apiUser(request, env) {
       : '',
   };
 
-  // remove session cookie metadata
   delete user.sub;
   delete user.sid;
   delete user.iss;

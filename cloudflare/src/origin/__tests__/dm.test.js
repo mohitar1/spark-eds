@@ -33,12 +33,7 @@ vi.mock('../../util/helixutil', () => ({
 vi.mock('../../user', () => ({
   ROLE: {
     ADMIN: 'admin',
-    EMPLOYEE: 'employee',
-    CONTINGENT_WORKER: 'contingent_worker',
-    AGENCY: 'agency',
-    BOTTLER: 'bottler',
   },
-  getRestrictedBrands: vi.fn().mockResolvedValue({}),
 }));
 
 // Mock console.log for authorization tests
@@ -154,25 +149,25 @@ describe('dm.js - Collection Authorization', () => {
     it('should grant access to collection owner', () => {
       const userEmail = 'user@example.com';
       const acl = {
-        'tccc:assetCollectionOwner': 'user@example.com',
-        'tccc:assetCollectionEditor': [],
-        'tccc:assetCollectionViewer': [],
+        'custom:assetCollectionOwner': 'user@example.com',
+        'custom:assetCollectionEditor': [],
+        'custom:assetCollectionViewer': [],
       };
       
-      const isOwner = acl['tccc:assetCollectionOwner']?.toLowerCase() === userEmail.toLowerCase();
+      const isOwner = acl['custom:assetCollectionOwner']?.toLowerCase() === userEmail.toLowerCase();
       expect(isOwner).toBe(true);
     });
 
     it('should grant access to collection editor', () => {
       const userEmail = 'user@example.com';
       const acl = {
-        'tccc:assetCollectionOwner': 'owner@example.com',
-        'tccc:assetCollectionEditor': ['user@example.com', 'other@example.com'],
-        'tccc:assetCollectionViewer': [],
+        'custom:assetCollectionOwner': 'owner@example.com',
+        'custom:assetCollectionEditor': ['user@example.com', 'other@example.com'],
+        'custom:assetCollectionViewer': [],
       };
       
-      const isEditor = Array.isArray(acl['tccc:assetCollectionEditor']) &&
-        acl['tccc:assetCollectionEditor'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
+      const isEditor = Array.isArray(acl['custom:assetCollectionEditor']) &&
+        acl['custom:assetCollectionEditor'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
       expect(isEditor).toBe(true);
     });
 
@@ -180,14 +175,14 @@ describe('dm.js - Collection Authorization', () => {
       const userEmail = 'user@example.com';
       const requiredRole = 'read';
       const acl = {
-        'tccc:assetCollectionOwner': 'owner@example.com',
-        'tccc:assetCollectionEditor': [],
-        'tccc:assetCollectionViewer': ['user@example.com'],
+        'custom:assetCollectionOwner': 'owner@example.com',
+        'custom:assetCollectionEditor': [],
+        'custom:assetCollectionViewer': ['user@example.com'],
       };
       
       const isViewer = requiredRole === 'read' &&
-        Array.isArray(acl['tccc:assetCollectionViewer']) &&
-        acl['tccc:assetCollectionViewer'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
+        Array.isArray(acl['custom:assetCollectionViewer']) &&
+        acl['custom:assetCollectionViewer'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
       expect(isViewer).toBe(true);
     });
 
@@ -195,31 +190,31 @@ describe('dm.js - Collection Authorization', () => {
       const userEmail = 'user@example.com';
       const requiredRole = 'write';
       const acl = {
-        'tccc:assetCollectionOwner': 'owner@example.com',
-        'tccc:assetCollectionEditor': [],
-        'tccc:assetCollectionViewer': ['user@example.com'],
+        'custom:assetCollectionOwner': 'owner@example.com',
+        'custom:assetCollectionEditor': [],
+        'custom:assetCollectionViewer': ['user@example.com'],
       };
       
       // Viewer check only passes for 'read' role
       const isViewer = requiredRole === 'read' &&
-        Array.isArray(acl['tccc:assetCollectionViewer']) &&
-        acl['tccc:assetCollectionViewer'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
+        Array.isArray(acl['custom:assetCollectionViewer']) &&
+        acl['custom:assetCollectionViewer'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
       expect(isViewer).toBe(false);
     });
 
     it('should deny access to user not in ACL', () => {
       const userEmail = 'unauthorized@example.com';
       const acl = {
-        'tccc:assetCollectionOwner': 'owner@example.com',
-        'tccc:assetCollectionEditor': ['editor@example.com'],
-        'tccc:assetCollectionViewer': ['viewer@example.com'],
+        'custom:assetCollectionOwner': 'owner@example.com',
+        'custom:assetCollectionEditor': ['editor@example.com'],
+        'custom:assetCollectionViewer': ['viewer@example.com'],
       };
       
-      const isOwner = acl['tccc:assetCollectionOwner']?.toLowerCase() === userEmail.toLowerCase();
-      const isEditor = Array.isArray(acl['tccc:assetCollectionEditor']) &&
-        acl['tccc:assetCollectionEditor'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
-      const isViewer = Array.isArray(acl['tccc:assetCollectionViewer']) &&
-        acl['tccc:assetCollectionViewer'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
+      const isOwner = acl['custom:assetCollectionOwner']?.toLowerCase() === userEmail.toLowerCase();
+      const isEditor = Array.isArray(acl['custom:assetCollectionEditor']) &&
+        acl['custom:assetCollectionEditor'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
+      const isViewer = Array.isArray(acl['custom:assetCollectionViewer']) &&
+        acl['custom:assetCollectionViewer'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
       
       expect(isOwner || isEditor || isViewer).toBe(false);
     });
@@ -227,10 +222,10 @@ describe('dm.js - Collection Authorization', () => {
     it('should handle case-insensitive email comparison', () => {
       const userEmail = 'USER@EXAMPLE.COM';
       const acl = {
-        'tccc:assetCollectionOwner': 'user@example.com',
+        'custom:assetCollectionOwner': 'user@example.com',
       };
       
-      const isOwner = acl['tccc:assetCollectionOwner']?.toLowerCase() === userEmail.toLowerCase();
+      const isOwner = acl['custom:assetCollectionOwner']?.toLowerCase() === userEmail.toLowerCase();
       expect(isOwner).toBe(true);
     });
   });
@@ -316,7 +311,7 @@ describe('dm.js - Analytics Event Data', () => {
         email: 'user@example.com', // email present but not used
         country: 'US',
         employeeType: 'employee',
-        company: 'Coca-Cola',
+        company: 'Acme Corp',
         roles: ['admin', 'editor'],
       };
 
@@ -340,7 +335,7 @@ describe('dm.js - Analytics Event Data', () => {
         koid: 'S700855',
         country: 'US',
         employeeType: 'employee',
-        company: 'Coca-Cola',
+        company: 'Acme Corp',
       };
 
       const roles = user.roles || [];
@@ -474,109 +469,6 @@ describe('dm.js - URL Transformations', () => {
   });
 });
 
-describe('dm.js - Search Authorization Filters', () => {
-  describe('brand filter construction', () => {
-    it('should construct filter for denied brands', () => {
-      const deniedBrands = ['sprite', 'fanta'];
-      const brandFilter = deniedBrands.map(b => `NOT tccc-brand._tagIDs:'tccc:brand/${b}'`).join(' AND ');
-      
-      expect(brandFilter).toContain('NOT tccc-brand._tagIDs');
-      expect(brandFilter).toContain('tccc:brand/sprite');
-      expect(brandFilter).toContain('tccc:brand/fanta');
-      expect(brandFilter).toContain(' AND ');
-    });
-
-    it('should handle empty denied brands', () => {
-      const deniedBrands = [];
-      const brandFilter = deniedBrands.map(b => `NOT tccc-brand._tagIDs:'tccc:brand/${b}'`).join(' AND ');
-      
-      expect(brandFilter).toBe('');
-    });
-  });
-
-  describe('bottler country filter', () => {
-    it('should allow all countries for employee role', () => {
-      const roles = ['employee'];
-      const hasUnrestrictedRole = ['employee', 'contingent_worker', 'agency'].some(r => roles.includes(r));
-      
-      expect(hasUnrestrictedRole).toBe(true);
-    });
-
-    it('should add "all-countries" for bottler role', () => {
-      const roles = ['bottler'];
-      const countries = ['US', 'CA'];
-      
-      if (roles.includes('bottler')) {
-        countries.push('all-countries');
-      }
-      
-      expect(countries).toContain('all-countries');
-    });
-
-    it('should construct country filter', () => {
-      const countries = ['US', 'CA', 'all-countries'];
-      const filter = `(${countries.map(c => `tccc-intendedBottlerCountry:'${c}'`).join(' OR ')})`;
-      
-      expect(filter).toContain('tccc-intendedBottlerCountry:\'US\'');
-      expect(filter).toContain(' OR ');
-    });
-
-    it('should use non-existent filter for empty countries', () => {
-      const countries = [];
-      const filter = countries.length > 0 
-        ? `(${countries.map(c => `tccc-intendedBottlerCountry:'${c}'`).join(' OR ')})`
-        : `tccc-intendedBottlerCountry:'___does_not_exist___'`;
-      
-      expect(filter).toBe('tccc-intendedBottlerCountry:\'___does_not_exist___\'');
-    });
-  });
-
-  describe('customer filter', () => {
-    it('should construct customer filter with user customers', () => {
-      const customers = ['walmart', 'target'];
-      const filter = `(NOT tccc-contentType:'customers'${customers.map(c => ` OR tccc-intendedCustomers:'${c}'`).join('')})`;
-      
-      expect(filter).toContain('NOT tccc-contentType:\'customers\'');
-      expect(filter).toContain('tccc-intendedCustomers:\'walmart\'');
-      expect(filter).toContain('tccc-intendedCustomers:\'target\'');
-    });
-
-    it('should handle empty customer list', () => {
-      const customers = [];
-      const filter = `(NOT tccc-contentType:'customers'${customers.map(c => ` OR tccc-intendedCustomers:'${c}'`).join('')})`;
-      
-      expect(filter).toBe('(NOT tccc-contentType:\'customers\')');
-    });
-  });
-
-  describe('filter combination', () => {
-    it('should combine multiple filters with AND', () => {
-      const bottlerCountryCheck = '(tccc-intendedBottlerCountry:\'US\' OR tccc-intendedBottlerCountry:\'CA\')';
-      const customerCheck = '(NOT tccc-contentType:\'customers\')';
-      const brandCheck = 'NOT tccc-brand._tagIDs:\'tccc:brand/sprite\'';
-      
-      const constraint = [bottlerCountryCheck, customerCheck, brandCheck]
-        .filter(c => c)
-        .join(' AND ');
-      
-      expect(constraint).toContain(' AND ');
-      expect(constraint.split(' AND ').length).toBe(3);
-    });
-
-    it('should filter out empty checks', () => {
-      const bottlerCountryCheck = '';
-      const customerCheck = '(NOT tccc-contentType:\'customers\')';
-      const brandCheck = 'NOT tccc-brand._tagIDs:\'tccc:brand/sprite\'';
-      
-      const constraint = [bottlerCountryCheck, customerCheck, brandCheck]
-        .filter(c => c)
-        .join(' AND ');
-      
-      expect(constraint.split(' AND ').length).toBe(2);
-      expect(constraint).not.toContain('tccc-intendedBottlerCountry');
-    });
-  });
-});
 
 describe('dm.js - Constants Validation', () => {
   it('should have defined IMS token expiry buffer', () => {
@@ -605,7 +497,7 @@ describe('dm.js - Archive Analytics Tracking', () => {
         assets: [
           {
             assetId: 'urn:aaid:aem:abc123',
-            brand: 'Coca-Cola',
+            brand: 'Acme Corp',
             campaign: 'Summer 2024',
             downloadType: 'ready-to-use',
             renditions: ['original', 'thumbnail'],
@@ -677,7 +569,7 @@ describe('dm.js - Archive Analytics Tracking', () => {
 
       const assetInfo = {
         assetId: 'urn:aaid:aem:abc123',
-        brand: 'Coca-Cola',
+        brand: 'Acme Corp',
         campaign: 'Summer 2024',
         downloadType: 'ready-to-use',
       };
@@ -727,7 +619,7 @@ describe('dm.js - Archive Analytics Tracking', () => {
     it('should default downloadType to empty string if not provided', () => {
       const assetInfo = {
         assetId: 'urn:aaid:aem:abc123',
-        brand: 'Coca-Cola',
+        brand: 'Acme Corp',
         campaign: 'Summer 2024',
       };
 
@@ -824,7 +716,7 @@ describe('dm.js - ContentAI Authorization', () => {
 
     it('should add auth clauses to existing and structure', () => {
       const search = { query: [{ and: [{ match: { text: 'test' } }] }] };
-      const authClauses = [{ term: { 'assetMetadata.tccc:brand': ['Coca-Cola'] } }];
+      const authClauses = [{ term: { 'assetMetadata.custom:brand': ['Acme Corp'] } }];
 
       forceContentAISearchFilter(search, authClauses);
 
@@ -886,193 +778,29 @@ describe('dm.js - ContentAI Authorization', () => {
   });
 
   describe('searchContentAIAuthorization', () => {
-    let mockGetRestrictedBrands;
 
-    beforeEach(async () => {
-      const user = await import('../../user.js');
-      mockGetRestrictedBrands = user.getRestrictedBrands;
-      mockGetRestrictedBrands.mockResolvedValue({});
-    });
-
-    it('should block search for user with no roles', async () => {
+    it('should not modify query (no-op — RBAC pending Phase 2g)', async () => {
       const request = {
         user: {
-          email: 'test@example.com',
-          roles: [],
-          brands: [],
-          countries: [],
-          customers: [],
-        },
-      };
-      const search = { query: [{ and: [] }] };
-
-      await searchContentAIAuthorization(request, {}, search);
-
-      // Should add impossible filter to return nothing
-      expect(search.query[0].and).toContainEqual({
-        and: [{
-          term: {
-            'assetMetadata.tccc:brand': ['___does_not_exist___'],
-          },
-        }],
-      });
-    });
-
-    it('should allow all for admin role', async () => {
-      const request = {
-        user: {
-          email: 'admin@example.com',
+          email: 'user@example.com',
           roles: ['admin'],
-          brands: [],
-          countries: [],
-          customers: [],
         },
       };
       const search = { query: [{ and: [] }] };
 
       await searchContentAIAuthorization(request, {}, search);
 
-      // Should not modify query for admin
       expect(search.query).toEqual([{ and: [] }]);
-    });
-
-    it('should add restricted brand filter', async () => {
-      mockGetRestrictedBrands.mockResolvedValue({
-        RestrictedBrand1: '/config/access/restricted-brands/RestrictedBrand1.json',
-        RestrictedBrand2: '/config/access/restricted-brands/RestrictedBrand2.json',
-      });
-
-      const request = {
-        user: {
-          email: 'user@example.com',
-          roles: ['employee'],
-          brands: ['RestrictedBrand1'], // Has access to one
-          countries: [],
-          customers: [],
-        },
-      };
-      const search = { query: [{ and: [] }] };
-
-      await searchContentAIAuthorization(request, {}, search);
-
-      // Should exclude RestrictedBrand2 which user doesn't have
-      const authClauses = search.query[0].and.find((c) => c.and)?.and || [];
-      const notClause = authClauses.find((c) => c.not);
-      expect(notClause).toBeDefined();
-      expect(notClause.not[0].term['assetMetadata.tccc:brand']).toContain('tccc:brand/RestrictedBrand2');
-    });
-
-    it('should add bottler country filter for bottler role', async () => {
-      mockGetRestrictedBrands.mockResolvedValue({});
-
-      const request = {
-        user: {
-          email: 'bottler@example.com',
-          roles: ['bottler'],
-          brands: [],
-          countries: ['US', 'CA'],
-          customers: [],
-        },
-      };
-      const search = { query: [{ and: [] }] };
-
-      await searchContentAIAuthorization(request, {}, search);
-
-      const authClauses = search.query[0].and.find((c) => c.and)?.and || [];
-      const countryFilter = authClauses.find((c) => c.term?.['assetMetadata.tccc:intendedBottlerCountry']);
-      expect(countryFilter).toBeDefined();
-      expect(countryFilter.term['assetMetadata.tccc:intendedBottlerCountry']).toContain('all-countries');
-    });
-
-    it('should add impossible filter when no countries for non-exempt role', async () => {
-      mockGetRestrictedBrands.mockResolvedValue({});
-
-      const request = {
-        user: {
-          email: 'user@example.com',
-          roles: ['other'],
-          brands: [],
-          countries: [],
-          customers: [],
-        },
-      };
-      const search = { query: [{ and: [] }] };
-
-      await searchContentAIAuthorization(request, {}, search);
-
-      const authClauses = search.query[0].and.find((c) => c.and)?.and || [];
-      const countryFilter = authClauses.find((c) => c.term?.['assetMetadata.tccc:intendedBottlerCountry']);
-      expect(countryFilter.term['assetMetadata.tccc:intendedBottlerCountry']).toContain('___does_not_exist___');
-    });
-
-    it('should skip bottler filter for employee role', async () => {
-      mockGetRestrictedBrands.mockResolvedValue({});
-
-      const request = {
-        user: {
-          email: 'employee@example.com',
-          roles: ['employee'],
-          brands: [],
-          countries: [],
-          customers: [],
-        },
-      };
-      const search = { query: [{ and: [] }] };
-
-      await searchContentAIAuthorization(request, {}, search);
-
-      const authClauses = search.query[0].and.find((c) => c.and)?.and || [];
-      const countryFilter = authClauses.find((c) => c.term?.['assetMetadata.tccc:intendedBottlerCountry']);
-      expect(countryFilter).toBeUndefined();
-    });
-
-    it('should add customer content filter', async () => {
-      mockGetRestrictedBrands.mockResolvedValue({});
-
-      const request = {
-        user: {
-          email: 'user@example.com',
-          roles: ['employee'],
-          brands: [],
-          countries: [],
-          customers: ['Customer1', 'Customer2'],
-        },
-      };
-      const search = { query: [{ and: [] }] };
-
-      await searchContentAIAuthorization(request, {}, search);
-
-      const authClauses = search.query[0].and.find((c) => c.and)?.and || [];
-      const customerFilter = authClauses.find((c) => c.or);
-      expect(customerFilter).toBeDefined();
-      // Should have NOT customers content type OR user's allowed customers
-      expect(customerFilter.or.length).toBe(2);
-    });
-
-    it('should only add NOT customers filter when no customer access', async () => {
-      mockGetRestrictedBrands.mockResolvedValue({});
-
-      const request = {
-        user: {
-          email: 'user@example.com',
-          roles: ['employee'],
-          brands: [],
-          countries: [],
-          customers: [],
-        },
-      };
-      const search = { query: [{ and: [] }] };
-
-      await searchContentAIAuthorization(request, {}, search);
-
-      const authClauses = search.query[0].and.find((c) => c.and)?.and || [];
-      // Should have just the NOT clause (not wrapped in OR)
-      const notClause = authClauses.find((c) => c.not?.some?.((n) => n.term?.['assetMetadata.tccc:contentType']));
-      expect(notClause).toBeDefined();
     });
   });
 
   describe('collectionsSearchContentAIAuthorization', () => {
+    /** Auth clauses are nested via chunkIntoAnd inside query[0].and */
+    function getNestedAuthClauses(search) {
+      const authBlock = search.query[0].and.find((c) => c.and);
+      return authBlock?.and || [];
+    }
+
     it('should block search when user has no email', () => {
       const request = {
         user: {
@@ -1081,18 +809,16 @@ describe('dm.js - ContentAI Authorization', () => {
       };
       const search = { query: [{ and: [] }] };
 
-      collectionsSearchContentAIAuthorization(request, 'user123', search);
+      collectionsSearchContentAIAuthorization(request, search);
 
-      expect(search.query[0].and).toContainEqual({
-        and: [{
-          term: {
-            'collectionMetadata.tccc:metadata.tccc:acl.tccc:assetCollectionOwner': ['___does_not_exist___'],
-          },
-        }],
+      expect(getNestedAuthClauses(search)).toContainEqual({
+        term: {
+          'collectionMetadata.custom:metadata.custom:acl.custom:assetCollectionOwner': ['___does_not_exist___'],
+        },
       });
     });
 
-    it('should add system user and ACL filters', () => {
+    it('should add legacy ACL filters when relationship is omitted', () => {
       const request = {
         user: {
           email: 'User@Example.com',
@@ -1100,40 +826,32 @@ describe('dm.js - ContentAI Authorization', () => {
       };
       const search = { query: [{ and: [] }] };
 
-      collectionsSearchContentAIAuthorization(request, 'system-user-id', search);
+      collectionsSearchContentAIAuthorization(request, search);
 
-      const authClauses = search.query[0].and.find((c) => c.and)?.and || [];
-
-      // Should have system user filter
-      const systemFilter = authClauses.find((c) => c.term?.['repositoryMetadata.repo:createdBy']);
-      expect(systemFilter).toBeDefined();
-      expect(systemFilter.term['repositoryMetadata.repo:createdBy']).toContain('system-user-id');
-
-      // Should have ACL filter with OR for owner/editor/viewer
+      const authClauses = getNestedAuthClauses(search);
       const aclFilter = authClauses.find((c) => c.or);
       expect(aclFilter).toBeDefined();
       expect(aclFilter.or.length).toBe(3);
     });
 
-    it('should use chunkIntoOr for ACL filter', () => {
+    it('should use chunkIntoOr for legacy ACL filter', () => {
       const request = {
         user: { email: 'test@example.com' },
       };
       const search = { query: [{ and: [] }] };
 
-      collectionsSearchContentAIAuthorization(request, 'system-user-id', search);
+      collectionsSearchContentAIAuthorization(request, search);
 
-      const authClauses = search.query[0].and.find((c) => c.and)?.and || [];
+      const authClauses = getNestedAuthClauses(search);
       const aclFilter = authClauses.find((c) => c.or);
       expect(aclFilter).toBeDefined();
-      // chunkIntoOr with <= 5 items returns { or: [...items] }
       expect(aclFilter.or.length).toBe(3);
       aclFilter.or.forEach((clause) => {
         expect(clause).toHaveProperty('term');
       });
     });
 
-    it('should lowercase email in ACL filters', () => {
+    it('should lowercase email in legacy ACL filters', () => {
       const request = {
         user: {
           email: 'User@Example.COM',
@@ -1141,15 +859,41 @@ describe('dm.js - ContentAI Authorization', () => {
       };
       const search = { query: [{ and: [] }] };
 
-      collectionsSearchContentAIAuthorization(request, 'system-user-id', search);
+      collectionsSearchContentAIAuthorization(request, search);
 
-      const authClauses = search.query[0].and.find((c) => c.and)?.and || [];
+      const authClauses = getNestedAuthClauses(search);
       const aclFilter = authClauses.find((c) => c.or);
 
-      // All ACL checks should use lowercase email
       aclFilter.or.forEach((clause) => {
         const termValues = Object.values(clause.term)[0];
         expect(termValues[0]).toBe('user@example.com');
+      });
+    });
+
+    it('should filter to public collections when relationship is public', () => {
+      const request = { user: { email: 'user@example.com' } };
+      const search = { query: [{ and: [] }] };
+
+      collectionsSearchContentAIAuthorization(request, search, { relationship: 'public' });
+
+      expect(getNestedAuthClauses(search)).toContainEqual({
+        term: { 'collectionMetadata.accessLevel': ['public'] },
+      });
+    });
+
+    it('should filter to owner when relationship is createdByMe', () => {
+      const request = { user: { email: 'user@example.com' } };
+      const search = { query: [{ and: [] }] };
+
+      collectionsSearchContentAIAuthorization(request, search, { relationship: 'createdByMe' });
+
+      expect(getNestedAuthClauses(search)).toContainEqual({
+        term: {
+          'collectionMetadata.custom:metadata.custom:acl.custom:assetCollectionOwner': [
+            'user@example.com',
+            'USER@EXAMPLE.COM',
+          ],
+        },
       });
     });
   });

@@ -17,7 +17,7 @@ function buildUniqueVisitorsByMonthQuery(startDate, endDate) {
   return `SELECT 
         formatDateTime(timestamp, '%Y-%m') as month,
         COUNT(DISTINCT blob1) as uniqueVisitors
-      FROM koassets_analyticstest 
+      FROM spark_analyticstest 
       WHERE index1 IN ('login', 'search', 'download') AND blob1 IS NOT NULL AND blob1 != '' AND ${timestampFilter}
       GROUP BY month 
       ORDER BY month`;
@@ -30,7 +30,7 @@ describe('uniqueVisitorsByMonth Query', () => {
       
       expect(query).toContain('SELECT');
       expect(query).toContain('COUNT(DISTINCT blob1) as uniqueVisitors');
-      expect(query).toContain('FROM koassets_analyticstest');
+      expect(query).toContain('FROM spark_analyticstest');
       expect(query).toContain('GROUP BY month');
       expect(query).toContain('ORDER BY month');
     });
@@ -148,10 +148,10 @@ describe('uniqueVisitorsByMonth Query', () => {
   });
 
   describe('Table and Column References', () => {
-    it('should query koassets_analyticstest table', () => {
+    it('should query spark_analyticstest table', () => {
       const query = buildUniqueVisitorsByMonthQuery('2025-01-01', '2025-12-31');
       
-      expect(query).toContain('FROM koassets_analyticstest');
+      expect(query).toContain('FROM spark_analyticstest');
     });
 
     it('should reference correct blob field (blob1 for KOID)', () => {

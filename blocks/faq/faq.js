@@ -51,7 +51,7 @@ function decorateAccordion(accordionItems, accordionContainer) {
 
       // Update expand all toggle state after accordion change
       setTimeout(() => {
-        const expandAllToggle = accordionContainer.parentElement.querySelector('.expand-all-toggle');
+        const expandAllToggle = accordionContainer.parentElement.querySelector('.toggle-switch-btn');
         const allDetails = accordionContainer.querySelectorAll('details');
         const openDetails = accordionContainer.querySelectorAll('details[open]');
 
@@ -144,13 +144,13 @@ export default async function decorate(block) {
     expandAllLabel.className = 'expand-all-label';
 
     const expandAllToggle = document.createElement('div');
-    expandAllToggle.className = 'expand-all-toggle';
+    expandAllToggle.className = 'toggle-switch-btn';
     expandAllToggle.setAttribute('role', 'switch');
     expandAllToggle.setAttribute('aria-checked', 'false');
     expandAllToggle.setAttribute('tabindex', '0');
 
     const toggleSlider = document.createElement('div');
-    toggleSlider.className = 'expand-all-slider';
+    toggleSlider.className = 'toggle-switch-btn-thumb';
     expandAllToggle.appendChild(toggleSlider);
 
     expandAllContainer.appendChild(expandAllLabel);

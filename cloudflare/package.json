@@ -1,14 +1,13 @@
 {
-  "name": "@koassets/cloudflare-worker",
+  "name": "@spark-eds/cloudflare-worker",
   "version": "1.0.0",
   "private": true,
-  "description": "Cloudflare Worker for KO Assets",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "predev": "./scripts/local-secret-store.sh",
+    "predev": "./scripts/local-secret-store.sh && ./scripts/local-d1-setup.sh",
     "dev": "wrangler dev",
     "deploy": "./scripts/deploy.sh",
     "tail": "wrangler tail",
@@ -28,6 +27,7 @@
   "dependencies": {
     "escape-html": "^1.0.3",
     "itty-router": "^5.0.22",
-    "jose": "^6.0.13"
+    "jose": "^6.0.13",
+    "sqids": "^0.3.0"
   }
 }

@@ -5,31 +5,30 @@ CREATE TABLE IF NOT EXISTS user_logins (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   
   -- Identifiers
-  koid TEXT,                    -- KO ID (e.g., "S700855")
-  email TEXT UNIQUE NOT NULL,   -- Primary key for upserts
+  user_id TEXT,
+  email TEXT UNIQUE NOT NULL,
   
   -- Profile fields
-  full_name TEXT,               -- Original full name from Entra (session.name)
-  first_name TEXT,              -- Parsed first name (best-effort split)
-  last_name TEXT,               -- Parsed last name (best-effort split)
-  title TEXT,                   -- Job title (if available)
-  country TEXT,                 -- Country code
-  employee_type TEXT,           -- User type (10=employee, 99=bottler, etc)
-  company TEXT,                 -- Company name
+  full_name TEXT,
+  first_name TEXT,
+  last_name TEXT,
+  title TEXT,
+  country TEXT,
+  employee_type TEXT,
+  company TEXT,
   
   -- Authorization/Access (stored as pipe-delimited strings)
-  roles TEXT,                   -- User roles: 'agency|bottler' etc.
-  permissions TEXT,             -- Permissions: 'admin-reports|sudo|manage-rights' etc.
+  roles TEXT,
+  permissions TEXT,
   
   -- Timestamps
-  first_login_date TEXT NOT NULL,  -- ISO date of first login
-  last_login_date TEXT NOT NULL,   -- ISO date of most recent login
-  last_updated TEXT NOT NULL       -- ISO date of last profile update
+  first_login_date TEXT NOT NULL,
+  last_login_date TEXT NOT NULL,
+  last_updated TEXT NOT NULL
 );
 
--- Indexes for common queries
 CREATE INDEX IF NOT EXISTS idx_email ON user_logins(email);
-CREATE INDEX IF NOT EXISTS idx_koid ON user_logins(koid);
+CREATE INDEX IF NOT EXISTS idx_user_id ON user_logins(user_id);
 CREATE INDEX IF NOT EXISTS idx_first_login ON user_logins(first_login_date);
 CREATE INDEX IF NOT EXISTS idx_roles ON user_logins(roles);
 CREATE INDEX IF NOT EXISTS idx_permissions ON user_logins(permissions);

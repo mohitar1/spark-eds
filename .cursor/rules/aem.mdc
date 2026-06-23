@@ -5,7 +5,7 @@ alwaysApply: false
 
 ## Project Overview
 
-Most parts of this project use Adobe AEM Edge Delivery Services that serves as the foundation for all AEM Edge Delivery projects. Some parts use the React components from the `koassets-react` folder.
+This project uses Adobe AEM Edge Delivery Services that serves as the foundation for all AEM Edge Delivery projects.
 
 **Key Technologies:**
 - AEM Edge Delivery Services
@@ -23,7 +23,7 @@ Most parts of this project use Adobe AEM Edge Delivery Services that serves as t
 
 ## Project Structure
 
-Note this does not cover the `koassets-react` and `cloudflare` folders which are separate.
+Note this does not cover the `cloudflare` folder which is separate.
 
 ```
 ├── blocks/          # Reusable content blocks
@@ -144,9 +144,9 @@ Pages are progressively loaded in three phases to maximize performance. This pro
 ## Deployment
 
 ### Environments
-- **Production Preview**: `https://main--koassets--the-coca-cola-company.aem.page/`
-- **Production Live**: `https://main--koassets--the-coca-cola-company.aem.live/`
-- **Feature Preview**: `https://{branch}--koassets--the-coca-cola-company.aem.page/`
+- **Production Preview**: `https://main--spark-eds--adobe.aem.page/`
+- **Production Live**: `https://main--spark-eds--adobe.aem.live/`
+- **Feature Preview**: `https://{branch}--spark-eds--adobe.aem.page/`
 
 ### Publishing Process
 1. Push changes to a feature branch

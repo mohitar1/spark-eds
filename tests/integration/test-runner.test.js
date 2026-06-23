@@ -26,7 +26,7 @@ if (!cookie) {
     '',
     '  To fix:',
     '    1. Open DevTools → Application → Cookies',
-    '    2. Copy the "session" cookie for koassets.adobecocacola.workers.dev',
+    '    2. Copy the "session" cookie for spark.aem.media',
     '    3. export TEST_SESSION_COOKIE="<value>"',
     '    4. Re-run the tests',
     '',

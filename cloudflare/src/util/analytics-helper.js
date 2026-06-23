@@ -4,27 +4,32 @@
  */
 
 /**
- * Send analytics event to Analytics Engine
- * @param {Object} env - Cloudflare env with KO_ANALYTICS_ENGINE_TEST binding
+ * Send analytics event to Analytics Engine (downloads/logins) or D1 (searches).
+ * @param {Object} env - Cloudflare env
  * @param {string} eventType - 'login', 'search', or 'download'
- * @param {Object} eventData - Event data matching writeAnalyticsEvent schema
+ * @param {Object} eventData - Event data
  * @returns {Promise<void>}
  */
 export async function trackAnalyticsEvent(env, eventType, eventData) {
-  if (!env.KO_ANALYTICS_ENGINE_TEST) {
-    console.warn('[Analytics] Analytics Engine not available');
-    return;
-  }
-  
   try {
-    const { writeAnalyticsEvent } = await import('../api/analytics.js');
-    await writeAnalyticsEvent(env.KO_ANALYTICS_ENGINE_TEST, eventType, eventData, env);
-    if (env.DEBUG_ANALYTICS) {
-      console.info(`[Analytics] ${eventType} event tracked:`, eventData.koid);
+    if (eventType === 'search') {
+      if (!env.SEARCH_EVENTS) {
+        console.warn('[Analytics] SEARCH_EVENTS D1 not available');
+        return;
+      }
+      const { writeSearchEvent } = await import('../api/analytics.js');
+      await writeSearchEvent(env.SEARCH_EVENTS, eventData);
+      return;
     }
-  } catch (error) {
-    console.error(`[Analytics] Failed to track ${eventType} event:`, error);
-    // Don't throw - analytics failures should not break the main flow
+
+    if (!env.SPARK_ANALYTICS_ENGINE) {
+      console.warn('[Analytics] Analytics Engine not available');
+      return;
+    }
+    const { writeAnalyticsEvent } = await import('../api/analytics.js');
+    await writeAnalyticsEvent(env.SPARK_ANALYTICS_ENGINE, eventType, eventData, env);
+  } catch (err) {
+    console.error(`[Analytics] Failed to track ${eventType} event:`, err);
   }
 }
 

@@ -4,7 +4,7 @@ import { maskEmail } from '../log-utils.js';
 describe('log-utils', () => {
   describe('maskEmail', () => {
     it('masks the local part keeping only the first character and domain', () => {
-      expect(maskEmail('john.smith@coca-cola.com')).toBe('j***@coca-cola.com');
+      expect(maskEmail('john.smith@example.com')).toBe('j***@example.com');
     });
 
     it('works for short local parts (single char)', () => {
@@ -28,7 +28,7 @@ describe('log-utils', () => {
     });
 
     it('preserves the full domain including subdomain', () => {
-      expect(maskEmail('user@mail.coca-cola.com')).toBe('u***@mail.coca-cola.com');
+      expect(maskEmail('user@mail.example.com')).toBe('u***@mail.example.com');
     });
 
     it('handles email with no @ symbol gracefully', () => {

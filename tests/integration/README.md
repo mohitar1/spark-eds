@@ -1,6 +1,6 @@
 # Integration Tests
 
-Smoke tests that hit real KO Assets endpoints (API + page loads) with your
+Smoke tests that hit real Spark endpoints (API + page loads) with your
 session cookie. Tests are defined declaratively in `test-config.js` — no
 per-feature test files needed.
 
@@ -9,7 +9,7 @@ per-feature test files needed.
 1. **Get your session cookie**
    - Open the site in your browser
    - DevTools → Application → Cookies
-   - Copy the value of the `session` cookie for `koassets.adobecocacola.workers.dev`
+   - Copy the value of the `session` cookie for `spark-eds.workers.dev`
 
 2. **Export it**
    ```bash
@@ -46,7 +46,7 @@ Tests are organized by feature area in `test-config.js`:
 | `user` | `/api/user` | — | Current user profile |
 | `search` | ContentAI search, collection search | `/en/search/assets` | Search endpoints and page |
 | `reporting` | Report metrics, raw downloads, user logins CSV | 5 report pages | Analytics and admin reports |
-| `collections` | — | `/en/my-dam/my-collections` | User collections |
+| `collections` | — | `/en/search-collections`, `/en/collection-details` | Collection search and details |
 | `rightsRequests` | List requests, reviews (assigned/unassigned), reviewers | My rights requests, my rights reviews | Rights request workflow |
 | `rightsRequestReport` | Admin rights requests list | Rights request report page | Admin reporting |
 | `savedSearches` | List/get saved searches | My saved searches page | Saved search management |
@@ -130,10 +130,10 @@ Use `expectByEnv` to set per-environment expectations:
 
 | `TEST_ENV` value | Target URL                                         |
 |------------------|----------------------------------------------------|
-| `production` (default) | `https://koassets.adobecocacola.workers.dev`      |
-| `preview`        | `https://preview-koassets.adobecocacola.workers.dev`    |
+| `production` (default) | `https://spark-eds.workers.dev`      |
+| `preview`        | `https://preview-spark-eds.workers.dev`    |
 | `local`          | `http://localhost:8787`                             |
-| `branch:<name>`  | `https://<name>-koassets.adobecocacola.workers.dev`     |
+| `branch:<name>`  | `https://<name>-spark-eds.workers.dev`     |
 
 ## Troubleshooting
 

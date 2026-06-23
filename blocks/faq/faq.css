@@ -87,44 +87,14 @@
     font-weight: normal;
 }
 
-.faq .expand-all-toggle {
-    width: 48px;
-    height: 22px;
-    background-color: #e4e4e4;
-    border-radius: 16px;
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    border: 1px solid #ed0000;
-}
-
-.faq .expand-all-slider {
-    width: 14px;
-    height: 14px;
-    background-color: white;
-    border-radius: 50%;
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    transition: transform 0.3s ease;
-    box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
-}
-
-.faq .expand-all-toggle[aria-checked='true'] {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
-.faq .expand-all-toggle[aria-checked='true'] .expand-all-slider {
-    transform: translateX(26px);
-}
+/* Toggle uses shared .toggle-switch-btn from styles.css */
 
 /* Accordion styling */
 .faq .accordion details {
     border: none;
     border-bottom: 1px solid #e4e4e4;
     margin: 0;
-    font-family: "TCCC UnityHeadline", sans-serif;
+    font-family: var(--heading-font-family);
 }
 
 .faq .accordion details summary {
@@ -191,5 +161,5 @@
 }
 
 .faq .accordion details .accordion-item-body a:hover {
-    color: #f40000;
+    color: var(--primary-color);
 }

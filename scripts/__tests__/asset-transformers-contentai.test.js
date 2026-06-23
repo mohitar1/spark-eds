@@ -147,9 +147,7 @@ describe('contentai-asset-transformer', () => {
       const hit = {
         assetId: 'test',
         repositoryMetadata: {},
-        assetMetadata: {
-          'tccc:lastModified': 'invalid-date',
-        },
+        assetMetadata: {},
       };
 
       const result = populateAssetFromContentAIHit(hit);
@@ -168,7 +166,7 @@ describe('contentai-asset-transformer', () => {
 
       const result = populateAssetFromContentAIHit(hit);
 
-      expect(result.formatedSize).toBe('1 MB');
+      expect(result.formattedSize).toBe('1 MB');
     });
 
     it('should handle zero file size', () => {
@@ -182,49 +180,7 @@ describe('contentai-asset-transformer', () => {
 
       const result = populateAssetFromContentAIHit(hit);
 
-      expect(result.formatedSize).toBe('0 Bytes');
-    });
-
-    it('should extract brand from _hidden field', () => {
-      const hit = {
-        assetId: 'test',
-        repositoryMetadata: {},
-        assetMetadata: {
-          'tccc:brand_hidden': ['Coca-Cola|brand-id-1', 'Sprite|brand-id-2'],
-        },
-      };
-
-      const result = populateAssetFromContentAIHit(hit);
-
-      expect(result.brand).toBe('Coca-Cola, Sprite');
-    });
-
-    it('should fall back to original field when no _hidden', () => {
-      const hit = {
-        assetId: 'test',
-        repositoryMetadata: {},
-        assetMetadata: {
-          'tccc:brand': [{ value: 'FallbackBrand' }],
-        },
-      };
-
-      const result = populateAssetFromContentAIHit(hit);
-
-      expect(result.brand).toBe('FallbackBrand');
-    });
-
-    it('should extract campaign name from _hidden field', () => {
-      const hit = {
-        assetId: 'test',
-        repositoryMetadata: {},
-        assetMetadata: {
-          'tccc:campaignName_hidden': 'Summer Campaign|camp-id',
-        },
-      };
-
-      const result = populateAssetFromContentAIHit(hit);
-
-      expect(result.campaignName).toBe('Summer Campaign');
+      expect(result.formattedSize).toBe('0 Bytes');
     });
 
     it('should handle missing metadata gracefully', () => {
@@ -236,8 +192,6 @@ describe('contentai-asset-transformer', () => {
 
       expect(result.assetId).toBe('test');
       expect(result.name).toBe('N/A');
-      // brand uses extractDisplayFromHiddenArray which returns '' when extractKeywords returns ''
-      expect(result.brand).toBe('');
     });
 
     it('should extract dimensions', () => {
@@ -272,51 +226,29 @@ describe('contentai-asset-transformer', () => {
       expect(result.imageHeight).toBe('600');
     });
 
-    it('should extract description with tccc priority', () => {
+    it('should extract description from dc:description', () => {
       const hit = {
         assetId: 'test',
         repositoryMetadata: {},
         assetMetadata: {
-          'tccc:description': 'TCCC Description',
           'dc:description': 'DC Description',
         },
       };
 
       const result = populateAssetFromContentAIHit(hit);
 
-      expect(result.description).toBe('TCCC Description');
-    });
-
-    it('should fall back to dc:description when tccc:description is empty string', () => {
-      const hit = {
-        assetId: 'test',
-        repositoryMetadata: {},
-        assetMetadata: {
-          'tccc:description': '', // Empty string is falsy, so falls through
-          'dc:description': 'DC Description',
-        },
-      };
-
-      const result = populateAssetFromContentAIHit(hit);
-
-      // safeStringField returns '' for empty string (since '' is a string type)
-      // '' is falsy, so || falls through to dc:description
       expect(result.description).toBe('DC Description');
     });
 
-    it('should use dc:description when tccc:description field does not exist', () => {
+    it('should return N/A when dc:description is missing', () => {
       const hit = {
         assetId: 'test',
         repositoryMetadata: {},
-        assetMetadata: {
-          'dc:description': 'DC Description',
-        },
+        assetMetadata: {},
       };
 
       const result = populateAssetFromContentAIHit(hit);
 
-      // When tccc:description doesn't exist, safeStringField returns 'N/A' (truthy)
-      // So it never falls through to dc:description with the current || logic
       expect(result.description).toBe('N/A');
     });
 
@@ -361,34 +293,6 @@ describe('contentai-asset-transformer', () => {
 
       expect(result.xcmKeywords).toBe('keyword1, keyword2');
       expect(result.xcmMachineKeywords).toBe('machine1, machine2');
-    });
-
-    it('should handle single _hidden string value for arrays', () => {
-      const hit = {
-        assetId: 'test',
-        repositoryMetadata: {},
-        assetMetadata: {
-          'tccc:language_hidden': 'English|en',
-        },
-      };
-
-      const result = populateAssetFromContentAIHit(hit);
-
-      expect(result.language).toBe('English');
-    });
-
-    it('should extract array values without | separator', () => {
-      const hit = {
-        assetId: 'test',
-        repositoryMetadata: {},
-        assetMetadata: {
-          'tccc:brand_hidden': ['Coca-Cola', 'Sprite'],
-        },
-      };
-
-      const result = populateAssetFromContentAIHit(hit);
-
-      expect(result.brand).toBe('Coca-Cola, Sprite');
     });
   });
 
@@ -452,9 +356,9 @@ describe('contentai-asset-transformer', () => {
         facets: [
           {
             type: 'CATEGORY',
-            id: 'tccc-brand',
+            id: 'brand',
             values: [
-              { value: 'Coca-Cola', count: 50 },
+              { value: 'Acme Corp', count: 50 },
               { value: 'Sprite', count: 30 },
             ],
           },
@@ -463,8 +367,8 @@ describe('contentai-asset-transformer', () => {
 
       const result = parseContentAIResponse(response);
 
-      expect(result.facets['tccc-brand']).toEqual({
-        'Coca-Cola': 50,
+      expect(result.facets.brand).toEqual({
+        'Acme Corp': 50,
         Sprite: 30,
       });
     });

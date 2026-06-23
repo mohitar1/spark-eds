@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <!--
-  KOAssets Analytics Query Tool
+  Spark Analytics Query Tool
   
   IMPORTANT: Cloudflare's API blocks browser requests (CORS). You must run Chrome with CORS disabled.
   
   Quick Start:
-    1. Get your API token from cloudflare/.secrets (KOASSETS_ANALYTICS_API_TOKEN)
+    1. Get your API token from cloudflare/.secrets (SPARK_ANALYTICS_API_TOKEN)
        Or from Cloudflare Dashboard → My Profile → API Tokens
     
     2. Run Chrome with CORS disabled (dev instance only):
@@ -34,7 +34,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KOAssets Analytics Query Tool</title>
+  <title>Spark Analytics Query Tool</title>
   <style>
     /* Reset and Base */
     * {
@@ -702,7 +702,7 @@
   <div class="container">
     <!-- Header -->
     <div class="header">
-      <h1>📊 KOAssets Analytics Query Tool</h1>
+      <h1>📊 Spark Analytics Query Tool</h1>
       <p>Query Cloudflare Analytics Engine directly from your browser • Standalone HTML tool</p>
     </div>
 
@@ -745,12 +745,12 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
         <div class="form-field">
           <label>Cloudflare API Token:</label>
           <input type="password" id="config-api-token" placeholder="Paste your Cloudflare API token here">
-          <small>Get from: <code>cloudflare/.secrets</code> (KOASSETS_ANALYTICS_API_TOKEN) or Cloudflare Dashboard → My Profile → API Tokens</small>
+          <small>Get from: <code>cloudflare/.secrets</code> (SPARK_ANALYTICS_API_TOKEN) or Cloudflare Dashboard → My Profile → API Tokens</small>
         </div>
         
         <div class="form-field">
           <label>Dataset Name:</label>
-          <input type="text" id="config-dataset" value="koassets_analyticstest" readonly>
+          <input type="text" id="config-dataset" value="spark_analyticstest" readonly>
           <small>Analytics Engine dataset name (pre-filled)</small>
         </div>
         
@@ -762,8 +762,8 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
         <details class="config-help" open>
           <summary><strong>Where to find your API token</strong></summary>
           <ol>
-            <li><strong>From project secrets (easiest):</strong> Open <code>cloudflare/.secrets</code> and copy the value of <code>KOASSETS_ANALYTICS_API_TOKEN</code></li>
-            <li><strong>From Cloudflare Secrets Store:</strong> Check <code>cloudflare/wrangler.toml</code> for the <code>ANALYTICS_API_TOKEN</code> binding (secret name: <code>KOASSETS_ANALYTICS_API_TOKEN</code>)</li>
+            <li><strong>From project secrets (easiest):</strong> Open <code>cloudflare/.secrets</code> and copy the value of <code>SPARK_ANALYTICS_API_TOKEN</code></li>
+            <li><strong>From Cloudflare Secrets Store:</strong> Check <code>cloudflare/wrangler.toml</code> for the <code>ANALYTICS_API_TOKEN</code> binding (secret name: <code>SPARK_ANALYTICS_API_TOKEN</code>)</li>
             <li><strong>From Cloudflare Dashboard:</strong> Go to My Profile → API Tokens → create/use token with "Analytics:Read" permission</li>
           </ol>
           <p><em>Note: Token is stored in browser localStorage only. This tool calls Cloudflare's API directly.</em></p>
@@ -858,7 +858,7 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
     <!-- OOTB Queries Section -->
     <div class="section">
       <h2>📋 Pre-built Report Queries</h2>
-      <p class="info-message">Click any button to run common analytics queries. Table: <code>koassets_analyticstest</code></p>
+      <p class="info-message">Click any button to run common analytics queries. Table: <code>spark_analyticstest</code></p>
       
       <div class="ootb-grid">
         <div class="ootb-category">
@@ -899,23 +899,23 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
     <!-- Custom SQL Section -->
     <div class="section custom-sql-section">
       <h2>💻 Custom SQL Query</h2>
-      <p class="info-message">Run your own SQL queries against Analytics Engine. Table: <code>koassets_analyticstest</code></p>
+      <p class="info-message">Run your own SQL queries against Analytics Engine. Table: <code>spark_analyticstest</code></p>
       
       <div class="form-field">
         <label>SQL Query:</label>
-        <textarea id="custom-sql-input" placeholder="SELECT COUNT(DISTINCT blob1) as unique_users FROM koassets_analyticstest WHERE index1 = 'login'"></textarea>
+        <textarea id="custom-sql-input" placeholder="SELECT COUNT(DISTINCT blob1) as unique_users FROM spark_analyticstest WHERE index1 = 'login'"></textarea>
       </div>
       
       <div class="sql-examples">
         <details>
           <summary>💡 Example Queries (click to load)</summary>
           <div class="example-queries">
-            <button class="example-btn" data-sql="SELECT * FROM koassets_analyticstest ORDER BY timestamp DESC LIMIT 10">Recent events (10)</button>
-            <button class="example-btn" data-sql="SELECT index1 as eventType, COUNT() as count FROM koassets_analyticstest GROUP BY index1">Count by event type</button>
-            <button class="example-btn" data-sql="SELECT COUNT(DISTINCT blob1) as unique_users FROM koassets_analyticstest WHERE index1 = 'login' AND timestamp >= toDateTime('2025-01-01 00:00:00')">Unique users (2025)</button>
-            <button class="example-btn" data-sql="SELECT blob1 as koid, COUNT() as logins FROM koassets_analyticstest WHERE index1 = 'login' GROUP BY blob1 ORDER BY logins DESC LIMIT 20">Top users by logins</button>
-            <button class="example-btn" data-sql="SELECT blob6 as search_term, COUNT() as searches FROM koassets_analyticstest WHERE index1 = 'search' AND blob6 != '' GROUP BY search_term ORDER BY searches DESC LIMIT 20">Top search terms</button>
-            <button class="example-btn" data-sql="SELECT blob7 as brand, COUNT() as downloads FROM koassets_analyticstest WHERE index1 = 'download' AND blob7 != '' GROUP BY brand ORDER BY downloads DESC LIMIT 20">Downloads by brand</button>
+            <button class="example-btn" data-sql="SELECT * FROM spark_analyticstest ORDER BY timestamp DESC LIMIT 10">Recent events (10)</button>
+            <button class="example-btn" data-sql="SELECT index1 as eventType, COUNT() as count FROM spark_analyticstest GROUP BY index1">Count by event type</button>
+            <button class="example-btn" data-sql="SELECT COUNT(DISTINCT blob1) as unique_users FROM spark_analyticstest WHERE index1 = 'login' AND timestamp >= toDateTime('2025-01-01 00:00:00')">Unique users (2025)</button>
+            <button class="example-btn" data-sql="SELECT blob1 as koid, COUNT() as logins FROM spark_analyticstest WHERE index1 = 'login' GROUP BY blob1 ORDER BY logins DESC LIMIT 20">Top users by logins</button>
+            <button class="example-btn" data-sql="SELECT blob6 as search_term, COUNT() as searches FROM spark_analyticstest WHERE index1 = 'search' AND blob6 != '' GROUP BY search_term ORDER BY searches DESC LIMIT 20">Top search terms</button>
+            <button class="example-btn" data-sql="SELECT blob7 as brand, COUNT() as downloads FROM spark_analyticstest WHERE index1 = 'download' AND blob7 != '' GROUP BY brand ORDER BY downloads DESC LIMIT 20">Downloads by brand</button>
           </div>
         </details>
       </div>
@@ -995,7 +995,7 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
     document.getElementById('test-connection-btn').addEventListener('click', async () => {
       if (!saveConfig()) return;
 
-      const testQuery = "SELECT COUNT() as total FROM koassets_analyticstest LIMIT 1";
+      const testQuery = "SELECT COUNT() as total FROM spark_analyticstest LIMIT 1";
       
       try {
         showConfigStatus('Testing connection...', 'info');
@@ -1253,10 +1253,10 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
       let sql = '';
       
       if (queryType === 'recent') {
-        sql = `SELECT * FROM koassets_analyticstest${whereClause} ORDER BY timestamp DESC`;
+        sql = `SELECT * FROM spark_analyticstest${whereClause} ORDER BY timestamp DESC`;
         if (rangeMode === 'limit') sql += ` LIMIT ${limitValue}`;
       } else if (queryType === 'by-type') {
-        sql = `SELECT index1 as event_type, COUNT() as count FROM koassets_analyticstest${whereClause} GROUP BY index1 ORDER BY count DESC`;
+        sql = `SELECT index1 as event_type, COUNT() as count FROM spark_analyticstest${whereClause} GROUP BY index1 ORDER BY count DESC`;
       }
       
       // Show loading message
@@ -1325,62 +1325,62 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
     const ootbQueries = {
       'unique-users': {
         name: 'Unique User Count',
-        sql: "SELECT COUNT(DISTINCT blob1) as unique_users FROM koassets_analyticstest WHERE index1 = 'login'",
+        sql: "SELECT COUNT(DISTINCT blob1) as unique_users FROM spark_analyticstest WHERE index1 = 'login'",
         eventType: 'login'
       },
       'users-by-month': {
         name: 'Users by Month',
-        sql: "SELECT toStartOfMonth(timestamp) as month, COUNT(DISTINCT blob1) as unique_users FROM koassets_analyticstest WHERE index1 = 'login' GROUP BY month ORDER BY month DESC",
+        sql: "SELECT toStartOfMonth(timestamp) as month, COUNT(DISTINCT blob1) as unique_users FROM spark_analyticstest WHERE index1 = 'login' GROUP BY month ORDER BY month DESC",
         eventType: 'login'
       },
       'users-by-role': {
         name: 'Users by Role',
-        sql: "SELECT blob5 as roles, COUNT(DISTINCT blob1) as unique_users FROM koassets_analyticstest WHERE index1 = 'login' GROUP BY roles ORDER BY unique_users DESC",
+        sql: "SELECT blob5 as roles, COUNT(DISTINCT blob1) as unique_users FROM spark_analyticstest WHERE index1 = 'login' GROUP BY roles ORDER BY unique_users DESC",
         eventType: 'login'
       },
       'first-time-users-native': {
         name: 'First Time Users - 2025',
-        sql: "SELECT COUNT() as first_time_users FROM (SELECT blob1, MIN(timestamp) as first_login FROM koassets_analyticstest WHERE index1 = 'login' GROUP BY blob1 HAVING MIN(timestamp) >= toDateTime('2025-01-01 00:00:00') AND MIN(timestamp) <= toDateTime('2025-12-31 23:59:59'))",
+        sql: "SELECT COUNT() as first_time_users FROM (SELECT blob1, MIN(timestamp) as first_login FROM spark_analyticstest WHERE index1 = 'login' GROUP BY blob1 HAVING MIN(timestamp) >= toDateTime('2025-01-01 00:00:00') AND MIN(timestamp) <= toDateTime('2025-12-31 23:59:59'))",
         eventType: 'login'
       },
       'total-downloads': {
         name: 'Total Downloads',
-        sql: "SELECT COUNT() as download_count FROM koassets_analyticstest WHERE index1 = 'download'",
+        sql: "SELECT COUNT() as download_count FROM spark_analyticstest WHERE index1 = 'download'",
         eventType: 'download'
       },
       'downloads-by-month': {
         name: 'Downloads by Month',
-        sql: "SELECT toStartOfMonth(timestamp) as month, COUNT() as download_count FROM koassets_analyticstest WHERE index1 = 'download' GROUP BY month ORDER BY month DESC",
+        sql: "SELECT toStartOfMonth(timestamp) as month, COUNT() as download_count FROM spark_analyticstest WHERE index1 = 'download' GROUP BY month ORDER BY month DESC",
         eventType: 'download'
       },
       'downloads-by-role': {
         name: 'Downloads by Role',
-        sql: "SELECT blob5 as roles, COUNT() as download_count FROM koassets_analyticstest WHERE index1 = 'download' GROUP BY roles ORDER BY download_count DESC",
+        sql: "SELECT blob5 as roles, COUNT() as download_count FROM spark_analyticstest WHERE index1 = 'download' GROUP BY roles ORDER BY download_count DESC",
         eventType: 'download'
       },
       'downloads-by-type': {
         name: 'Downloads by Resource Type',
-        sql: "SELECT blob6 as resource_type, COUNT() as download_count FROM koassets_analyticstest WHERE index1 = 'download' GROUP BY resource_type ORDER BY download_count DESC",
+        sql: "SELECT blob6 as resource_type, COUNT() as download_count FROM spark_analyticstest WHERE index1 = 'download' GROUP BY resource_type ORDER BY download_count DESC",
         eventType: 'download'
       },
       'downloads-by-country': {
         name: 'Downloads by Country',
-        sql: "SELECT blob2 as country, COUNT() as download_count FROM koassets_analyticstest WHERE index1 = 'download' GROUP BY country ORDER BY download_count DESC LIMIT 20",
+        sql: "SELECT blob2 as country, COUNT() as download_count FROM spark_analyticstest WHERE index1 = 'download' GROUP BY country ORDER BY download_count DESC LIMIT 20",
         eventType: 'download'
       },
       'first-time-downloaders-native': {
         name: 'First Time Downloaders - 2025',
-        sql: "SELECT COUNT() as first_time_downloaders FROM (SELECT blob1, MIN(timestamp) as first_download FROM koassets_analyticstest WHERE index1 = 'download' GROUP BY blob1 HAVING MIN(timestamp) >= toDateTime('2025-01-01 00:00:00') AND MIN(timestamp) <= toDateTime('2025-12-31 23:59:59'))",
+        sql: "SELECT COUNT() as first_time_downloaders FROM (SELECT blob1, MIN(timestamp) as first_download FROM spark_analyticstest WHERE index1 = 'download' GROUP BY blob1 HAVING MIN(timestamp) >= toDateTime('2025-01-01 00:00:00') AND MIN(timestamp) <= toDateTime('2025-12-31 23:59:59'))",
         eventType: 'download'
       },
       'top-searches': {
         name: 'Top Search Terms',
-        sql: "SELECT blob6 as search_term, COUNT() as search_count FROM koassets_analyticstest WHERE index1 = 'search' AND blob6 != '' GROUP BY search_term ORDER BY search_count DESC LIMIT 50",
+        sql: "SELECT blob6 as search_term, COUNT() as search_count FROM spark_analyticstest WHERE index1 = 'search' AND blob6 != '' GROUP BY search_term ORDER BY search_count DESC LIMIT 50",
         eventType: 'search'
       },
       'searches-by-month': {
         name: 'Searches by Month',
-        sql: "SELECT toStartOfMonth(timestamp) as month, COUNT() as search_count FROM koassets_analyticstest WHERE index1 = 'search' GROUP BY month ORDER BY month DESC",
+        sql: "SELECT toStartOfMonth(timestamp) as month, COUNT() as search_count FROM spark_analyticstest WHERE index1 = 'search' GROUP BY month ORDER BY month DESC",
         eventType: 'search'
       }
     };

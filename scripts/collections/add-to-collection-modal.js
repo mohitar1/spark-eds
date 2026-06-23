@@ -4,10 +4,13 @@
  */
 
 // Import the centralized JavaScript collections client with auth
+import { CollectionListSegment } from './collection-search-constants.js';
 import { DynamicMediaCollectionsClient } from './collections-api-client.js';
 import { transformApiCollectionToInternal } from './collections-utils.js';
-import { getHitsPerPage } from '../../blocks/koassets-search/utils/config.js';
-import setButtonLoading from '../../blocks/koassets-search/utils/dom-utils.js';
+import { MAX_HITS_PER_PAGE } from '../../blocks/search-results/utils/config.js';
+import { dispatchAssetAction } from '../audit/asset-audit.js';
+import { ASSET_AUDIT_ACTIONS } from '../audit/asset-audit-constants.js';
+import setButtonLoading from '../../blocks/search-results/utils/dom-utils.js';
 import { localizePath } from '../locale-utils.js';
 
 // Global state
@@ -18,7 +21,9 @@ let currentAssets = [];
 let collectionsModal = null;
 
 // Pagination state for ContentAI cursor-based pagination
-let collectionsCursor = null;
+// Two independent cursors: one per search segment (createdByMe + public).
+let createdByMeCursor = null;
+let publicCursor = null;
 let hasMoreCollections = false;
 let isLoadingCollections = false;
 
@@ -106,7 +111,7 @@ function createCollectionsModal() {
             <button class="load-more-button">Load more</button>
           </div>
           <div class="no-collections-message" style="display: none;">
-            <p>No collections found. <a href="${localizePath('/my-dam/my-collections')}">Create your first collection</a>.</p>
+            <p>No collections found. <a href="${localizePath('/search-collections')}">Create your first collection</a>.</p>
           </div>
         </div>
       </div>
@@ -145,7 +150,8 @@ function showCollectionsModal() {
   if (!currentAsset) return;
 
   // Reset pagination state when opening modal
-  collectionsCursor = null;
+  createdByMeCursor = null;
+  publicCursor = null;
   hasMoreCollections = false;
   allCollections = [];
 
@@ -161,6 +167,23 @@ function hideCollectionsModal() {
   collectionsModal.style.display = 'none';
   currentAsset = null;
   currentAssets = [];
+}
+
+/**
+ * Merge two raw API item arrays, transform each to internal format, and
+ * deduplicate against an already-seen ID set. Own (createdByMe) items are
+ * listed first so they take precedence when the same collection appears in
+ * both segments.
+ *
+ * @param {Array} createdItems  Raw hits from the createdByMe segment.
+ * @param {Array} publicItems   Raw hits from the public segment.
+ * @param {Set<string>} seen    IDs already present in the current list (mutated in place).
+ * @returns {Array} Transformed, deduplicated collection objects.
+ */
+export function mergeCollectionSegments(createdItems, publicItems, seen) {
+  return [...createdItems, ...publicItems]
+    .map(transformApiCollectionToInternal)
+    .filter((c) => { if (seen.has(c.id)) return false; seen.add(c.id); return true; });
 }
 
 // Load collections from API and create checkboxes
@@ -183,37 +206,52 @@ async function loadCollectionsForSelection(loadMore = false) {
     if (!loadMore) {
       collectionsContainer.innerHTML = '<div class="loading">Loading collections...</div>';
     }
-    // eslint-disable-next-line no-console
-    console.log(`Loading collections for modal... (loadMore: ${loadMore})`);
+    const limit = MAX_HITS_PER_PAGE;
 
-    // ContentAI API has max limit of 50
-    const limit = getHitsPerPage();
+    // Fetch collections the user can write to:
+    //   1. All collections they created (any access level)
+    //   2. Public collections created by anyone (accessLevel=public → anyone can add assets)
+    // Run both in parallel; on load-more, only fetch from segments that still have a cursor.
+    // Use allSettled so a transient error on one segment doesn't suppress the other.
+    const [createdResult, publicResult] = await Promise.allSettled([
+      createdByMeCursor !== null || !loadMore
+        ? collectionsClient.searchCollections({
+          limit,
+          relationship: CollectionListSegment.CREATED_BY_ME,
+          ...(loadMore && createdByMeCursor ? { cursor: createdByMeCursor } : {}),
+        })
+        : Promise.resolve({ items: [], cursor: null }),
+      publicCursor !== null || !loadMore
+        ? collectionsClient.searchCollections({
+          limit,
+          relationship: CollectionListSegment.PUBLIC,
+          ...(loadMore && publicCursor ? { cursor: publicCursor } : {}),
+        })
+        : Promise.resolve({ items: [], cursor: null }),
+    ]);
 
-    // Pass cursor for pagination if loading more; writeOnly so backend returns owner/editor only
-    const searchOptions = { limit, writeOnly: true };
-    if (loadMore && collectionsCursor) {
-      searchOptions.cursor = collectionsCursor;
-    }
+    const createdResponse = createdResult.status === 'fulfilled'
+      ? createdResult.value : { items: [], cursor: null };
+    const publicResponse = publicResult.status === 'fulfilled'
+      ? publicResult.value : { items: [], cursor: null };
 
-    const response = await collectionsClient.searchCollections(searchOptions);
+    createdByMeCursor = createdResponse.cursor || null;
+    publicCursor = publicResponse.cursor || null;
+    hasMoreCollections = !!(createdByMeCursor || publicCursor);
 
-    // Transform API response to internal format (backend already filtered to write access only)
-    const newCollections = response.items.map(transformApiCollectionToInternal);
+    // Merge and deduplicate by id (own collections take precedence over public ones)
+    const seen = new Set(allCollections.map((c) => c.id));
+    const newCollections = mergeCollectionSegments(
+      createdResponse.items,
+      publicResponse.items,
+      seen,
+    );
 
-    // Append or replace collections based on loadMore flag
     if (loadMore) {
       allCollections = [...allCollections, ...newCollections];
     } else {
       allCollections = newCollections;
     }
-
-    // Update cursor and hasMore state for pagination
-    collectionsCursor = response.cursor || null;
-    const totalFromApi = response.total || 0;
-    hasMoreCollections = allCollections.length < totalFromApi;
-
-    // eslint-disable-next-line no-console
-    console.log(`Loaded ${newCollections.length} collections (total: ${allCollections.length})`);
 
     if (allCollections.length === 0) {
       collectionsContainer.style.display = 'none';
@@ -376,6 +414,7 @@ async function handleAddToSelectedCollections(event) {
     hideCollectionsModal();
 
     if (updatedCount > 0) {
+      assets.forEach((asset) => dispatchAssetAction(ASSET_AUDIT_ACTIONS.COLLECTION_ADD, asset.assetId || asset.id));
       showToast('ASSETS ADDED TO COLLECTIONS SUCCESSFULLY', 'success');
     } else {
       showToast('Failed to add assets to collections', 'error');
@@ -388,7 +427,6 @@ async function handleAddToSelectedCollections(event) {
   }
 }
 
-// Toast notification function (reused from my-collections)
 function showToast(message, type = 'success') {
   // Check if toast already exists
   const existingToast = document.querySelector('.toast');
@@ -420,8 +458,10 @@ function showToast(message, type = 'success') {
   }, 3000);
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', initAddToCollectionModal);
+// Initialize when DOM is loaded (guard allows importing this module in Node/test environments)
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', initAddToCollectionModal);
+}
 
 // Export for module usage
 export { initAddToCollectionModal, handleOpenCollectionModal };

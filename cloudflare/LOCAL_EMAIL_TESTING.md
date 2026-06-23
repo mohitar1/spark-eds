@@ -47,13 +47,13 @@ FakeSMTP is a dummy SMTP server that:
 The project already includes FakeSMTP:
 
 ```
-📁 koassets/
+📁 spark/
   └── fakeSMTP-2.0.jar  ← Already included!
 ```
 
 If the file is missing, download it:
 - **Direct Download:** https://github.com/Nilhcem/FakeSMTP/releases/download/v2.0/fakeSMTP-2.0.jar
-- Save it to the project root: `koassets/fakeSMTP-2.0.jar`
+- Save it to the project root: `spark/fakeSMTP-2.0.jar`
 
 ---
 
@@ -72,10 +72,10 @@ Create or edit `cloudflare/.dev.vars` to enable local SMTP mode:
 USE_LOCAL_SMTP=true
 SMTP_HOST=localhost
 SMTP_PORT=1025
-SMTP_FROM_NAME="KO Assets (Local Dev)"
+SMTP_FROM_NAME="Spark (Local Dev)"
 
 # Optional: Custom from email address
-# SMTP_FROM_EMAIL=noreply@koassets.local
+# SMTP_FROM_EMAIL=noreply@spark.local
 ```
 
 **Important Notes:**
@@ -92,7 +92,7 @@ SMTP_FROM_NAME="KO Assets (Local Dev)"
 
 The project includes a batch script:
 
-**File Location:** `koassets/start-fake-smtp.bat`
+**File Location:** `spark/start-fake-smtp.bat`
 
 ```batch
 @echo off
@@ -115,7 +115,7 @@ start-fake-smtp.bat
 
 Create a shell script:
 
-**File Location:** `koassets/start-fake-smtp.sh`
+**File Location:** `spark/start-fake-smtp.sh`
 
 ```bash
 #!/bin/bash
@@ -473,7 +473,7 @@ Console will show:
 echo "USE_LOCAL_SMTP=true
 SMTP_HOST=localhost
 SMTP_PORT=1025
-SMTP_FROM_NAME=\"KO Assets (Local Dev)\"" > cloudflare/.dev.vars
+SMTP_FROM_NAME=\"Spark (Local Dev)\"" > cloudflare/.dev.vars
 
 # 2. Start FakeSMTP
 start-fake-smtp.bat  # Windows

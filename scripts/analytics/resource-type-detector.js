@@ -5,8 +5,7 @@
  * Determines if an asset is a template or regular asset for analytics tracking.
  *
  * **Used by:**
- * - `blocks/koassets-search-new/clients/dynamicmedia-client.js` - Download tracking
- * - `koassets-react/src/clients/dynamicmedia-client.ts` - Download tracking (React)
+ * - `blocks/search-results/clients/dynamicmedia-client.js` - Download tracking
  *
  * **Purpose:**
  * Downloads are tracked separately for assets vs. templates. This utility
@@ -15,7 +14,7 @@
  *
  * **Detection Methods (in order):**
  * 1. **XML filename** - Chili templates use `.xml` extension
- * 2. **contentType metadata** - `tccc:contentType` field contains "template"
+ * 2. **contentType metadata** - `custom:contentType` field contains "template"
  * 3. **category** - Legacy fallback, checks if category includes "template"
  *
  * **Returns:**
@@ -32,7 +31,7 @@ import { RESOURCE_TYPES } from './analytics-constants.js';
  *
  * Checks performed:
  * 1. File extension (.xml files are Chili templates)
- * 2. tccc:contentType metadata field
+ * 2. custom:contentType metadata field
  * 3. Asset category (legacy fallback)
  *
  * @param {Object} asset - Asset object with metadata
@@ -59,7 +58,7 @@ export function detectResourceType(asset) {
     templateChecks.push('XML filename');
   }
 
-  // Check 2: tccc:contentType metadata
+  // Check 2: custom:contentType metadata
   const contentType = asset?.contentType;
   if (contentType && String(contentType).toLowerCase().includes('template')) {
     templateChecks.push('contentType metadata');

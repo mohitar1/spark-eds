@@ -1,6 +1,6 @@
 .accordion details {
     border: none;
-    border-bottom: 1px solid #00a3bf;
+    border-bottom: 1px solid var(--primary-color);
     margin: 0;
 }
 
@@ -56,7 +56,7 @@
 }
 
 .accordion details .accordion-item-body a:hover {
-    color: #f40000;
+    color: var(--primary-color);
 }
 
 /* Collapsible dropdown wrapping accordion with icon-label header */

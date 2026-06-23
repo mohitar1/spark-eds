@@ -177,7 +177,7 @@ describe('buildSearchFilterConditions', () => {
     it('should throw error for SQL injection attempt in searchType', () => {
       expect(() => {
         buildSearchFilterConditions({
-          searchType: "'; DELETE FROM koassets_analyticstest; --",
+          searchType: "'; DELETE FROM spark_analyticstest; --",
         });
       }).toThrow('Invalid searchType filter');
     });
@@ -318,7 +318,7 @@ describe('buildSearchFilterConditions', () => {
     it('should prevent SQL injection with special characters', () => {
       expect(() => {
         buildSearchFilterConditions({
-          region: "NA'; DROP TABLE koassets_analyticstest; --",
+          region: "NA'; DROP TABLE spark_analyticstest; --",
         });
       }).toThrow('Invalid region filter');
     });

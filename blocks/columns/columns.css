@@ -66,14 +66,14 @@ main:has(.columns.loginpage) > .section.light-blue {
 }
 
 .columns.loginpage h1 {
-  font-family: "TCCC UnityHeadline", sans-serif;
+  font-family: var(--heading-font-family);
   font-size: 2.05rem;
   font-weight: 400;
   padding-top: 0;
 }
 
 .columns.loginpage p {
-  font-family: "TCCC UnityText Regular", sans-serif;
+  font-family: var(--body-font-family);
   font-size: 1.1rem;
   line-height: 1.5;
   margin-top: 20px;

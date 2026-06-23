@@ -2,9 +2,8 @@
 /**
  * Download/Cart Panels Initialization Module
  *
- * This module initializes the shared cart state and global functions.
- * The actual panel components are loaded from blocks/koassets-search/components/cart/
- * This provides full-featured cart/download panels on any page, even without koassets-search.
+ * Initializes shared cart state and global functions for all pages.
+ * Panel UI is provided by blocks/search-results/components/cart/.
  */
 
 import { initCartState } from './cart-state.js';

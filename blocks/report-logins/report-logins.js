@@ -116,7 +116,7 @@ async function downloadFullUserReport() {
     const url = URL.createObjectURL(blob);
 
     const today = new Date().toISOString().split('T')[0];
-    const filename = `koassets-users-${today}.csv`;
+    const filename = `spark-users-${today}.csv`;
 
     link.setAttribute('href', url);
     link.setAttribute('download', filename);

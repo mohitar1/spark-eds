@@ -12,7 +12,7 @@ import {
 import { DynamicMediaCollectionsClient } from '../collections-api-client.js';
 
 // Mock dependencies
-vi.mock('../../../blocks/koassets-search/clients/dynamicmedia-client.js', () => ({
+vi.mock('../../../blocks/search-results/clients/dynamicmedia-client.js', () => ({
   getContentAIClient: vi.fn(),
 }));
 
@@ -184,7 +184,7 @@ describe('DynamicMediaCollectionsClient - ContentAI search methods', () => {
       mockContentAIClient = {
         searchAssets: vi.fn().mockResolvedValue({ hits: { results: [] } }),
       };
-      const { getContentAIClient } = await import('../../../blocks/koassets-search/clients/dynamicmedia-client.js');
+      const { getContentAIClient } = await import('../../../blocks/search-results/clients/dynamicmedia-client.js');
       getContentAIClient.mockReturnValue(mockContentAIClient);
     });
 
@@ -265,11 +265,6 @@ describe('DynamicMediaCollectionsClient - ContentAI search methods', () => {
         assetId: 'urn:aaid:aem:123',
         assetMetadata: {
           'dc:title': 'Asset Title',
-          'tccc:contentType': 'marketing',
-          'tccc:brand': 'Coca-Cola',
-          'tccc:campaignName': 'Summer 2024',
-          'tccc:intendedChannel': 'social',
-          'tccc:marketCovered': 'US',
         },
         repositoryMetadata: {
           'repo:name': 'file.jpg',
@@ -289,11 +284,6 @@ describe('DynamicMediaCollectionsClient - ContentAI search methods', () => {
         repositoryId: 'repo-123',
         repoName: 'file.jpg',
         format: 'image/jpeg',
-        contentType: 'marketing',
-        brand: 'Coca-Cola',
-        campaign: 'Summer 2024',
-        intendedChannel: 'social',
-        marketCovered: 'US',
         _searchHit: hit,
       });
     });

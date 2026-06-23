@@ -1,6 +1,6 @@
 # Permission Configuration
 
-Permissions for accessing the application and controlling access to assets are configured via AEM EDS sheets authored in [KO Assets - Document Authoring](https://da.live/#/the-coca-cola-company/koassets/config/access).
+Permissions for accessing the application and controlling access to assets are configured via AEM EDS sheets authored in [Spark - Document Authoring](https://da.live/#/adobe/spark-eds/config/access).
 
 ## Configuration Sheets
 

@@ -6,8 +6,8 @@
  *
  * Note: The import/no-cycle warning is disabled because:
  * - image-gallery.js imports cart-service.js for cart operations
- * - koassets-search.js imports image-gallery.js for UI rendering
- * - cart-utils.js updates state via cart-state.js (not koassets-search.js)
+ * - search-results.js imports image-gallery.js for UI rendering
+ * - cart-utils.js updates state via cart-state.js (not search-results.js)
  * This is a known architectural limitation that will be resolved in future refactoring
  */
 

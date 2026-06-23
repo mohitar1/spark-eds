@@ -214,7 +214,7 @@ async function fetchMetric(metricType, startDate, endDate, searchFilters = {}) {
     params.set('region', searchFilters.region);
   }
 
-  const response = await fetch(`/api/analytics/report-metrics?${params.toString()}`);
+  const response = await fetch(`/api/analytics/search-metrics?${params.toString()}`);
   if (!response.ok) {
     throw new Error(`Failed to fetch ${metricType}`);
   }

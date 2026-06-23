@@ -1,13 +1,13 @@
-# KO Assets Cloudflare Worker
+# Spark Cloudflare Worker
 
-A Cloudflare Worker that acts as outermost CDN for the KO Assets project with some additional features. It provides authentication, authorization, edge caching, and request routing to the various AEM backends (Helix/EDS, Dynamic Media OpenAPI and more).
+A Cloudflare Worker that acts as outermost CDN for the Spark project with some additional features. It provides authentication, authorization, edge caching, and request routing to the various AEM backends (Helix/EDS, Dynamic Media OpenAPI and more).
 
-- [Worker in Cloudflare Dashboard](https://dash.cloudflare.com/d3259185ae56522248254092489d6755/workers/services/view/koassets/production/metrics)
+- [Worker in Cloudflare Dashboard](https://dash.cloudflare.com/d3259185ae56522248254092489d6755/workers/services/view/spark/production/metrics)
 
 - Live: https://pilot.assets.coke.com
 - Preview: https://preview.assets.coke.com
-- Branch (preview): <https://{branch}-koassets.adobecocacola.workers.dev>
-- Branch (live): <https://{branch}-live-koassets.adobecocacola.workers.dev>
+- Branch (preview): <https://{branch}-spark-eds.workers.dev>
+- Branch (live): <https://{branch}-live-spark-eds.workers.dev>
 
 ## URL Paths
 
@@ -94,8 +94,8 @@ On each branch/PR push, the Github Actions CI will automatically deploy brancher
 
 | URL | Helix origin |
 |-----|--------------|
-| `https://{branch}-koassets.adobecocacola.workers.dev` | `https://{branch}--koassets--the-coca-cola-company.aem.page` |
-| `https://{branch}-live-koassets.adobecocacola.workers.dev` | `https://{branch}--koassets--the-coca-cola-company.aem.live` |
+| `https://{branch}-spark-eds.workers.dev` | `https://{branch}--spark-eds--adobe.aem.page` |
+| `https://{branch}-live-spark-eds.workers.dev` | `https://{branch}--spark-eds--adobe.aem.live` |
 
 
 ### CI main
@@ -105,8 +105,8 @@ On each `main` branch push, the Github ActionsCI will do the same as above and a
 
 | URL | Helix origin |
 |-----|--------------|
-| https://koassets.adobecocacola.workers.dev | https://main--koassets--the-coca-cola-company.aem.live |
-| https://preview-koassets.adobecocacola.workers.dev | https://main--koassets--the-coca-cola-company.aem.page |
+| https://spark-eds.workers.dev | https://main--spark-eds--adobe.aem.live |
+| https://preview-spark-eds.workers.dev | https://main--spark-eds--adobe.aem.page |
 
 ### Manual deploy
 
@@ -122,10 +122,10 @@ npm run deploy
 This will deploy the worker to the preview URL using the `user` id (git email address without the domain) and `branch` name:
 
 ```bash
-https://{user}-{branch}-koassets.adobecocacola.workers.dev
+https://{user}-{branch}-spark-eds.workers.dev
 ```
 
-This will use the same `branch` for the Helix origin: `{branch}--koassets--the-coca-cola-company.aem.live`
+This will use the same `branch` for the Helix origin: `{branch}--spark-eds--adobe.aem.live`
 
 Options:
 
@@ -143,7 +143,7 @@ When running `npm run dev`, logs are shown in the console.
 
 ### Production logs
 
-Go to [koassets worker logs](https://dash.cloudflare.com/d3259185ae56522248254092489d6755/workers/services/view/koassets/production/observability/logs) in the Cloudflare dashboard to see the production worker logs (`koassets.adobecocacola.workers.dev`).
+Go to [spark worker logs](https://dash.cloudflare.com/d3259185ae56522248254092489d6755/workers/services/view/spark/production/observability/logs) in the Cloudflare dashboard to see the production worker logs (`spark-eds.workers.dev`).
 
 You can also tail the logs locally using the `npm run tail` command.
 
@@ -155,7 +155,7 @@ This is a workaround to view logs in Cloudflare for PR branches, before they are
 
 1. Create PR, wait for branch deployment
 2. Notify the team that they should not merge PRs while you are testing the logs
-3. Go to [deployments](https://dash.cloudflare.com/d3259185ae56522248254092489d6755/workers/services/view/koassets/production/deployments) for the koassets worker in Cloudflare
+3. Go to [deployments](https://dash.cloudflare.com/d3259185ae56522248254092489d6755/workers/services/view/spark/production/deployments) for the spark worker in Cloudflare
 4. Manually create a [gradual deployment](https://developers.cloudflare.com/workers/configuration/versions-and-deployments/gradual-deployments/?utm_source=chatgpt.com) with 0%/100% traffic split
    1. Click the "Deploy" button
    2. Enable the Split deployment toggle
@@ -171,7 +171,7 @@ This is a workaround to view logs in Cloudflare for PR branches, before they are
    - This targets your specific version
    - Set manually when using curl or postman
    - When using a browser, you need a setting or extension that allows to set/override custom headers for all requests, such as [ModHeader](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en) for Chrome.
-7. Go to [koassets worker logs](https://dash.cloudflare.com/d3259185ae56522248254092489d6755/workers/services/view/koassets/production/observability/logs) and filter by `$workers.scriptVersion.id = <version>`
+7. Go to [spark worker logs](https://dash.cloudflare.com/d3259185ae56522248254092489d6755/workers/services/view/spark/production/observability/logs) and filter by `$workers.scriptVersion.id = <version>`
    - Alternatively run `npx wrangler tail --version-id <version>` to tail locally
 8. Do your testing
    - Every time you push changes to your branch, you will have to re-create the gradual deployment to the new worker version deployed by the CI
@@ -199,7 +199,7 @@ Understanding how different Cloudflare resources behave across deployment enviro
 #### KV Stores
 - **Production & Branch**: Both use the **same production KV namespaces**
   - ⚠️ **No isolation**: Changes in branch preview affect production KV data
-  - Example: Saving a search in `https://mybranch-koassets.adobecocacola.workers.dev` writes to production KV
+  - Example: Saving a search in `https://mybranch-spark-eds.workers.dev` writes to production KV
 - **Local**: Uses separate local KV (`.wrangler/state/v3/kv/`) - isolated from production
   - Safe for testing without affecting production data
 
@@ -214,7 +214,7 @@ Understanding how different Cloudflare resources behave across deployment enviro
   - Local ✅ Reads from production index (reports show production data)
 
 #### D1 Database
-- **Production**: ✅ Uses production D1 database (`koassets-user-logins`)
+- **Production**: ✅ Uses production D1 database (`spark-user-logins`)
   - `scripts/deploy.sh` includes D1 binding for production deployments
 - **Branch/Preview**: ❌ **No D1 binding available** (Cloudflare limitation)
   - D1 bindings are deployment-scoped, not namespace-scoped like KV
@@ -292,20 +292,20 @@ To configure these secrets locally (for use with `npm run dev`), create a `.secr
 Secret Store ID: `1e5b0170484843c69f8b9bb71c055468`
 
 * As options are limited in the Secret Store beta, we are using the _default secret store_ in the Franklin (Dev) account.
-* And use a common prefix `KOASSETS_` for individual secrets, to avoid conflicts with other workers.
-* Ideally this should be a dedicated secret store just for `koassets`. In which case we would not need the prefix.
+* And use a common prefix `SPARK_` for individual secrets, to avoid conflicts with other workers.
+* Ideally this should be a dedicated secret store just for `spark`. In which case we would not need the prefix.
 
 | Name in Secret Store | Variable Name in Code | Description | Rotation |
 |----------------------|-----------------------|-------------|----------|
-| `KOASSETS_COOKIE_SECRET` | `COOKIE_SECRET` | Secret used to sign the session cookie. Must be a cryptographically secure random string of characters, base64 encoded, 32 bytes or more. | TODO: weekly? need to implement 2 secrets for rotation.<br><br>Manually rotate by generating new secretvalue using `openssl rand -base64 32` and updating secret store. Note: will currently immediately end all existing sessions. |
-| `KOASSETS_DM_CLIENT_ID` | `DM_CLIENT_ID` | Client ID for the DM IMS technical account used to access `DM_ORIGIN`. From [Adobe developer console](http://developer.adobe.com/console) project with access to the right delivery environment and DM API access. | Only changed if the DM IMS technical account is changed, e.g. new developer console project. |
-| `KOASSETS_DM_CLIENT_SECRET` | `DM_CLIENT_SECRET` | Client secret for the DM IMS technical account used to access `DM_ORIGIN`. From [Adobe developer console](http://developer.adobe.com/console) project with access to the right delivery environment and DM API access. | Manually rotate in [Adobe developer console](http://developer.adobe.com/console) and then update in secret store. |
-| `KOASSETS_HELIX_ORIGIN_AUTHENTICATION` | `HELIX_ORIGIN_AUTHENTICATION` | AEM EDS authentication token. | TODO: possible using Helix admin APIs? |
-| `KOASSETS_FADEL_USER` | `FADEL_USER` | Fadel API username/email. | Only if user is changed in Fadel. |
-| `KOASSETS_FADEL_PASSWORD` | `FADEL_PASSWORD` | Fadel API password. | Manually rotate in Fadel and then update in secret store. |
-| `KOASSETS_PUBLISH_API_USER` | `PUBLISH_API_USER` | AEM CS user in the format of `<user>:<password>`. Used for proxying requests to AEM publish environment for certain features not re-implemented in the new portal yet. Must be available on the publish environment. Must have impersonation rights for all portal users on publish. Current user id: `koassets-contenthub`. | Manually rotate in AEM CS and then update in secret store. |
-| `KOASSETS_SMTP_USERNAME` | `SMTP_USERNAME` | Email address for SMTP authentication (e.g., `noreply@coca-cola.com`). This is the Microsoft 365 mailbox that sends emails. | Only if the sending mailbox changes. |
-| `KOASSETS_MICROSOFT_ENTRA_CLIENT_SECRET` | `MICROSOFT_ENTRA_CLIENT_SECRET` | Client secret for the Microsoft Entra app registration. Used for both user login and SMTP OAuth2 authentication. | **Max 24 months.** Rotate in Microsoft Entra Admin Center before expiration. See [SMTP OAuth2 Configuration](#smtp-oauth2-configuration). |
+| `SPARK_COOKIE_SECRET` | `COOKIE_SECRET` | Secret used to sign the session cookie. Must be a cryptographically secure random string of characters, base64 encoded, 32 bytes or more. | TODO: weekly? need to implement 2 secrets for rotation.<br><br>Manually rotate by generating new secretvalue using `openssl rand -base64 32` and updating secret store. Note: will currently immediately end all existing sessions. |
+| `SPARK_DM_CLIENT_ID` | `DM_CLIENT_ID` | Client ID for the DM IMS technical account used to access `DM_ORIGIN`. From [Adobe developer console](http://developer.adobe.com/console) project with access to the right delivery environment and DM API access. | Only changed if the DM IMS technical account is changed, e.g. new developer console project. |
+| `SPARK_DM_CLIENT_SECRET` | `DM_CLIENT_SECRET` | Client secret for the DM IMS technical account used to access `DM_ORIGIN`. From [Adobe developer console](http://developer.adobe.com/console) project with access to the right delivery environment and DM API access. | Manually rotate in [Adobe developer console](http://developer.adobe.com/console) and then update in secret store. |
+| `SPARK_HELIX_ORIGIN_AUTHENTICATION` | `HELIX_ORIGIN_AUTHENTICATION` | AEM EDS authentication token. | TODO: possible using Helix admin APIs? |
+| `SPARK_FADEL_USER` | `FADEL_USER` | Fadel API username/email. | Only if user is changed in Fadel. |
+| `SPARK_FADEL_PASSWORD` | `FADEL_PASSWORD` | Fadel API password. | Manually rotate in Fadel and then update in secret store. |
+| `SPARK_PUBLISH_API_USER` | `PUBLISH_API_USER` | AEM CS user in the format of `<user>:<password>`. Used for proxying requests to AEM publish environment for certain features not re-implemented in the new portal yet. Must be available on the publish environment. Must have impersonation rights for all portal users on publish. Current user id: `spark-contenthub`. | Manually rotate in AEM CS and then update in secret store. |
+| `SPARK_SMTP_USERNAME` | `SMTP_USERNAME` | Email address for SMTP authentication (e.g., `noreply@coca-cola.com`). This is the Microsoft 365 mailbox that sends emails. | Only if the sending mailbox changes. |
+| `SPARK_MICROSOFT_ENTRA_CLIENT_SECRET` | `MICROSOFT_ENTRA_CLIENT_SECRET` | Client secret for the Microsoft Entra app registration. Used for both user login and SMTP OAuth2 authentication. | **Max 24 months.** Rotate in Microsoft Entra Admin Center before expiration. See [SMTP OAuth2 Configuration](#smtp-oauth2-configuration). |
 
 
 ### CI secrets
@@ -325,11 +325,11 @@ This worker uses the following [Cloudflare KV](https://developers.cloudflare.com
 
 | Namespace Name | Binding | Contents |
 |----------------|---------|-------------|
-| `koassets-auth-tokens` | `env.AUTH_TOKENS` | Authentication tokens for various origins |
-| `koassets-saved-searches` | `env.SAVED_SEARCHES` | Saved searches from users |
-| `koassets-rights-requests` | `env.RIGHTS_REQUESTS` | Rights requests |
-| `koassets-rights-request-reviews` | `env.RIGHTS_REQUEST_REVIEWS` | Review results of rights requests |
-| `koassets-messages` | `env.MESSAGES` | Notifications for users |
+| `spark-auth-tokens` | `env.AUTH_TOKENS` | Authentication tokens for various origins |
+| `spark-saved-searches` | `env.SAVED_SEARCHES` | Saved searches from users |
+| `spark-rights-requests` | `env.RIGHTS_REQUESTS` | Rights requests |
+| `spark-rights-request-reviews` | `env.RIGHTS_REQUEST_REVIEWS` | Review results of rights requests |
+| `spark-messages` | `env.MESSAGES` | Notifications for users |
 
 ### D1 Database
 
@@ -337,7 +337,7 @@ This worker uses [Cloudflare D1](https://developers.cloudflare.com/d1/) for rela
 
 | Database Name | Binding | Contents | Schema |
 |---------------|---------|----------|--------|
-| `koassets-user-logins` | `env.USER_LOGINS` | User login data for reporting | [user_logins.sql](./schema/user_logins.sql) |
+| `spark-user-logins` | `env.USER_LOGINS` | User login data for reporting | [user_logins.sql](./schema/user_logins.sql) |
 
 **Note:** D1 is only available in production deployments. Branch/preview deployments automatically exclude D1 bindings. See [Cloudflare Resources across Environments](#cloudflare-resources-across-environments) for details.
 
@@ -347,7 +347,7 @@ This worker uses [Cloudflare Analytics Engine](https://developers.cloudflare.com
 
 | Dataset Name | Binding | Purpose |
 |--------------|---------|---------|
-| `koassets_analyticstest` | `env.KO_ANALYTICS_ENGINE_TEST` | User activity tracking (search, download, login events) |
+| `spark_analyticstest` | `env.KO_ANALYTICS_ENGINE_TEST` | User activity tracking (search, download, login events) |
 
 **Note:** Analytics Engine writes work in all environments (writes to production index). SQL API reads are available in production and branch deployments but not in local development.
 
@@ -378,7 +378,7 @@ General notes:
 | | `user@example.com` | Email address to address an individual user. |
 | | `*` | Any user allowed by the IDP. |
 | `permissions` | | Comma separated list of permissions |
-| | `preview`  | User has access to preview environments (eg. https://preview-koassets.adobecocacola.workers.dev), including branch deployments for development. |
+| | `preview`  | User has access to preview environments (eg. https://preview-spark-eds.workers.dev), including branch deployments for development. |
 | | `sudo` | User can use the impersonation/user simulation feature. |
 | | `admin-reports` | User has access to system reports |
 | | `admin-rights` | User has access to rights reviews (can assign to self or other reviewers) |
@@ -477,7 +477,7 @@ The refresh token is automatically rotated on each use. A monthly cron job (`0 0
 
 Before Adobe can complete the technical setup, TCCC must configure the Microsoft Entra app:
 
-- [ ] Add **SMTP.Send** permission (delegated) to the existing KO Assets app registration
+- [ ] Add **SMTP.Send** permission (delegated) to the existing Spark app registration
 - [ ] Grant admin consent for SMTP.Send permission
 - [ ] Ensure **offline_access** permission is present (should already exist for login)
 - [ ] Add redirect URI: `http://localhost:3939/callback` (for initial token generation)
@@ -491,7 +491,7 @@ Before Adobe can complete the technical setup, TCCC must configure the Microsoft
    - Redirect URI: `http://localhost:3939/callback`
 
 2. **Create Client Secret** (if not exists):
-   - Go to Microsoft Entra Admin Center > App registrations > KO Assets App
+   - Go to Microsoft Entra Admin Center > App registrations > Spark App
    - Navigate to "Certificates & secrets" > "New client secret"
    - Set max expiration (24 months)
    - Copy the secret value
@@ -501,7 +501,7 @@ Before Adobe can complete the technical setup, TCCC must configure the Microsoft
    # Add to Cloudflare Secret Store
    npx wrangler secrets-store secret create 1e5b0170484843c69f8b9bb71c055468 \
      --scopes workers \
-     --name KOASSETS_MICROSOFT_ENTRA_CLIENT_SECRET
+     --name SPARK_MICROSOFT_ENTRA_CLIENT_SECRET
    ```
 
 4. **Generate Initial Refresh Token**:
@@ -516,7 +516,7 @@ Before Adobe can complete the technical setup, TCCC must configure the Microsoft
 The client secret expires after max 24 months. To rotate:
 
 1. Create a new client secret in Microsoft Entra Admin Center
-2. Update `KOASSETS_MICROSOFT_ENTRA_CLIENT_SECRET` in Cloudflare Secret Store
+2. Update `SPARK_MICROSOFT_ENTRA_CLIENT_SECRET` in Cloudflare Secret Store
 3. The existing refresh token in `AUTH_TOKENS` KV remains valid
 
 ### Troubleshooting

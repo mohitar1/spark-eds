@@ -4,11 +4,10 @@
  * Handles brand name cleaning and normalization for analytics tracking.
  *
  * **Used by:**
- * - `blocks/koassets-search-new/clients/dynamicmedia-client.js` - Download tracking
- * - `koassets-react/src/clients/dynamicmedia-client.ts` - Download tracking (React)
+ * - `blocks/search-results/clients/dynamicmedia-client.js` - Download tracking
  *
  * **Purpose:**
- * Asset metadata often includes "Brand / " prefixes (e.g., "Brand / Coca-Cola").
+ * Asset metadata often includes "Brand / " prefixes (e.g., "Brand / Acme Brand").
  * This utility strips those prefixes to normalize brand names for reporting,
  * ensuring consistent data in analytics and cleaner display in reports.
  *
@@ -25,7 +24,7 @@ import { UNKNOWN_VALUE } from './analytics-constants.js';
 /**
  * Pattern to match "Brand / " prefix (case-insensitive, flexible whitespace)
  * Matches variations like:
- * - "Brand / Coca-Cola" → "Coca-Cola"
+ * - "Brand / Acme Brand" → "Acme Brand"
  * - "Brand / Kist-KO, Brand / Fanta" → "Kist-KO, Fanta"
  * - "brand/Sprite" → "Sprite"
  */
@@ -38,8 +37,8 @@ export const BRAND_PREFIX_PATTERN = /^Brand\s*\/\s*/i;
  * @returns {string} Cleaned brand string or 'unknown' if empty
  *
  * @example
- * cleanBrandName('Brand / Coca-Cola')
- * // Returns: 'Coca-Cola'
+ * cleanBrandName('Brand / Acme Brand')
+ * // Returns: 'Acme Brand'
  *
  * @example
  * cleanBrandName('Brand / Kist-KO, Brand / Fanta')

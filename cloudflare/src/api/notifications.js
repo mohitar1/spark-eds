@@ -8,7 +8,7 @@ import { fetchHelixSheet } from '../util/helixutil.js';
 
 // Constants
 const DEFAULT_NOTIFICATION_TYPE = 'Notification';
-const DEFAULT_FROM_EMAIL = 'system@coca-cola.com';
+const DEFAULT_FROM_EMAIL = 'system@spark-eds.adobe.com';
 const DEFAULT_PRIORITY = 'normal';
 const DEFAULT_EXPIRATION_DAYS = 30;
 const DEFAULT_STATUS = 'unread';

@@ -6,8 +6,8 @@
  * Note: The import/no-cycle warning is disabled because:
  * - This module is used by cart-service.js
  * - cart-service.js is imported by image-gallery.js
- * - koassets-search.js imports image-gallery.js
- * - We use setState from cart-state.js (not koassets-search.js) to avoid direct cycles
+ * - search-results.js imports image-gallery.js
+ * - We use setState from cart-state.js (not search-results.js) to avoid direct cycles
  * This is a known architectural pattern in the cart system
  */
 
@@ -22,7 +22,7 @@ import {
 export { getStorageKey, getStateKey } from './cart-keys.js';
 
 // Constants for background job management
-const CART_JOBS_KEY = 'koassets-cart-background-jobs';
+const CART_JOBS_KEY = 'spark-cart-background-jobs';
 const JOB_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 const JOB_CHECK_INTERVAL_MS = 2000; // Check every 2 seconds
 

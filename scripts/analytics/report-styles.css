@@ -15,14 +15,11 @@
 
 :root {
   /* Colors */
-  --report-primary-color: #f40009; /* Coca-Cola red */
-  --report-primary-hover: #c8102e; /* Darker red */
-  --report-secondary-color: #6ac9ce; /* Teal */
-  --report-text-dark: #333;
-  --report-text-medium: #666;
-  --report-text-light: #999;
-  --report-border-color: #ddd;
-  --report-border-light: #f0f0f0;
+  --report-primary-color: var(--primary-color);
+  --report-primary-hover: var(--primary-color-hover);
+  --report-secondary-color: var(--accent-tertiary);
+  --report-text-dark: var(--text-color);
+  --report-border-light: var(--light-color);
   --report-background-white: #fff;
   --report-background-light: #fafafa;
   --report-background-lighter: #f9f9f9;
@@ -32,7 +29,7 @@
   /* Shadows */
   --report-shadow-sm: 0 2px 8px rgb(0 0 0 / 10%);
   --report-shadow-md: 0 4px 12px rgb(0 0 0 / 15%);
-  --report-shadow-focus: 0 0 0 3px rgb(244 0 9 / 10%);
+  --report-shadow-focus: 0 0 0 3px rgb(0 100 125 / 15%);
   
   /* Border Radius */
   --report-radius-sm: 6px;

@@ -1,7 +1,7 @@
 footer {
-  background-color: black;
-  color: #fff;
-  font-size: var(--body-font-size-xs);
+  background-color: var(--light-color);
+  font-family: var(--body-font-family);
+  color: var(--text-color);
   width: 100%;
   padding: 0;
   margin: 0;
@@ -9,83 +9,97 @@ footer {
 
 footer .footer > div {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 80px;
-  margin: 0;
-  padding: 24px 40px;
-  height: 30px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 48px;
+  max-width: var(--site-width);
+  margin: auto;
+  padding: 48px 24px 24px;
+}
+
+/* Brand column (logo stacked over taglines) */
+footer .footer > div > .section:first-child {
+  flex: 1 1 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+footer .footer .icon {
+  width: auto;
+  height: auto;
+  display: inline-flex;
+}
+
+footer .footer .icon img,
+footer .footer .icon svg {
+  width: 160px;
+  height: auto;
 }
 
 footer .footer p {
   margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-color);
 }
 
-footer .footer .section:last-child {
-  margin-left: auto;
+/* Link columns */
+footer .footer .columns-container {
+  flex: 2 1 420px;
 }
 
-footer .footer picture {
+footer .footer .columns > div {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 40px;
 }
 
-footer .footer > div > div:first-child img {
-  width: 180px;
-  height: auto;
-}
-
-/* Navigation links section - right side */
-footer .footer .default-content-wrapper ul {
+footer .footer .columns > div > div {
+  flex: 1 1 140px;
   display: flex;
-  align-items: center;
-  gap: 30px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  flex-direction: column;
+  gap: 8px;
 }
 
-footer .footer .default-content-wrapper li {
+footer .footer .columns p {
   margin: 0;
-  padding: 0;
+}
+
+footer .footer .columns p strong {
+  font-weight: 600;
+  font-size: 15px;
 }
 
 footer .footer a {
-  color: #fff;
+  color: var(--text-color);
   text-decoration: none;
-  font-family: "TCCC UnityText Regular", sans-serif;
-  font-weight: 600;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  transition: color 0.3s ease;
-}
-
-footer .footer a .icon {
-  margin-right: 8px;
-  display: flex;
-  align-items: center;
+  font-weight: 300;
+  font-size: 14px;
+  transition: color 0.2s ease;
 }
 
 footer .footer a:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+/* Copyright row spans full width at the bottom */
+footer .footer > div > .section:last-child {
+  flex-basis: 100%;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgb(88 24 29 / 12%);
+}
+
+footer .footer > div > .section:last-child p {
+  font-size: 13px;
   opacity: 0.8;
 }
 
 @media (width <= 768px) {
   footer .footer > div {
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px;
-    height: auto;
-  }
-
-  footer .footer .section:last-child {
-    margin-left: 0;
-  }
-  
-  footer .footer .default-content-wrapper ul {
-    gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
+    gap: 28px;
+    padding: 32px 20px 20px;
   }
 }

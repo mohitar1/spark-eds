@@ -12,8 +12,8 @@ fi
 # Disable react build - no longer used
 #
 # STAGED_FILES=$(git diff-index --cached --name-only HEAD)
-# if echo "$STAGED_FILES" | grep -q "^koassets-react/"; then
-#   echo "Staged files include changes to koassets-react/*. Running react build and adding output to git commit..."
-#   cd koassets-react && npm run build-and-copy:koassets-react
+# if echo "$STAGED_FILES" | grep -q "^spark-react/"; then
+#   echo "Staged files include changes to spark-react/*. Running react build and adding output to git commit..."
+#   cd spark-react && npm run build-and-copy:spark-react
 #   git add ../tools/assets-browser/
 # fi

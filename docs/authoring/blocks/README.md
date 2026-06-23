@@ -97,13 +97,11 @@ Blocks can contain different types of content in their cells:
 | Block | Purpose | Documentation |
 |-------|---------|---------------|
 | [Search](search.md) | Search bar for navigating to search pages | [View](search.md) |
-| [KOAssets Search](koassets-search.md) | Full asset search and management interface | [View](koassets-search.md) |
 
 ### Data-Driven Blocks
 
 | Block | Purpose | Documentation |
 |-------|---------|---------------|
-| [Content Stores](../content-stores.md) | Browsable asset libraries with tabs and search | [View](../content-stores.md) |
 
 ### Utility Blocks
 
@@ -173,6 +171,4 @@ Explore individual block documentation:
 - [Fragment](fragment.md) - Reuse content across pages
 - [Team Cards](team-cards.md) - Display team members
 - [Buttons](buttons.md) - Style call-to-action links
-- [Content Stores](../content-stores.md) - Build browsable asset libraries
 - [Search](search.md) - Add a search bar to any page
-- [KOAssets Search](koassets-search.md) - Full asset search and management interface

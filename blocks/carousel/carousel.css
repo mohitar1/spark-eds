@@ -42,7 +42,7 @@
 
 .carousel .carousel-slide:hover .carousel-slide-content {
     background: white; /* White background on hover */
-    color: #f40000; /* Red text color on hover */
+    color: var(--primary-color); /* Red text color on hover */
 }
 
 .carousel .carousel-slide:has(.carousel-slide-content[data-align='center']),
@@ -151,7 +151,7 @@
 .carousel .carousel-slide:hover .carousel-slide-content h4,
 .carousel .carousel-slide:hover .carousel-slide-content h5,
 .carousel .carousel-slide:hover .carousel-slide-content h6 {
-    color: #f40000; /* Red text on hover */
+    color: var(--primary-color); /* Red text on hover */
 }
 
 /* Override H2 styling specifically for carousel - remove red underline */

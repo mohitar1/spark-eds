@@ -477,9 +477,9 @@ function extractCollectionData(collectionPath, rawJson) {
     'jcr:lastModifiedBy': rawJson['jcr:lastModifiedBy'] || null,
     'jcr:description': rawJson['jcr:description'] || null,
     'jcr:title': rawJson['jcr:title'] || null,
-    'tccc:assetCollectionOwner': rawJson['tccc:assetCollectionOwner'] || null,
-    'tccc:assetCollectionEditor': rawJson['tccc:assetCollectionEditor'] || null,
-    'tccc:assetCollectionViewer': rawJson['tccc:assetCollectionViewer'] || null,
+    'custom:assetCollectionOwner': rawJson['custom:assetCollectionOwner'] || null,
+    'custom:assetCollectionEditor': rawJson['custom:assetCollectionEditor'] || null,
+    'custom:assetCollectionViewer': rawJson['custom:assetCollectionViewer'] || null,
     'sling:resources': slingResources,
   };
 }

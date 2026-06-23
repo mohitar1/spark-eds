@@ -1,11 +1,11 @@
-# KOAssets Analytics Query Tool
+# Spark Analytics Query Tool
 
 A standalone HTML tool for querying Cloudflare Analytics Engine directly from your browser with a user-friendly interface.
 
 ## Quick Start (TL;DR)
 
 ```bash
-# 1. Get your API token from cloudflare/.secrets (KOASSETS_ANALYTICS_API_TOKEN)
+# 1. Get your API token from cloudflare/.secrets (SPARK_ANALYTICS_API_TOKEN)
 #    Or from Cloudflare Dashboard → My Profile → API Tokens
 
 # 2. Launch Chrome with CORS disabled:
@@ -19,7 +19,7 @@ That's it! Read below for details and troubleshooting.
 
 ## Purpose
 
-This tool provides a better alternative to curl commands for debugging and analyzing analytics data from the `koassets_analyticstest` dataset. It's designed for developers and analysts who need to:
+This tool provides a better alternative to curl commands for debugging and analyzing analytics data from the `spark_analyticstest` dataset. It's designed for developers and analysts who need to:
 
 - Query analytics data during development
 - Debug analytics event tracking
@@ -45,11 +45,11 @@ You need a Cloudflare API token with Analytics:Read permission. Three ways to ge
 
 **Option A: From project secrets (easiest)**
 1. Open `cloudflare/.secrets`
-2. Copy the value of `KOASSETS_ANALYTICS_API_TOKEN`
+2. Copy the value of `SPARK_ANALYTICS_API_TOKEN`
 
 **Option B: From Cloudflare Secrets Store**
 1. Check `cloudflare/wrangler.toml` for the `ANALYTICS_API_TOKEN` binding
-2. The secret name is `KOASSETS_ANALYTICS_API_TOKEN` in the Cloudflare secrets store
+2. The secret name is `SPARK_ANALYTICS_API_TOKEN` in the Cloudflare secrets store
 
 **Option C: From Cloudflare Dashboard**
 1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/) → **My Profile** → **API Tokens**
@@ -229,7 +229,7 @@ This makes it easy to:
 
 ### SQL Query Reference
 
-The dataset is called `koassets_analyticstest`. Data structure:
+The dataset is called `spark_analyticstest`. Data structure:
 
 **Indexes (event metadata):**
 - `index1`: Event type (`login`, `search`, `download`)
@@ -257,24 +257,24 @@ The dataset is called `koassets_analyticstest`. Data structure:
 ```sql
 -- Count distinct users
 SELECT COUNT(DISTINCT blob1) as unique_users 
-FROM koassets_analyticstest 
+FROM spark_analyticstest 
 WHERE index1 = 'login'
 
 -- Group by month
 SELECT toStartOfMonth(timestamp) as month, COUNT() as event_count
-FROM koassets_analyticstest
+FROM spark_analyticstest
 GROUP BY month
 ORDER BY month DESC
 
 -- Filter by date range
 SELECT COUNT() as events
-FROM koassets_analyticstest
+FROM spark_analyticstest
 WHERE timestamp >= toDateTime('2025-01-01 00:00:00')
   AND timestamp <= toDateTime('2025-12-31 23:59:59')
 
 -- Top N results
 SELECT blob6 as search_term, COUNT() as searches
-FROM koassets_analyticstest
+FROM spark_analyticstest
 WHERE index1 = 'search' AND blob6 != ''
 GROUP BY search_term
 ORDER BY searches DESC
@@ -315,11 +315,11 @@ This is useful for troubleshooting queries or understanding what data is being r
 ### "Query returned no results"
 - The query syntax is valid but no data matches
 - Check your date ranges and filter conditions
-- Verify events are being written to `koassets_analyticstest`
+- Verify events are being written to `spark_analyticstest`
 
 ### "HTTP 400: Bad Request" or SQL errors
 - Check your SQL syntax
-- Verify table name is correct: `koassets_analyticstest`
+- Verify table name is correct: `spark_analyticstest`
 - Refer to Cloudflare SQL API docs for supported functions
 - Check debug panel for exact error message
 
@@ -335,7 +335,7 @@ This is useful for troubleshooting queries or understanding what data is being r
 
 ### "Query failed: SQL error"
 - Check your SQL syntax
-- Make sure you're using the correct table name: `koassets_analyticstest`
+- Make sure you're using the correct table name: `spark_analyticstest`
 - Refer to Cloudflare SQL API docs for supported functions
 - Check debug panel for the exact error message
 
@@ -380,7 +380,7 @@ curl -X POST \
   "https://api.cloudflare.com/client/v4/accounts/d3259185ae56522248254092489d6755/analytics_engine/sql" \
   -H "Authorization: Bearer YOUR_API_TOKEN" \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  --data "SELECT COUNT() FROM koassets_analyticstest WHERE index1='login'"
+  --data "SELECT COUNT() FROM spark_analyticstest WHERE index1='login'"
 ```
 
 **Using this tool:**
@@ -395,7 +395,7 @@ Much better developer experience!
 - [Cloudflare Analytics Engine](https://developers.cloudflare.com/analytics/analytics-engine/)
 - [Analytics Engine SQL API](https://developers.cloudflare.com/analytics/analytics-engine/sql-api/)
 - [Creating API Tokens](https://developers.cloudflare.com/fundamentals/api/get-started/create-token/)
-- [KOAssets Analytics README](../../scripts/analytics/README.md) - Full analytics implementation docs
+- [Spark Analytics README](../../scripts/analytics/README.md) - Full analytics implementation docs
 
 ## Contributing
 
@@ -411,4 +411,4 @@ For SQL query examples or common patterns, update this README's SQL Query Refere
 
 ---
 
-**Need help?** Contact the KOAssets dev team or check the Analytics README at `scripts/analytics/README.md`.
+**Need help?** Contact the Spark dev team or check the Analytics README at `scripts/analytics/README.md`.

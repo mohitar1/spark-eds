@@ -57,7 +57,7 @@ export default function decorate(block) {
   // Build error page structure
   block.innerHTML = `
     <div class="error-page-content">
-      ${logoUrl ? `<img src="${logoUrl}" alt="ko assets" class="error-logo-image" />` : '<div class="error-logo-text">ko assets</div>'}
+      ${logoUrl ? `<img src="${logoUrl}" alt="Spark EDS" class="error-logo-image" />` : '<div class="error-logo-text">Spark EDS</div>'}
       <p class="error-message">${message}</p>
       <div class="error-description">${description}</div>
       <div class="button-container">
