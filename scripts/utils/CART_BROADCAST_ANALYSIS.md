@@ -2,7 +2,7 @@
 
 ## Overview
 
-The KO Assets cart system uses the **BroadcastChannel API** to synchronize cart state across multiple browser tabs in real-time. When a user adds or removes items in one tab, all other open tabs immediately reflect those changes without requiring a page refresh.
+The Spark cart system uses the **BroadcastChannel API** to synchronize cart state across multiple browser tabs in real-time. When a user adds or removes items in one tab, all other open tabs immediately reflect those changes without requiring a page refresh.
 
 ## Architecture
 
@@ -375,7 +375,7 @@ try {
 
 ### Manual Testing
 
-1. Open KO Assets in two browser tabs
+1. Open Spark in two browser tabs
 2. In Tab 1: Add an asset to cart
 3. In Tab 2: Observe cart badge and buttons update instantly
 4. In Tab 2: Remove the asset from cart
@@ -519,7 +519,7 @@ isUpdatingFromCrossTab = false;
 
 ## Summary
 
-The KO Assets cart system leverages the BroadcastChannel API for seamless, real-time synchronization across browser tabs. This provides a native, performant solution for keeping cart state consistent without server infrastructure or complex state management.
+The Spark cart system leverages the BroadcastChannel API for seamless, real-time synchronization across browser tabs. This provides a native, performant solution for keeping cart state consistent without server infrastructure or complex state management.
 
 **Key Takeaways:**
 - ✅ Zero-configuration cross-tab sync

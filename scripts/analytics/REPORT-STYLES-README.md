@@ -42,7 +42,7 @@ The `report-styles.css` file contains shared CSS patterns and design tokens for 
 ### Colors
 
 ```css
---report-primary-color: #f40009;        /* Coca-Cola red */
+--report-primary-color: #f40009;        /* Primary red */
 --report-primary-hover: #c8102e;        /* Darker red */
 --report-secondary-color: #6ac9ce;      /* Teal */
 --report-text-dark: #333;

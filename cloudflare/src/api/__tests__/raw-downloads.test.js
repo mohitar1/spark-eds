@@ -5,7 +5,7 @@
  * The actual getRawDownloads function requires environment bindings,
  * so we test the core logic in isolation here.
  *
- * Note: maskEmail was removed when we switched from email to koid for user identification.
+ * Note: maskEmail was removed when we switched from email to userId for user identification.
  */
 
 import { describe, expect, it } from 'vitest';
@@ -78,7 +78,7 @@ describe('raw downloads CSV generation', () => {
     const isTemplate = row.resourceType === 'template';
     return [
       escapeCSV(row.timestamp),
-      escapeCSV(row.koid),
+      escapeCSV(row.userId),
       escapeCSV(row.country),
       escapeCSV(row.employeeType),
       escapeCSV(row.company),
@@ -95,10 +95,10 @@ describe('raw downloads CSV generation', () => {
     ].join(',');
   };
 
-  it('generates correct CSV row with koid (not email)', () => {
+  it('generates correct CSV row with userId (not email)', () => {
     const row = {
       timestamp: '2026-01-20T14:30:22Z',
-      koid: 'S700855',
+      userId: 'U700855',
       country: 'US',
       employeeType: 'employee',
       company: 'Adobe',
@@ -116,14 +116,14 @@ describe('raw downloads CSV generation', () => {
     const csvRow = generateCSVRow(row);
     // asset: Asset ID = downloadItemId, Template ID empty, campaign/brand after IDs
     expect(csvRow).toBe(
-      '2026-01-20T14:30:22Z,S700855,US,employee,Adobe,associate,550e8400-e29b-41d4-a716-446655440000,asset,abc123-def4-5678-9abc-def012345678,,,Christmas 2025,Acme Corp,ready-to-use,original',
+      '2026-01-20T14:30:22Z,U700855,US,employee,Adobe,associate,550e8400-e29b-41d4-a716-446655440000,asset,abc123-def4-5678-9abc-def012345678,,,Christmas 2025,Acme Corp,ready-to-use,original',
     );
   });
 
   it('strips urn:aaid:aem: prefix from asset downloadItemId', () => {
     const row = {
       timestamp: '2026-01-20T14:30:22Z',
-      koid: 'S700855',
+      userId: 'U700855',
       country: 'US',
       employeeType: 'employee',
       company: 'Adobe',
@@ -145,7 +145,7 @@ describe('raw downloads CSV generation', () => {
   it('handles values with special characters', () => {
     const row = {
       timestamp: '2026-01-20T14:30:22Z',
-      koid: 'S123456',
+      userId: 'U123456',
       country: 'US',
       employeeType: 'employee',
       company: 'Company, Inc.',
@@ -169,7 +169,7 @@ describe('raw downloads CSV generation', () => {
   it('handles missing/null values including new fields', () => {
     const row = {
       timestamp: '2026-01-20T14:30:22Z',
-      koid: null,
+      userId: null,
       country: '',
       employeeType: undefined,
       company: 'Adobe',
@@ -185,17 +185,17 @@ describe('raw downloads CSV generation', () => {
     };
 
     const csvRow = generateCSVRow(row);
-    // 15 fields: timestamp, koid, country, employeeType, company, roles,
+    // 15 fields: timestamp, userId, country, employeeType, company, roles,
     // downloadId, resourceType, assetId, templateId, publicationId,
     // campaign, brand, downloadType, rendition
     // null/undefined/empty all become empty strings; resourceType=asset so templateId is empty
     expect(csvRow).toBe('2026-01-20T14:30:22Z,,,,Adobe,associate,,asset,,,,,Acme Corp,,');
   });
 
-  it('does not mask koid (unlike old email masking)', () => {
+  it('does not mask userId (unlike old email masking)', () => {
     const row = {
       timestamp: '2026-01-20T14:30:22Z',
-      koid: 'S700855',
+      userId: 'U700855',
       country: 'US',
       employeeType: 'employee',
       company: 'Adobe',
@@ -211,15 +211,15 @@ describe('raw downloads CSV generation', () => {
     };
 
     const csvRow = generateCSVRow(row);
-    // koid should appear as-is, not masked
-    expect(csvRow).toContain('S700855');
+    // userId should appear as-is, not masked
+    expect(csvRow).toContain('U700855');
     expect(csvRow).not.toContain('***');
   });
 
   it('includes publicationId for customized template downloads', () => {
     const row = {
       timestamp: '2026-02-26T10:00:00Z',
-      koid: 'S700855',
+      userId: 'U700855',
       country: 'US',
       employeeType: 'employee',
       company: 'Adobe',
@@ -248,7 +248,7 @@ describe('raw downloads CSV generation', () => {
   it('non-customized template: Template ID set, Publication ID empty', () => {
     const row = {
       timestamp: '2026-02-26T10:00:00Z',
-      koid: 'S700855',
+      userId: 'U700855',
       country: 'US',
       employeeType: 'employee',
       company: 'Adobe',
@@ -273,7 +273,7 @@ describe('raw downloads CSV generation', () => {
   it('handles missing/null values for template resource type', () => {
     const row = {
       timestamp: '2026-01-20T14:30:22Z',
-      koid: null,
+      userId: null,
       country: '',
       employeeType: undefined,
       company: 'Adobe',

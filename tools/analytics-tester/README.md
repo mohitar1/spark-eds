@@ -199,7 +199,7 @@ All query results show a **two-row header** for easy reference:
 - These are the names you use when writing SQL queries
 
 **Row 2 (bottom):** Friendly names in italic (if mapped)
-- `Event Type`, `Timestamp`, `KOID`, `Country`, `Resource Type`, etc.
+- `Event Type`, `Timestamp`, `User ID`, `Country`, `Resource Type`, etc.
 - Human-readable descriptions of what each field contains
 - Empty if no friendly mapping exists
 
@@ -208,10 +208,10 @@ All query results show a **two-row header** for easy reference:
 ┌───┬──────────┬───────────┬───────┬─────────┬───────────────┐
 │ # │ index1   │ timestamp │ blob1 │ blob2   │ blob6         │  ← Row 1: Actual field names
 ├───┼──────────┼───────────┼───────┼─────────┼───────────────┤
-│   │Event Type│ Timestamp │ KOID  │ Country │Resource Type  │  ← Row 2: Friendly names
+│   │Event Type│ Timestamp │User ID│ Country │Resource Type  │  ← Row 2: Friendly names
 ├───┼──────────┼───────────┼───────┼─────────┼───────────────┤
-│ 1 │ download │2025-02-...│S12345 │ US      │ asset         │  ← Data rows
-│ 2 │ download │2025-02-...│S67890 │ CA      │ template      │
+│ 1 │ download │2025-02-...│U12345 │ US      │ asset         │  ← Data rows
+│ 2 │ download │2025-02-...│U67890 │ CA      │ template      │
 └───┴──────────┴───────────┴───────┴─────────┴───────────────┘
  ↑
 Row numbers (sticky on scroll)
@@ -225,7 +225,7 @@ This makes it easy to:
 **Event-specific friendly names:**
 - **Downloads**: `Resource Type`, `Brand`, `Campaigns`, `Download ID`, `Download Item ID`, `Download Type`, `Rendition`
 - **Searches**: `Search Term`, `Search Type`, `Result Count`
-- **Logins**: Uses common fields only (KOID, Country, Employee Type, Company, Roles)
+- **Logins**: Uses common fields only (User ID, Country, Employee Type, Company, Roles)
 
 ### SQL Query Reference
 
@@ -236,7 +236,7 @@ The dataset is called `spark_analyticstest`. Data structure:
 - `timestamp`: Event timestamp
 
 **Blobs (string data):**
-- `blob1`: User KOID
+- `blob1`: User ID
 - `blob2`: Country
 - `blob3`: Employee type
 - `blob4`: Company

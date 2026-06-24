@@ -8,13 +8,13 @@ The worker applies authorization filters in `searchContentAIAuthorization` ([clo
 
 | Rule | Description | How tested |
 |------|-------------|------------|
-| 1. No roles | Unknown domain users get zero search results | `not@onboarded.com` returns 0 results; `test@coca-cola.com` with wrong employeeType also returns 0 |
-| 2. Admin bypass | Admin users see everything, no filters | `admin@coca-cola.com` sees multiple countries; comparative test proves admin sees more than a bottler |
-| 3. Restricted brands | Users without brand access can't see those brand's assets | Per-brand keyword search across 13 brands as admin vs employee; `burn@coca-cola.com` (has Burn) vs `test@coca-cola.com` (doesn't) |
-| 4. Bottler country | Bottlers see only their country's assets; employees/agencies are not filtered | France bottler: static check for `fr` + `all-countries`; Generic/APAC bottlers: dynamic check using resolved countries; Employee/CW/Agency: skip proof |
-| 5. Customer content | `contentType=customers` assets visible only to customer-associated users | `mcdonalds@coca-cola.com` sees McDonald's content; others don't |
+| 1. No roles | Unknown domain users get zero search results | `not@onboarded.com` returns 0 results; `test@example.com` with wrong employeeType also returns 0 |
+| 2. Admin bypass | Admin users see everything, no filters | `admin@example.com` sees multiple countries; comparative test proves admin sees more than a partner |
+| 3. Restricted brands | Users without brand access can't see those brand's assets | Per-brand keyword search across 13 brands as admin vs employee; `burn@example.com` (has Burn) vs `test@example.com` (doesn't) |
+| 4. Partner country | Partners see only their country's assets; employees/agencies are not filtered | France partner: static check for `fr` + `all-countries`; Generic/APAC partners: dynamic check using resolved countries; Employee/CW/Agency: skip proof |
+| 5. Customer content | `contentType=customers` assets visible only to customer-associated users | `customer-a@example.com` sees their customer-specific content; others don't |
 
-Additionally, **data integrity** tests verify all search results have `tccc:assetStatus: approved` and that employeeType mismatches produce zero results end-to-end.
+Additionally, **data integrity** tests verify all search results have `custom:assetStatus: approved` and that employeeType mismatches produce zero results end-to-end.
 
 ## How it works
 
@@ -57,7 +57,7 @@ The HTML report is written to `tests/authz/report/index.html` (gitignored).
 All test users are defined in `test-users.js`. Each user has:
 
 - **`email`** — must use a domain that exists in the companies sheet (`/config/access/companies`) for role resolution to work
-- **`country`** — sets the `SUDO_COUNTRY` cookie; relevant for bottler country filtering and IDP fallback
+- **`country`** — sets the `SUDO_COUNTRY` cookie; relevant for partner country filtering and IDP fallback
 - **`employeeType`** — must match the companies sheet value exactly (`'10'` for employee, `'11'` for contingent worker, `'99'` for external)
 - **`targetRules`** — which authZ rules this user tests (used by `getUsersByRule()` to group tests)
 - **`expectedAttributes`** — what `/api/user` should return (roles, countries, customers, brands). Role counts are exact — any extra roles cause a failure.
@@ -71,19 +71,19 @@ The test users map to entries configured in the permission simulator, documented
 
 The relevant permission sheets are:
 
-- `/config/access/companies` — maps email domains to roles (employee, bottler, agency, customer, contingent-worker)
+- `/config/access/companies` — maps email domains to roles (employee, partner, agency, customer, contingent-worker)
 - `/config/access/users` — per-email overrides for roles, countries, customers
 - `/config/access/restricted-brands` — maps brands to specific users/domains who can see them
 
-If a permission sheet changes (e.g. a new bottler domain is added, or a restricted brand is renamed), the corresponding test user in `test-users.js` may need updating.
+If a permission sheet changes (e.g. a new partner domain is added, or a restricted brand is renamed), the corresponding test user in `test-users.js` may need updating.
 
 ## Interpreting results
 
 **Warnings you might see:**
 
-- `⚠ No assets tagged tccc:brand/X found in top 50 results` — The restricted brand filter is applied, but no assets with that brand tag exist in the result set. The filter is working; there's just no data to prove it visually. Not a failure.
-- `⚠ search returned results but none had tccc:contentType=customers` — The customer content filter is applied, but the search term didn't match any customer-typed assets. Not a failure.
-- `⚠ zero results — no content for countries [X]?` — The bottler country filter returned nothing. This could mean there's genuinely no content tagged for that country, or it could indicate a configuration issue.
+- `⚠ No assets tagged custom:brand/X found in top 50 results` — The restricted brand filter is applied, but no assets with that brand tag exist in the result set. The filter is working; there's just no data to prove it visually. Not a failure.
+- `⚠ search returned results but none had custom:contentType=customers` — The customer content filter is applied, but the search term didn't match any customer-typed assets. Not a failure.
+- `⚠ zero results — no content for countries [X]?` — The partner country filter returned nothing. This could mean there's genuinely no content tagged for that country, or it could indicate a configuration issue.
 - `⚠ no 'all-countries' assets in top 50 results` — The `all-countries` tag wasn't found in results. Usually fine if results are sparse.
 
 **Common failures:**

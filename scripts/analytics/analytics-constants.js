@@ -83,7 +83,7 @@ export const DOWNLOAD_TYPES = {
 export const ROLE_DISPLAY_NAMES = {
   associate: 'Associate',
   agency: 'Agency',
-  bottler: 'Bottler',
+  partner: 'Partner',
 };
 
 /**
@@ -98,7 +98,7 @@ export const ROLE_ALIASES = {
 /**
  * List of known role display names in display order
  */
-export const KNOWN_ROLES = ['Associate', 'Agency', 'Bottler'];
+export const KNOWN_ROLES = ['Associate', 'Agency', 'Partner'];
 
 /**
  * Color scheme for roles in charts
@@ -106,7 +106,7 @@ export const KNOWN_ROLES = ['Associate', 'Agency', 'Bottler'];
 export const ROLE_COLORS = {
   Associate: '#00647D',
   Agency: '#EBA439',
-  Bottler: '#58181D',
+  Partner: '#58181D',
   Other: '#b8b8b8',
 };
 
@@ -169,7 +169,7 @@ export function processRoleData(roleData, countField = 'users') {
   const roleCounts = {
     Associate: 0,
     Agency: 0,
-    Bottler: 0,
+    Partner: 0,
     Other: 0,
   };
 
@@ -204,7 +204,7 @@ export function processRoleData(roleData, countField = 'users') {
 
 /**
  * Get color for a role type
- * @param {string} roleType - Role type (e.g., 'Associate', 'Agency', 'Bottler', 'Other')
+ * @param {string} roleType - Role type (e.g., 'Associate', 'Agency', 'Partner', 'Other')
  * @returns {string} Hex color code
  */
 export function getRoleColor(roleType) {
@@ -289,6 +289,6 @@ export const RESOURCE_TYPE_COLORS = {
 export const USER_TYPE_COLORS = {
   Associate: '#00647D',
   Agency: '#EBA439',
-  Bottler: '#58181D',
+  Partner: '#58181D',
   Other: '#b8b8b8',
 };

@@ -53,7 +53,6 @@ Tests are organized by feature area in `test-config.js`:
 | `savedSearchReport` | Saved search report metrics | Saved search report page | Admin reporting |
 | `notifications` | List notifications | My notifications page | User notifications |
 | `contentStores` | — | All content stores page | Content store browsing |
-| `fadel` | Collections, media rights, market rights, clearance | — | FADEL rights clearance proxy |
 | `localization` | — | Auto-generated `/ja/` variants | Japanese page variants (see below) |
 
 ## Localization Tests

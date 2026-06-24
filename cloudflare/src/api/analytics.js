@@ -14,7 +14,7 @@ const FILTER_DEFAULT_VALUE = 'all';
 // =============================================================================
 // VALID FILTER VALUES (for input sanitization)
 // =============================================================================
-const VALID_ROLES = ['all', 'associate', 'agency', 'bottler'];
+const VALID_ROLES = ['all', 'associate', 'agency', 'partner'];
 const VALID_SEARCH_TYPES = ['all', 'assets', 'products', 'templates'];
 const VALID_SEARCH_TERMS = ['all', 'empty', 'non-empty'];
 const VALID_REGIONS = ['all', 'AFR', 'ASP', 'EME', 'EU', 'GCM', 'INSWA', 'JSK', 'LA', 'NA'];
@@ -26,7 +26,7 @@ const VALID_REGIONS = ['all', 'AFR', 'ASP', 'EME', 'EU', 'GCM', 'INSWA', 'JSK', 
 const ROLE_MAPPINGS = {
   associate: ['associate', 'employee', 'contingent-worker'],
   agency: ['agency'],
-  bottler: ['bottler'],
+  partner: ['partner'],
 };
 
 // =============================================================================
@@ -89,7 +89,7 @@ const REGION_TO_COUNTRIES = {
 /**
  * Build SQL filter conditions for search report queries
  * @param {Object} filters - Filter parameters
- * @param {string} filters.role - Role filter (e.g., 'agency', 'bottler', 'associate')
+ * @param {string} filters.role - Role filter (e.g., 'agency', 'partner', 'associate')
  * @param {string} filters.searchType - Search type filter (e.g., 'assets', 'products', 'templates')
  * @param {string} filters.searchTerm - Search term filter ('empty' or 'non-empty')
  * @param {string} filters.region - Region filter (e.g., 'NA', 'EU', 'LA')
@@ -157,7 +157,7 @@ function buildSearchFilterConditions(filters) {
 /**
  * Build SQL filter conditions for download report queries
  * @param {Object} filters - Filter parameters
- * @param {string} filters.role - Role filter (e.g., 'agency', 'bottler', 'associate')
+ * @param {string} filters.role - Role filter (e.g., 'agency', 'partner', 'associate')
  * @param {string} filters.region - Region filter (e.g., 'NA', 'EU', 'LA')
  * @returns {string} SQL WHERE conditions to append (empty string if no filters)
  */
@@ -1300,7 +1300,7 @@ function processFirstTimeDownloadersByOU(data, year) {
 const ROLE_DISPLAY_NAMES = {
   associate: 'Associate',
   agency: 'Agency',
-  bottler: 'Bottler',
+  partner: 'Partner',
 };
 
 /**
@@ -1315,7 +1315,7 @@ const ROLE_ALIASES = {
 /**
  * List of known role display names in display order
  */
-const KNOWN_ROLES = ['Associate', 'Agency', 'Bottler'];
+const KNOWN_ROLES = ['Associate', 'Agency', 'Partner'];
 
 /**
  * Resolve a raw role string to a known display name
@@ -1363,7 +1363,7 @@ function processRoleData(data, valueField) {
   const roleData = {
     Associate: 0,
     Agency: 0,
-    Bottler: 0,
+    Partner: 0,
     Other: 0,
   };
 

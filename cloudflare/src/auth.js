@@ -318,7 +318,7 @@ authRouter
     // Track login analytics event
     if (!session.userId) {
       console.warn(
-        '[Analytics] Login event written with no KOID — user may be missing User ID in IDP token.',
+        '[Analytics] Login event written with no user ID — user may be missing User ID in IDP token.',
         `email=${maskEmail(session.email)}`,
         `company=${session.company}`,
       );

@@ -39,7 +39,7 @@ The `email` column supports three formats. All matching rows are combined — a 
 
 | Permission | Description                                                                             |
 |------------|-----------------------------------------------------------------------------------------|
-| `preview` | Access to preview environments (e.g. `preview.assets.coke.com`) and branch deployments. |
+| `preview` | Access to preview environments (e.g. `preview.spark.aem.media`) and branch deployments. |
 | `sudo` | Can use the impersonation / user simulation feature.                                    |
 | `admin-reports` | Access to system reports.                                                               |
 | `admin-rights` | Can manage rights request reviews and assign reviewers (self or others).                |
@@ -68,13 +68,13 @@ This sheet has multiple tabs — one for each role. Each tab defines which email
 | Column | Example | Description |
 |--------|---------|-------------|
 | `domain` | `customer.com` | Email domain of the customer company. |
-| `name` | `customerX` | Exact value used in the `tccc:intendedCustomers` asset metadata field. |
+| `name` | `customerX` | Exact value used in the `custom:intendedCustomers` asset metadata field. |
 
-#### `bottler` tab
+#### `partner` tab
 
 | Column | Example | Description |
 |--------|---------|-------------|
-| `domain` | `bottler.com` | Email domain of the bottler company. |
+| `domain` | `partner.com` | Email domain of the partner company. |
 | `countries` | `us, ca, es` | Comma-separated list of countries the company has access to (2-letter ISO codes). |
 
 #### `agency` tab
@@ -107,9 +107,9 @@ Use this sheet to configure individual users — either to assign roles directly
 | Column | Example | Description |
 |--------|---------|-------------|
 | `email` | `user@example.com` | Email address of the user. |
-| `roles` | `employee, bottler` | Comma-separated list of roles. Optional if already set via the companies sheet. |
-| `countries` | `us, ca` | Comma-separated list of bottler countries (2-letter ISO codes). Optional. |
-| `customers` | `customer1, customer2` | Comma-separated list of customers. Must use the exact value from the `tccc:intendedCustomers` asset metadata field. |
+| `roles` | `employee, partner` | Comma-separated list of roles. Optional if already set via the companies sheet. |
+| `countries` | `us, ca` | Comma-separated list of partner countries (2-letter ISO codes). Optional. |
+| `customers` | `customer1, customer2` | Comma-separated list of customers. Must use the exact value from the `custom:intendedCustomers` asset metadata field. |
 
 #### Available roles
 
@@ -118,7 +118,7 @@ Use this sheet to configure individual users — either to assign roles directly
 | `employee` | Can see all non-restricted content. |
 | `contingent-worker` | Can see all non-restricted content. |
 | `agency` | Can see all non-restricted content. |
-| `bottler` | Can see content filtered by their assigned countries. |
+| `partner` | Can see content filtered by their assigned countries. |
 | `admin` | Can see all content, including restricted brands. |
 
 > **Note:** If a user has no country configured in either the companies or users sheet, the country field from the identity provider (Microsoft Entra) is used.
@@ -146,7 +146,7 @@ Most brands are visible to all users (subject to their role-based access). Howev
 
 | Column | Example | Description |
 |--------|---------|-------------|
-| `country` | `us` | 2-letter ISO country code. Grants access to bottler users from this country. |
+| `country` | `us` | 2-letter ISO country code. Grants access to partner users from this country. |
 
 #### `roles` tab
 
@@ -164,7 +164,7 @@ Users with the `admin` role automatically have access to all brands, including r
 
 ### Onboard a new company
 
-1. Open `/config/access/companies` and go to the appropriate role tab (e.g. `agency`, `bottler`).
+1. Open `/config/access/companies` and go to the appropriate role tab (e.g. `agency`, `partner`).
 2. Add a row with the company's domain and fill in the required columns for that role.
 3. Publish the sheet.
 
@@ -177,17 +177,17 @@ Users with the `admin` role automatically have access to all brands, including r
 
 For the `admin` content role (see all assets), use `/config/access/users` instead and set the `roles` column to `admin`.
 
-### Configure bottler country access
+### Configure partner country access
 
 For a **company** (all users at that domain):
-1. Open `/config/access/companies`, go to the `bottler` tab.
+1. Open `/config/access/companies`, go to the `partner` tab.
 2. Find or add a row with the company's domain.
 3. Set the `countries` column to the desired country codes (e.g. `us, ca, mx`).
 
 For an **individual user**:
 1. Open `/config/access/users`.
 2. Find or add a row with the user's email.
-3. Set `roles` to include `bottler` (if not already set via company permissions).
+3. Set `roles` to include `partner` (if not already set via company permissions).
 4. Set the `countries` column to the desired country codes.
 
 Publish the sheet after making changes.

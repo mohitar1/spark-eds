@@ -825,16 +825,16 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
         </div>
 
         <div class="form-field range-field">
-          <label>User / KOID:</label>
+          <label>User / User ID:</label>
           <div class="range-options">
             <label class="range-option">
-              <input type="radio" name="koid-mode" value="all" checked>
+              <input type="radio" name="userid-mode" value="all" checked>
               <span>All users</span>
             </label>
             <label class="range-option">
-              <input type="radio" name="koid-mode" value="specific">
-              <span>KOID:</span>
-              <input type="text" id="koid-value" value="S700855" style="width: 80px; font-family: Monaco, Menlo, monospace; font-size: 12px;">
+              <input type="radio" name="userid-mode" value="specific">
+              <span>User ID:</span>
+              <input type="text" id="userid-value" value="U700855" style="width: 80px; font-family: Monaco, Menlo, monospace; font-size: 12px;">
             </label>
           </div>
         </div>
@@ -913,7 +913,7 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
             <button class="example-btn" data-sql="SELECT * FROM spark_analyticstest ORDER BY timestamp DESC LIMIT 10">Recent events (10)</button>
             <button class="example-btn" data-sql="SELECT index1 as eventType, COUNT() as count FROM spark_analyticstest GROUP BY index1">Count by event type</button>
             <button class="example-btn" data-sql="SELECT COUNT(DISTINCT blob1) as unique_users FROM spark_analyticstest WHERE index1 = 'login' AND timestamp >= toDateTime('2025-01-01 00:00:00')">Unique users (2025)</button>
-            <button class="example-btn" data-sql="SELECT blob1 as koid, COUNT() as logins FROM spark_analyticstest WHERE index1 = 'login' GROUP BY blob1 ORDER BY logins DESC LIMIT 20">Top users by logins</button>
+            <button class="example-btn" data-sql="SELECT blob1 as userId, COUNT() as logins FROM spark_analyticstest WHERE index1 = 'login' GROUP BY blob1 ORDER BY logins DESC LIMIT 20">Top users by logins</button>
             <button class="example-btn" data-sql="SELECT blob6 as search_term, COUNT() as searches FROM spark_analyticstest WHERE index1 = 'search' AND blob6 != '' GROUP BY search_term ORDER BY searches DESC LIMIT 20">Top search terms</button>
             <button class="example-btn" data-sql="SELECT blob7 as brand, COUNT() as downloads FROM spark_analyticstest WHERE index1 = 'download' AND blob7 != '' GROUP BY brand ORDER BY downloads DESC LIMIT 20">Downloads by brand</button>
           </div>
@@ -1073,7 +1073,7 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
       const commonMap = {
         'index1': 'Event Type',
         'timestamp': 'Timestamp',
-        'blob1': 'KOID',
+        'blob1': 'User ID',
         'blob2': 'Country',
         'blob3': 'Employee Type',
         'blob4': 'Company',
@@ -1194,9 +1194,9 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
      * Query Builder Section
      * ============================================ */
     
-    // Auto-select "specific" KOID radio when user types in the KOID field
-    document.getElementById('koid-value').addEventListener('input', () => {
-      document.querySelector('input[name="koid-mode"][value="specific"]').checked = true;
+    // Auto-select "specific" User ID radio when user types in the User ID field
+    document.getElementById('userid-value').addEventListener('input', () => {
+      document.querySelector('input[name="userid-mode"][value="specific"]').checked = true;
     });
 
     // Query Builder button handler
@@ -1212,10 +1212,10 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
       const daysValue = parseInt(document.getElementById('days-value').value, 10) || 30;
       let sinceDate = document.getElementById('since-date').value;
 
-      // Get KOID filter
-      const koidMode = document.querySelector('input[name="koid-mode"]:checked')?.value || 'all';
-      const koidValue = document.getElementById('koid-value').value.trim();
-      const koidFilter = koidMode === 'specific' && koidValue ? koidValue : null;
+      // Get User ID filter
+      const userIdMode = document.querySelector('input[name="userid-mode"]:checked')?.value || 'all';
+      const userIdValue = document.getElementById('userid-value').value.trim();
+      const userIdFilter = userIdMode === 'specific' && userIdValue ? userIdValue : null;
       
       const resultEl = document.getElementById('query-builder-result');
       const debugEl = document.getElementById('query-builder-debug');
@@ -1244,7 +1244,7 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
       // Build shared WHERE conditions
       const conditions = [];
       if (eventType) conditions.push(`index1 = '${eventType}'`);
-      if (koidFilter) conditions.push(`blob1 = '${koidFilter}'`);
+      if (userIdFilter) conditions.push(`blob1 = '${userIdFilter}'`);
       if (rangeMode === 'days' && calculatedDate) conditions.push(`timestamp >= toDateTime('${calculatedDate}')`);
       else if (rangeMode === 'date' && sinceDate) conditions.push(`timestamp >= toDateTime('${sinceDate}')`);
       const whereClause = conditions.length ? ` WHERE ${conditions.join(' AND ')}` : '';
@@ -1261,7 +1261,7 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
       
       // Show loading message
       const filterText = eventType ? ` (${eventType} only)` : '';
-      const koidText = koidFilter ? `, KOID: ${koidFilter}` : '';
+      const userIdText = userIdFilter ? `, User ID: ${userIdFilter}` : '';
       let rangeText = '';
       if (rangeMode === 'limit') {
         rangeText = `, last ${limitValue} events`;
@@ -1270,7 +1270,7 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
       } else if (rangeMode === 'date') {
         rangeText = `, since ${sinceDate.split('T')[0]}`;
       }
-      resultEl.innerHTML = `<div class="loading">Querying Analytics Engine${filterText}${koidText}${rangeText}...</div>`;
+      resultEl.innerHTML = `<div class="loading">Querying Analytics Engine${filterText}${userIdText}${rangeText}...</div>`;
       debugEl.style.display = 'none';
       
       try {
@@ -1291,7 +1291,7 @@ open -na "Google Chrome" --args --user-data-dir=/tmp/chrome-dev --disable-web-se
         const debugInfo = {
           query_type: queryType,
           event_type: eventType || 'all',
-          koid_filter: koidFilter || 'all',
+          userId_filter: userIdFilter || 'all',
           range_mode: rangeMode,
           sql: result.meta.sql,
           rows: result.meta.rows,

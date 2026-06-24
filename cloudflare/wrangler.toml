@@ -6,6 +6,14 @@ compatibility_date = "2025-08-16"
 
 workers_dev = false
 
+# Top-level bindings used by `wrangler dev` (no --env) and the local
+# schema-setup script. Per-env overrides live under [env.*] below.
+d1_databases = [
+  { binding = "USER_LOGINS", database_name = "spark-user-logins", database_id = "3db42334-a8ba-48cc-b5bd-84f7e1b04eb2" },
+  { binding = "AUDIT_EVENTS", database_name = "spark-audit-events", database_id = "3db42334-a8ba-48cc-b5bd-84f7e1b04eb2" },
+  { binding = "SEARCH_EVENTS", database_name = "spark-search-events", database_id = "3db42334-a8ba-48cc-b5bd-84f7e1b04eb2" },
+]
+
 [observability.logs]
 enabled = true
 
@@ -51,7 +59,6 @@ MICROSOFT_ENTRA_CLIENT_ID = "93e6431f-2f57-4612-96c8-1464640b4280"
 MICROSOFT_ENTRA_JWKS_URL = "https://login.microsoftonline.com/common/discovery/keys"
 SESSION_COOKIE_EXPIRATION = "6h"
 # Stub vars for features not used in this demo
-FADEL_ORIGIN = ""
 DOMAIN_URL = ""
 SMTP_HOST = ""
 SMTP_PORT = ""
@@ -94,7 +101,6 @@ MICROSOFT_ENTRA_CLIENT_ID = "93e6431f-2f57-4612-96c8-1464640b4280"
 MICROSOFT_ENTRA_JWKS_URL = "https://login.microsoftonline.com/common/discovery/keys"
 SESSION_COOKIE_EXPIRATION = "6h"
 # Stub vars for features not used in this demo
-FADEL_ORIGIN = ""
 DOMAIN_URL = ""
 SMTP_HOST = ""
 SMTP_PORT = ""

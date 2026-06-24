@@ -8,7 +8,7 @@
  *
  * Key Features:
  * - Transparent proxy to Adobe AEM Cloud delivery endpoints
- * - Role-based access control for assets (brands, bottler countries, customers)
+ * - Role-based access control for assets (brands, countries, customers)
  * - Collection-level ACL enforcement (CRUD operations)
  * - Automatic IMS token caching with expiry handling
  *

@@ -151,7 +151,7 @@ export function getSearchResults(searchBody) {
  * Extract unique values of a metadata field from search results.
  *
  * @param {object} searchBody – parsed search response body
- * @param {string} field      – metadata field, e.g. 'tccc:brand' or 'tccc:intendedBottlerCountry'
+ * @param {string} field      – metadata field, e.g. 'custom:brand' or 'custom:country'
  * @returns {string[]} – unique values found
  */
 export function extractMetadataValues(searchBody, field) {
@@ -185,5 +185,5 @@ export function hitsContainMetadataValue(searchBody, field, value) {
  * Check if any hit has a contentType of 'customers'.
  */
 export function hitsContainCustomerContent(searchBody) {
-  return hitsContainMetadataValue(searchBody, 'tccc:contentType', 'customers');
+  return hitsContainMetadataValue(searchBody, 'custom:contentType', 'customers');
 }

@@ -1,6 +1,6 @@
 # Analytics Reports Shared Utilities
 
-Comprehensive design system and utility library for building consistent, maintainable analytics reports in KO Assets.
+Comprehensive design system and utility library for building consistent, maintainable analytics reports in Spark.
 
 ## Table of Contents
 
@@ -129,7 +129,7 @@ scripts/analytics/
 
 ```css
 /* Primary Colors */
---report-primary-color: #f40009;        /* Coca-Cola Red */
+--report-primary-color: #f40009;        /* Primary red */
 --report-primary-hover: #d90008;        /* Darker red for hover states */
 
 /* Text Colors */
@@ -325,7 +325,7 @@ const chart = createBarChart(canvas, data, 'Users', {
 ```javascript
 const canvas = document.querySelector('#role-chart');
 const data = {
-  labels: ['Associate', 'Agency', 'Bottler'],
+  labels: ['Associate', 'Agency', 'Partner'],
   values: [45, 30, 25],
 };
 const colors = ['#f40009', '#6ac9ce', '#999999'];
@@ -405,7 +405,7 @@ const chart = renderMonthlyBarChart(
 const roleData = {
   associate: 450,
   agency: 300,
-  bottler: 250,
+  partner: 250,
 };
 
 const chart = renderRolePieChart(canvas, roleData);
@@ -593,7 +593,7 @@ const roleFilter = createFilterDropdown({
     { value: 'all', label: 'All Roles' },
     { value: 'associate', label: 'Associate' },
     { value: 'agency', label: 'Agency' },
-    { value: 'bottler', label: 'Bottler' },
+    { value: 'partner', label: 'Partner' },
   ],
   selectedValue: 'all',
   onChange: (value) => {
@@ -648,7 +648,7 @@ const table = createTable({
   rows: [
     ['Associate', 450, '45%'],
     ['Agency', 300, '30%'],
-    ['Bottler', 250, '25%'],
+    ['Partner', 250, '25%'],
   ],
   className: 'my-report-table',
 });
@@ -853,11 +853,11 @@ const data = [
   { role: 'associate', count: 100 },
   { role: 'associate', count: 50 },
   { role: 'agency', count: 75 },
-  { role: 'bottler', count: 25 },
+  { role: 'partner', count: 25 },
 ];
 
 const byRole = aggregateBy(data, 'role', 'count');
-// Returns: { associate: 150, agency: 75, bottler: 25 }
+// Returns: { associate: 150, agency: 75, partner: 25 }
 ```
 
 #### Aggregate by Region
@@ -877,7 +877,7 @@ const byRegion = aggregateByRegion(data, 'count', 'country');
 #### Calculate Total
 
 ```javascript
-const roleData = { associate: 150, agency: 75, bottler: 25 };
+const roleData = { associate: 150, agency: 75, partner: 25 };
 const total = calculateTotal(roleData);  // 250
 ```
 
@@ -902,18 +902,18 @@ createBarChart(canvas, arrayData, 'Users');
 #### Object to Array
 
 ```javascript
-const roleData = { associate: 150, agency: 75, bottler: 25 };
+const roleData = { associate: 150, agency: 75, partner: 25 };
 const labels = { 
   associate: 'Associate Users',
   agency: 'Agency Users',
-  bottler: 'Bottler Users',
+  partner: 'Partner Users',
 };
 
 const arrayData = objectToArray(roleData, labels);
 // Returns: [
 //   { label: 'Associate Users', value: 150 },
 //   { label: 'Agency Users', value: 75 },
-//   { label: 'Bottler Users', value: 25 }
+//   { label: 'Partner Users', value: 25 }
 // ]
 ```
 
@@ -1330,4 +1330,4 @@ For questions or issues:
 
 **Last Updated:** February 2, 2026  
 **Version:** 1.0.0  
-**Maintainers:** KO Assets Development Team
+**Maintainers:** Spark Development Team

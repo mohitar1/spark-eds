@@ -1,10 +1,10 @@
 # Getting Started
 
-This guide walks you through the basics of creating content for KO Assets using Document Authoring.
+This guide walks you through the basics of creating content for Spark using Document Authoring.
 
 ## What is Document Authoring?
 
-Document Authoring is a web-based content editing platform that lets you create and manage web pages using a familiar document-editing experience. Your documents automatically become web pages on the KO Assets site.
+Document Authoring is a web-based content editing platform that lets you create and manage web pages using a familiar document-editing experience. Your documents automatically become web pages on the Spark site.
 
 For comprehensive Document Authoring documentation, visit [docs.da.live](https://docs.da.live/).
 
@@ -16,13 +16,13 @@ The AEM Sidekick is a browser extension that lets you preview and publish your c
 
 1. Install the [AEM Sidekick](https://chromewebstore.google.com/detail/aem-sidekick/ccfggkjabjahcjoljmgmklhpaccedipo) from the Chrome Web Store
 2. Pin it to your browser toolbar for easy access
-3. The Sidekick will appear when you're working on KO Assets content
+3. The Sidekick will appear when you're working on Spark content
 
 ### 2. Access Document Authoring
 
 1. Go to [da.live](https://da.live/)
 2. Sign in with your authorized account
-3. Navigate to the KO Assets content folder
+3. Navigate to the Spark content folder
 
 ## Creating Your First Page
 
@@ -89,8 +89,8 @@ Your document's location and name determine its URL:
 
 | Document Location | URL                        |
 |-------------------|----------------------------|
-| `/en/about` | `assets.coke.com/en/about` |
-| `/en/help/faq` | `assets.coke.com/en/help/faq` |
+| `/en/about` | `spark.aem.media/en/about` |
+| `/en/help/faq` | `spark.aem.media/en/help/faq` |
 
 ### Sections
 

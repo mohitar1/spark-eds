@@ -98,7 +98,7 @@ export const testUsers = [
     email: 'test@example.com',
     country: 'US',
     employeeType: EMPLOYEE_TYPE.EMPLOYEE,
-    targetRules: ['restricted-brands', 'bottler-country-skip'],
+    targetRules: ['restricted-brands', 'partner-country-skip'],
     expectedAttributes: {
       roles: ['employee'],
       brands: [],
@@ -113,16 +113,16 @@ export const testUsers = [
   },
 
   // =========================================================================
-  // Rule 4: Bottler country filtering — bottlers see only their countries
+  // Rule 4: Partner country filtering — partners see only their countries
   // =========================================================================
   {
-    name: 'Bottler - France Only',
-    email: 'user@french-bottler.com',
+    name: 'Partner - France Only',
+    email: 'user@french-partner.com',
     country: 'FR',
     employeeType: EMPLOYEE_TYPE.EXTERNAL,
-    targetRules: ['bottler-country'],
+    targetRules: ['partner-country'],
     expectedAttributes: {
-      roles: ['bottler'],
+      roles: ['partner'],
       countries: ['fr'],
     },
     expectedSearch: {
@@ -131,13 +131,13 @@ export const testUsers = [
     },
   },
   {
-    name: 'Bottler - Generic (US)',
-    email: 'user@bottler.com',
+    name: 'Partner - Generic (US)',
+    email: 'user@partner.com',
     country: 'US',
     employeeType: EMPLOYEE_TYPE.EXTERNAL,
-    targetRules: ['bottler-country'],
+    targetRules: ['partner-country'],
     expectedAttributes: {
-      roles: ['bottler'],
+      roles: ['partner'],
       // country comes from SUDO_COUNTRY via IDP fallback or sheet
     },
     expectedSearch: {
@@ -146,13 +146,13 @@ export const testUsers = [
     },
   },
   {
-    name: 'Bottler - APAC Multi-Country',
-    email: 'user@apac-bottler.com',
+    name: 'Partner - APAC Multi-Country',
+    email: 'user@apac-partner.com',
     country: 'AU',
     employeeType: EMPLOYEE_TYPE.EXTERNAL,
-    targetRules: ['bottler-country'],
+    targetRules: ['partner-country'],
     expectedAttributes: {
-      roles: ['bottler'],
+      roles: ['partner'],
       // multiple APAC countries from the sheet
     },
     expectedSearch: {
@@ -169,7 +169,7 @@ export const testUsers = [
     email: 'test@example.com',
     country: 'US',
     employeeType: EMPLOYEE_TYPE.CONTINGENT_WORKER,
-    targetRules: ['bottler-country-skip'],
+    targetRules: ['partner-country-skip'],
     expectedAttributes: {
       roles: ['contingent-worker'],
     },
@@ -183,7 +183,7 @@ export const testUsers = [
     email: 'agency@agency.com',
     country: 'US',
     employeeType: EMPLOYEE_TYPE.EXTERNAL,
-    targetRules: ['bottler-country-skip'],
+    targetRules: ['partner-country-skip'],
     expectedAttributes: {
       roles: ['agency'],
     },
@@ -243,7 +243,7 @@ export const restrictedBrandPairs = [
  * these brands. A regular employee (all restricted brands excluded) should not.
  *
  * The test searches for each brand name as a keyword. If any results come back,
- * it checks the tccc:brand metadata to confirm the filter is working.
+ * it checks the custom:brand metadata to confirm the filter is working.
  */
 export const restrictedBrands = [
   'burn',
@@ -252,13 +252,13 @@ export const restrictedBrands = [
   'full-throttle',
   'gladiator',
   'kirks',
-  'monster-ko',
+  'monster',
   'mother',
-  'moxie-ko',
+  'moxie',
   'nalu',
   'nos',
   'relentless',
-  'roar-ko',
+  'roar',
 ];
 
 /**

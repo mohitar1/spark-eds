@@ -9,13 +9,13 @@ import { describe, expect, it } from 'vitest';
 // For testing purposes, we're recreating it here to test the logic independently
 
 const FILTER_DEFAULT_VALUE = 'all';
-const VALID_ROLES = ['all', 'associate', 'agency', 'bottler'];
+const VALID_ROLES = ['all', 'associate', 'agency', 'partner'];
 const VALID_REGIONS = ['all', 'AFR', 'ASP', 'EME', 'EU', 'GCM', 'INSWA', 'JSK', 'LA', 'NA'];
 
 const ROLE_MAPPINGS = {
   associate: ['associate', 'employee', 'contingent-worker'],
   agency: ['agency'],
-  bottler: ['bottler'],
+  partner: ['partner'],
 };
 
 const REGION_TO_COUNTRIES = {
@@ -141,9 +141,9 @@ describe('buildDownloadFilterConditions', () => {
       expect(result).toBe(" AND (blob5 LIKE '%agency%')");
     });
 
-    it('should filter by bottler role', () => {
-      const result = buildDownloadFilterConditions({ role: 'bottler' });
-      expect(result).toBe(" AND (blob5 LIKE '%bottler%')");
+    it('should filter by partner role', () => {
+      const result = buildDownloadFilterConditions({ role: 'partner' });
+      expect(result).toBe(" AND (blob5 LIKE '%partner%')");
     });
 
     it('should not include role filter when role is "all"', () => {
@@ -222,10 +222,10 @@ describe('buildDownloadFilterConditions', () => {
 
     it('should ignore "all" values in combined filters', () => {
       const result = buildDownloadFilterConditions({
-        role: 'bottler',
+        role: 'partner',
         region: 'all',
       });
-      expect(result).toBe(" AND (blob5 LIKE '%bottler%')");
+      expect(result).toBe(" AND (blob5 LIKE '%partner%')");
       expect(result).not.toContain('blob2');
     });
   });
@@ -245,9 +245,9 @@ describe('buildDownloadFilterConditions', () => {
       expect(result).not.toContain(' OR ');
     });
 
-    it('should not expand bottler (no aliases)', () => {
-      const result = buildDownloadFilterConditions({ role: 'bottler' });
-      expect(result).toBe(" AND (blob5 LIKE '%bottler%')");
+    it('should not expand partner (no aliases)', () => {
+      const result = buildDownloadFilterConditions({ role: 'partner' });
+      expect(result).toBe(" AND (blob5 LIKE '%partner%')");
       expect(result).not.toContain(' OR ');
     });
   });
@@ -320,7 +320,7 @@ describe('buildDownloadFilterConditions', () => {
 
     it('should use AND to combine multiple filters', () => {
       const result = buildDownloadFilterConditions({
-        role: 'bottler',
+        role: 'partner',
         region: 'LA',
       });
       expect(result).toMatch(/ AND .* AND /);

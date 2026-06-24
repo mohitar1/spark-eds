@@ -30,10 +30,10 @@ Spark is a digital asset management platform built on:
 │                 │     │   Cloudflare Worker  │     │   Backend Services │
 │   Client        │────▶│   (Edge)             │────▶│                    │
 │   (Browser)     │     │                      │     │  - Adobe DM API    │
-│                 │◀────│  - Authentication    │◀────│  - Fadel API       │
-└─────────────────┘     │  - Authorization     │     │  - AEM Publish     │
-                        │  - Internal APIs     │     │  - KV Storage      │
-                        │  - Request Routing   │     │  - Analytics Engine│
+│                 │◀────│  - Authentication    │◀────│  - AEM Publish     │
+└─────────────────┘     │  - Authorization     │     │  - KV Storage      │
+                        │  - Internal APIs     │     │  - Analytics Engine│
+                        │  - Request Routing   │     │                    │
                         └──────────────────────┘     └────────────────────┘
 ```
 
@@ -106,11 +106,11 @@ Spark uses **Microsoft Entra ID** (formerly Azure AD) for authentication via OAu
 {
   "sub": "microsoft-entra-user-id",
   "name": "John Doe",
-  "email": "john.doe@coca-cola.com",
+  "email": "john.doe@example.com",
   "country": "US",
   "employeeType": "10",
-  "koid": "12345",
-  "company": "The Coca-Cola Company",
+  "userId": "12345",
+  "company": "Acme",
   "permissions": ["preview", "admin-reports"],
   "roles": ["employee"],
   "countries": [],
@@ -142,10 +142,10 @@ Configured in `/config/access/companies` and `/config/access/users`:
 | Role | Description |
 |------|-------------|
 | `admin` | Full access to all content |
-| `employee` | TCCC employee (employeeType: 10) |
-| `contingent-worker` | TCCC contingent worker (employeeType: 11) |
+| `employee` | Employee (employeeType: 10) |
+| `contingent-worker` | Contingent worker (employeeType: 11) |
 | `agency` | External agency partner |
-| `bottler` | Bottling partner (country-restricted) |
+| `partner` | Distribution partner (country-restricted) |
 
 ### Impersonation (Sudo)
 
@@ -181,7 +181,6 @@ These APIs are proxied to external services with authentication handled by the W
 | Category | Path Prefix | Backend |
 |----------|-------------|---------|
 | Dynamic Media | `/api/adobe/assets/*` | `delivery-*.adobeaemcloud.com` |
-| Fadel | `/api/fadel/*` | `*.fadelarc.net` |
 | AEM Publish | `/api/publish/*` | `publish-*.adobeaemcloud.com` |
 
 ---
@@ -202,11 +201,11 @@ Returns the authenticated user's profile and permissions.
 ```json
 {
   "name": "John Doe",
-  "email": "john.doe@coca-cola.com",
+  "email": "john.doe@example.com",
   "country": "US",
   "employeeType": "10",
-  "koid": "12345",
-  "company": "The Coca-Cola Company",
+  "userId": "12345",
+  "company": "Acme",
   "permissions": ["preview", "admin-reports"],
   "roles": ["employee"],
   "countries": [],
@@ -238,9 +237,9 @@ All keys are automatically scoped to the authenticated user.
   "value": [
     {
       "id": "search-123",
-      "name": "Coca-Cola Red Assets",
-      "searchTerm": "coca-cola red",
-      "filters": {"brand": "Coca-Cola"},
+      "name": "Brand A Red Assets",
+      "searchTerm": "brand-a red",
+      "filters": {"brand": "brand-a"},
       "dateCreated": "2024-01-15T10:30:00Z"
     }
   ],
@@ -253,7 +252,7 @@ All keys are automatically scoped to the authenticated user.
 ```json
 {
   "success": true,
-  "key": "user:john.doe@coca-cola.com:saved-searches",
+  "key": "user:john.doe@example.com:saved-searches",
   "message": "Value set successfully"
 }
 ```
@@ -296,9 +295,9 @@ All keys are automatically scoped to the authenticated user.
     {"assetId": "urn:aaid:aem:abc123", "name": "Campaign Asset.jpg"}
   ],
   "agencyType": "Associate",
-  "agencyName": "TCCC Marketing",
+  "agencyName": "Acme Marketing",
   "contactName": "John Doe",
-  "contactEmail": "john.doe@coca-cola.com",
+  "contactEmail": "john.doe@example.com",
   "contactPhone": "+1-555-0123",
   "airDate": "2024-03-01",
   "pullDate": "2024-06-01",
@@ -334,7 +333,7 @@ All keys are automatically scoped to the authenticated user.
   "subject": "New Asset Available",
   "message": "A new asset matching your saved search is now available.",
   "type": "Notification",
-  "from": "system@coca-cola.com",
+  "from": "system@example.com",
   "priority": "normal",
   "expiresInXDays": 30,
   "status": "unread"
@@ -358,10 +357,10 @@ All keys are automatically scoped to the authenticated user.
 ```json
 {
   "eventType": "login",
-  "koid": "12345",
+  "userId": "12345",
   "country": "US",
   "employeeType": "10",
-  "company": "The Coca-Cola Company",
+  "company": "Acme",
   "roles": ["employee"]
 }
 ```
@@ -370,12 +369,12 @@ All keys are automatically scoped to the authenticated user.
 ```json
 {
   "eventType": "search",
-  "koid": "12345",
+  "userId": "12345",
   "country": "US",
   "employeeType": "10",
-  "company": "The Coca-Cola Company",
+  "company": "Acme",
   "roles": ["employee"],
-  "searchTerm": "coca-cola summer campaign",
+  "searchTerm": "brand-a summer campaign",
   "resultCount": 42
 }
 ```
@@ -384,13 +383,13 @@ All keys are automatically scoped to the authenticated user.
 ```json
 {
   "eventType": "download",
-  "koid": "12345",
+  "userId": "12345",
   "country": "US",
   "employeeType": "10",
-  "company": "The Coca-Cola Company",
+  "company": "Acme",
   "roles": ["employee"],
   "resourceType": "asset",
-  "brand": "Coca-Cola",
+  "brand": "brand-a",
   "campaigns": "Summer 2024",
   "downloadId": "dl-abc123",
   "downloadItemId": "urn:aaid:aem:asset123",
@@ -423,7 +422,7 @@ Proxied to Adobe Dynamic Media OpenAPI (`delivery-*.adobeaemcloud.com`).
 **Request Body:**
 ```json
 {
-  "query": {"text": "coca-cola summer"},
+  "query": {"text": "brand-a summer"},
   "filters": {"dc:format": ["image/jpeg", "image/png"]},
   "limit": 20,
   "offset": 0
@@ -440,7 +439,7 @@ x-analytics-context: {
   "assets": [
     {
       "assetId": "urn:aaid:aem:abc123",
-      "brand": "Coca-Cola",
+      "brand": "brand-a",
       "campaign": "Summer",
       "downloadType": "ready-to-use",
       "renditions": ["original"]
@@ -451,18 +450,7 @@ x-analytics-context: {
 
 ---
 
-### 7. Fadel API
-
-Proxied to Fadel rights management system (`*.fadelarc.net`).
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/fadel/rights/check` | POST | Check asset rights |
-| `/api/fadel/rights/:assetId` | GET | Get rights details |
-
----
-
-### 8. AEM Publish API
+### 7. AEM Publish API
 
 Proxied to AEM CS Publish environment (`publish-*.adobeaemcloud.com`).
 
@@ -505,7 +493,7 @@ Proxied to AEM CS Publish environment (`publish-*.adobeaemcloud.com`).
 
 | Consideration | Implementation |
 |---------------|----------------|
-| PII handling | Email stored in session, koid used for analytics |
+| PII handling | Email stored in session, userId used for analytics |
 | Audit logging | Events tracked in Analytics Engine |
 | Data retention | KV data with optional TTL |
 

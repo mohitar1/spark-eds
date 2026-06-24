@@ -336,7 +336,7 @@ async function trackDownloadAnalytics(user, downloadContext, env) {
   try {
     if (!user?.userId) {
       console.warn(
-        '[Analytics] Download event written with no KOID — user may be missing User ID in IDP token.',
+        '[Analytics] Download event written with no user ID — user may be missing User ID in IDP token.',
         `downloadItemId=${downloadContext.downloadItemId}`,
         `resourceType=${downloadContext.resourceType}`,
       );
@@ -503,7 +503,7 @@ async function processSearchAnalytics(clonedResponse, user, searchContext, env) 
 
     if (!user?.userId) {
       console.warn(
-        '[Analytics] Search event written with no KOID — user may be missing User ID in IDP token.',
+        '[Analytics] Search event written with no user ID — user may be missing User ID in IDP token.',
         `searchTerm="${searchContext.searchTerm}"`,
         `searchType=${searchContext.searchType}`,
       );

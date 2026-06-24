@@ -4,7 +4,7 @@
 
 ### Integration Tests (`integration/`)
 
-Smoke tests that hit real KO Assets endpoints (API + page loads) with a session cookie. Tests are defined declaratively in `test-config.js` — covers user, search, reporting, collections, rights requests, saved searches, notifications, content stores, Fadel proxy, and auto-generated Japanese localization variants.
+Smoke tests that hit real Spark endpoints (API + page loads) with a session cookie. Tests are defined declaratively in `test-config.js` — covers user, search, reporting, collections, rights requests, saved searches, notifications, content stores, and auto-generated Japanese localization variants.
 
 ```bash
 # Production (default, opens HTML report)
@@ -25,12 +25,12 @@ See [`integration/README.md`](integration/README.md) for full details on adding 
 
 Authorization rule verification using 13 test user personas. Tests that different user profiles see the correct search results based on the permission sheets (`/config/access/companies`, `/config/access/users`, `/config/access/restricted-brands`).
 
-These tests use the worker's SUDO cookie mechanism to impersonate different user types (employee, bottler, agency, customer, admin, no-roles) and validate the 5 authorization rules in `searchContentAIAuthorization`:
+These tests use the worker's SUDO cookie mechanism to impersonate different user types (employee, partner, agency, customer, admin, no-roles) and validate the 5 authorization rules in `searchContentAIAuthorization`:
 
 1. **No roles** — unknown domain users and employeeType mismatches get zero results
-2. **Admin bypass** — admins see everything; comparative test proves admin sees more than bottler
+2. **Admin bypass** — admins see everything; comparative test proves admin sees more than a partner
 3. **Restricted brands** — per-brand keyword search across 13 brands; admin vs employee comparison
-4. **Bottler country filtering** — bottlers see only their country's assets; employees/agencies skip the filter
+4. **Partner country filtering** — partners see only their country's assets; employees/agencies skip the filter
 5. **Customer content** — customer-specific assets visible only to associated users
 
 The suite has two phases:

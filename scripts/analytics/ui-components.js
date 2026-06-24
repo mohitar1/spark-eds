@@ -479,7 +479,7 @@ export function createTableRow(cells) {
  *   rows: [
  *     ['Associate', 100, '50%'],
  *     ['Agency', 75, '37.5%'],
- *     ['Bottler', 25, '12.5%']
+ *     ['Partner', 25, '12.5%']
  *   ],
  *   className: 'report-table'
  * });

@@ -6,9 +6,12 @@
  *
  * Supported formats:
  * - "agency"           → excludes all agency users
- * - "bottler"          → excludes all bottlers
- * - "bottler:us"       → excludes bottlers from US only
- * - "agency, bottler:us, bottler:ca" → combined exclusions
+ * - "partner"          → excludes all users with the "partner" role
+ * - "partner:us"       → excludes "partner" users from US only
+ * - "agency, partner:us, partner:ca" → combined exclusions
+ *
+ * Any role may be country-scoped with the "role:country" syntax; there is no
+ * hard-coded role, so the set of roles is fully driven by authored content.
  */
 
 /**
@@ -16,13 +19,14 @@
  * Reads <meta name="exclude-roles" content="..."> from <head>.
  *
  * @param {string} html - The raw HTML string
- * @returns {{ roles: string[], bottlerCountries: string[], allBottlers: boolean }}
+ * @returns {{ roles: string[], scopedRoles: Object<string, string[]> }}
+ *   `roles` excludes the whole role; `scopedRoles` maps a role to the list of
+ *   countries it is excluded in.
  */
 export function parsePageExclusions(html) {
   const exclusions = {
     roles: [],
-    bottlerCountries: [],
-    allBottlers: false,
+    scopedRoles: {},
   };
 
   const match = html.match(/<meta\s+name="exclude-roles"\s+content="([^"]*)"[^>]*>/i);
@@ -33,13 +37,11 @@ export function parsePageExclusions(html) {
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
   for (const entry of entries) {
-    if (entry.startsWith('bottler:')) {
-      const country = entry.split(':')[1];
-      if (country) exclusions.bottlerCountries.push(country);
-    } else if (entry === 'bottler') {
-      exclusions.allBottlers = true;
+    const [role, country] = entry.split(':');
+    if (country) {
+      (exclusions.scopedRoles[role] ||= []).push(country);
     } else {
-      exclusions.roles.push(entry);
+      exclusions.roles.push(role);
     }
   }
 
@@ -50,29 +52,25 @@ export function parsePageExclusions(html) {
  * Check whether a user is excluded from a page.
  *
  * @param {Object} user - The user object (roles, countries, etc.)
- * @param {{ roles: string[], bottlerCountries: string[], allBottlers: boolean }} exclusions
+ * @param {{ roles: string[], scopedRoles: Object<string, string[]> }} exclusions
  * @returns {boolean} true if user is EXCLUDED (should be denied)
  */
 export function isUserExcluded(user, exclusions) {
   if (user.roles?.includes('admin')) return false;
 
-  const hasExclusions = exclusions.roles.length > 0 || exclusions.bottlerCountries.length > 0 || exclusions.allBottlers;
+  const scopedRoles = exclusions.scopedRoles || {};
+  const hasExclusions = exclusions.roles.length > 0 || Object.keys(scopedRoles).length > 0;
   if (!hasExclusions) return false;
 
   const userRoles = user.roles || [];
 
-  // check full-role exclusions (agency, employee, contingent-worker)
+  // check full-role exclusions (agency, employee, contingent-worker, ...)
   if (userRoles.some((role) => exclusions.roles.includes(role))) return true;
 
-  // check bottler exclusions
-  if (userRoles.includes('bottler')) {
-    if (exclusions.allBottlers) return true;
-
-    if (exclusions.bottlerCountries.length > 0) {
-      const userCountries = (user.countries || []).map((c) => c.toLowerCase());
-      if (userCountries.some((c) => exclusions.bottlerCountries.includes(c))) return true;
-    }
-  }
-
-  return false;
+  // check country-scoped role exclusions
+  const userCountries = (user.countries || []).map((c) => c.toLowerCase());
+  return userRoles.some((role) => {
+    const countries = scopedRoles[role];
+    return countries && userCountries.some((c) => countries.includes(c));
+  });
 }

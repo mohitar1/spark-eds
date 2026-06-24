@@ -4,7 +4,7 @@ This guide explains how to organize content on your pages using sections, metada
 
 ## Page Anatomy
 
-A typical KO Assets page consists of:
+A typical Spark page consists of:
 
 ```
 ┌─────────────────────────────────┐
@@ -150,7 +150,7 @@ Add this table at the very end of your document:
 
 | Property | Purpose | Example |
 |----------|---------|---------|
-| `title` | Page title (browser tab, search results) | `About KO Assets` |
+| `title` | Page title (browser tab, search results) | `About Spark` |
 | `description` | SEO description (search result snippet) | `Learn about our digital asset platform` |
 | `image` | Social sharing image (og:image) | `/images/about-hero.jpg` |
 
@@ -169,7 +169,7 @@ Here's an example of a complete page structure:
 
 ---
 
-## Welcome to KO Assets
+## Welcome to Spark
 
 Access thousands of brand-approved digital assets for your marketing needs.
 
@@ -199,7 +199,7 @@ Contact our support team for assistance with finding the right assets.
 
 | Metadata    |                                        |
 |-------------|----------------------------------------|
-| title       | KO Assets - Digital Asset Portal       |
+| title       | Spark - Digital Asset Portal       |
 | description | Access brand-approved digital assets for marketing |
 | image       | /images/home-social.jpg                |
 ```

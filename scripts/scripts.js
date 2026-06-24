@@ -39,21 +39,19 @@ async function loadUser() {
 
 /**
  * Check if a user matches any of the given role entries.
- * Supports: "agency", "bottler", "bottler:us", etc.
+ * Supports a plain role ("partner") or a country-scoped role ("partner:us"),
+ * where the scoped form requires both the role and the country to match.
  * @param {Object} user - The user object with roles and countries
  * @param {string[]} entries - Parsed role entries (lowercase, trimmed)
  * @returns {boolean} true if user matches at least one entry
  */
 function matchesRoleEntries(user, entries) {
   return entries.some((entry) => {
-    if (entry.startsWith('bottler:')) {
-      const country = entry.split(':')[1];
-      return user.roles?.includes('bottler') && user.countries?.includes(country);
+    const [role, country] = entry.split(':');
+    if (country) {
+      return user.roles?.includes(role) && user.countries?.includes(country);
     }
-    if (entry === 'bottler') {
-      return user.roles?.includes('bottler');
-    }
-    return user.roles?.includes(entry);
+    return user.roles?.includes(role);
   });
 }
 
@@ -233,9 +231,9 @@ function loadErrorPage(main) {
 
 /**
  * Remove sections that the current user is not allowed to see.
- * If a section has a "roles" metadata property (e.g. "employee, bottler:us"),
+ * If a section has a "roles" metadata property (e.g. "employee, partner:us"),
  * only users with a matching role can see it. Admins always see everything.
- * Supports the same syntax as page-level exclude-roles: bottler, bottler:us, etc.
+ * Supports the same syntax as page-level exclude-roles: partner, partner:us, etc.
  * @param {Element} main The main element
  */
 function filterSectionsByRole(main) {

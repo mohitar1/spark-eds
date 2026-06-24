@@ -36,9 +36,9 @@ Use the special syntax `((fragment)):` followed by a link to the fragment:
 
 | tabs |  |
 |------|--|
-| Coca-Cola | ((fragment)): [/fragments/coca-cola](/fragments/coca-cola) |
-| Sprite | ((fragment)): [/fragments/sprite](/fragments/sprite) |
-| Fanta | ((fragment)): [/fragments/fanta](/fragments/fanta) |
+| Brand A | ((fragment)): [/fragments/brand-a](/fragments/brand-a) |
+| Brand B | ((fragment)): [/fragments/brand-b](/fragments/brand-b) |
+| Brand C | ((fragment)): [/fragments/brand-c](/fragments/brand-c) |
 
 ## Examples
 
@@ -54,8 +54,8 @@ Use the special syntax `((fragment)):` followed by a link to the fragment:
 
 | tabs |  |
 |------|--|
-| Coca-Cola | ((fragment)): [/fragments/coca-cola](/fragments/coca-cola) |
-| Fanta | ((fragment)): [/fragments/fanta](/fragments/fanta) |
+| Brand A | ((fragment)): [/fragments/brand-a](/fragments/brand-a) |
+| Brand B | ((fragment)): [/fragments/brand-b](/fragments/brand-b) |
 
 ### Content with Cards Inside Tabs
 

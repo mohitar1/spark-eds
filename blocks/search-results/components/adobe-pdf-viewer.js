@@ -8,12 +8,13 @@
 // Module state
 let adobeDCViewInstance = null;
 
-// Adobe PDF Embed API – one client ID per allowed domain
+// Adobe PDF Embed API – one client ID per allowed domain.
+// NOTE: Adobe PDF Embed client IDs are domain-locked. Register a client ID for the
+// Spark production host at https://developer.adobe.com/document-services/apis/pdf-embed/
+// and replace the placeholder below before PDF preview works on production.
 const CLIENT_IDS = {
   localhost: '5b30e43dabf0482480341b9395596694',
-  'adobecocacola.workers.dev': '96d28392f9e54037abef530dcbe8b23f',
-  'pilot.assets.coke.com': 'a1ad48e243e64b19a49ea8bd4e999537',
-  'assets.coke.com': '2cf82e1563b54682be6db9c151d8eec9',
+  'spark.aem.media': 'REPLACE_WITH_SPARK_PDF_EMBED_CLIENT_ID',
 };
 
 /**
