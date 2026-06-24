@@ -38,7 +38,7 @@ Tags	Tags
 Type	Type
 Job	Job
 Template	Template
-Coca-Cola	Coca-Cola
+Acme	Acme
 Fanta	Fanta
 Sprite	Sprite
 Aquarius	Aquarius
@@ -49,8 +49,8 @@ Nestea	Nestea
 Schweppes	Schweppes
 Powerade	Powerade
 Georgia	Georgia
-Coca-Cola light/diet Coke	Coca-Cola light/diet Coke
-Coca-Cola Zero Sugar	Coca-Cola Zero Sugar
+Acme Light/Diet	Acme Light/Diet
+Acme Zero Sugar	Acme Zero Sugar
 Fanta Zero/diet/light	Fanta Zero/diet/light
 Nestle	Nestle
 Dr Pepper	Dr Pepper
@@ -72,11 +72,11 @@ Mate Tea of the Sun	Mate Tea of the Sun
 Taiyo no Mate Cha	Taiyo no Mate Cha
 Toreta!	Toreta!
 Tsumugi	Tsumugi
-Victoria - KO	Victoria - KO
-TCCC-All Other Brands	TCCC-All Other Brands
+Victoria	Victoria
+Acme-All Other Brands	Acme-All Other Brands
 All Other Manufacturers - All Brands	All Other Manufacturers - All Brands
 Cadbury-Schweppes - All Other Brands	Cadbury-Schweppes - All Other Brands
-TCCC-All Other Schweppes Brands	TCCC-All Other Schweppes Brands
+Acme-All Other Schweppes Brands	Acme-All Other Schweppes Brands
 7-Up-Cadbury-Schweppes	7-Up-Cadbury-Schweppes
 Asia Pacific	Asia Pacific
 Europe, Middle East and Africa	Europe, Middle East and Africa
@@ -101,16 +101,16 @@ Christmas 2017	Christmas 2017
 Rio Olympics 2016	Rio Olympics 2016
 Ramadan 2017	Ramadan 2017
 100 Years	100 Years
-Coke Side of Life	Coke Side of Life
-Coca-Cola Summer 2016	Coca-Cola Summer 2016
+Acme Side of Life	Acme Side of Life
+Acme Summer 2016	Acme Summer 2016
 Open Happiness	Open Happiness
 COPA 2016	COPA 2016
 EURO 2016	EURO 2016
 Halloween 2016	Halloween 2016
 Ramadan 2016	Ramadan 2016
-Coca-Cola Summer 2017	Coca-Cola Summer 2017
+Acme Summer 2017	Acme Summer 2017
 Christmas 2016	Christmas 2016
-Copa Coca-Cola	Copa Coca-Cola
+Copa Acme	Copa Acme
 Yes	Yes
 No	No
 Description	Description
@@ -223,7 +223,7 @@ Job Description	Job Description
 Job Status	Job Status
 Legacy Job Number	Legacy Job Number
 Target Completion Date	Target Completion Date
-TCCC Lead Associate	TCCC Lead Associate
+Acme Lead Associate	Acme Lead Associate
 Related Jobs	Related Jobs
 Adaptations	Adaptations
 Market Entity	Market Entity
@@ -233,11 +233,11 @@ Market Name	Market Name
 Country Code	Country Code
 Country Entity	Country Entity
 Country Name	Country Name
-TCCC Division	TCCC Division
-TCCC Op Group	TCCC Op Group
+Acme Division	Acme Division
+Acme Op Group	Acme Op Group
 Parent Market	Parent Market
 Countries	Countries
-Intended Bottler Country	Intended Bottler Country
+Intended Partner Country	Intended Partner Country
 Intended Business Unit (BU) or Market	Intended Business Unit (BU) or Market
 Intended Customer Commercial Market	Intended Customer Commercial Market
 Funding Business Unit (BU) or Market	Funding Business Unit (BU) or Market

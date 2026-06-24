@@ -7,7 +7,7 @@
  *   Rule 1: No roles → zero results
  *   Rule 2: Admin → sees everything
  *   Rule 3: Restricted brands → comparative (with vs without access)
- *   Rule 4: Bottler country → filtered to user's countries (skip for employee/agency/CW)
+ *   Rule 4: Partner country → filtered to user's countries (skip for employee/agency/CW)
  *   Rule 5: Customer content → visible only to customer-domain users
  */
 
@@ -98,28 +98,28 @@ if (!cookie) {
 
         it(`${user.name} sees assets from multiple countries`, async () => {
           const res = await searchAsUser(user, BROAD_SEARCH);
-          const countries = extractMetadataValues(res.body, 'tccc:intendedBottlerCountry');
+          const countries = extractMetadataValues(res.body, 'custom:country');
           expect(countries.length, 'Admin should see assets from multiple countries').toBeGreaterThan(1);
         });
       }
 
-      // Comparative: admin sees more diverse results than a country-filtered bottler
-      it('admin sees more countries than a bottler (comparative)', async () => {
+      // Comparative: admin sees more diverse results than a country-filtered partner
+      it('admin sees more countries than a partner (comparative)', async () => {
         const admin = getUsersByRule('admin-bypass')[0];
-        const bottler = getUsersByRule('bottler-country')[0];
+        const partner = getUsersByRule('partner-country')[0];
 
-        const [adminRes, bottlerRes] = await Promise.all([
+        const [adminRes, partnerRes] = await Promise.all([
           searchAsUser(admin, BROAD_SEARCH),
-          searchAsUser(bottler, BROAD_SEARCH),
+          searchAsUser(partner, BROAD_SEARCH),
         ]);
 
-        const adminCountries = extractMetadataValues(adminRes.body, 'tccc:intendedBottlerCountry');
-        const bottlerCountries = extractMetadataValues(bottlerRes.body, 'tccc:intendedBottlerCountry');
+        const adminCountries = extractMetadataValues(adminRes.body, 'custom:country');
+        const partnerCountries = extractMetadataValues(partnerRes.body, 'custom:country');
 
         expect(
           adminCountries.length,
-          `Admin sees [${adminCountries}] but bottler sees [${bottlerCountries}] — admin should see more`,
-        ).toBeGreaterThan(bottlerCountries.length);
+          `Admin sees [${adminCountries}] but partner sees [${partnerCountries}] — admin should see more`,
+        ).toBeGreaterThan(partnerCountries.length);
       });
     });
 
@@ -172,18 +172,18 @@ if (!cookie) {
           for (const brand of restrictedBrands) {
             const hasBrand = hitsContainMetadataValue(
               employeeResults.body,
-              'tccc:brand',
-              `tccc:brand/${brand}`,
+              'custom:brand',
+              `custom:brand/${brand}`,
             );
-            expect(hasBrand, `Employee should not see tccc:brand/${brand}`).toBe(false);
+            expect(hasBrand, `Employee should not see custom:brand/${brand}`).toBe(false);
           }
         });
 
         it('summary: restricted brands found by admin but hidden from employee', () => {
           const adminOnly = [];
           for (const brand of restrictedBrands) {
-            const adminHas = hitsContainMetadataValue(adminResults.body, 'tccc:brand', `tccc:brand/${brand}`);
-            const empHas = hitsContainMetadataValue(employeeResults.body, 'tccc:brand', `tccc:brand/${brand}`);
+            const adminHas = hitsContainMetadataValue(adminResults.body, 'custom:brand', `custom:brand/${brand}`);
+            const empHas = hitsContainMetadataValue(employeeResults.body, 'custom:brand', `custom:brand/${brand}`);
             if (adminHas && !empHas) adminOnly.push(brand);
             if (empHas) {
               expect.fail(`Employee can see restricted brand "${brand}" — filter may be broken`);
@@ -201,17 +201,17 @@ if (!cookie) {
       // --- B) Per-brand keyword search ---
       describe('per-brand keyword search', () => {
         for (const brand of restrictedBrands) {
-          it(`"${brand}": employee cannot see tccc:brand/${brand} assets`, async () => {
+          it(`"${brand}": employee cannot see custom:brand/${brand} assets`, async () => {
             const brandSearch = keywordSearch(brand, 50);
             const res = await searchAsUser(employeeUser, brandSearch);
             expect(res.status).toBe(200);
 
             const hasBrand = hitsContainMetadataValue(
               res.body,
-              'tccc:brand',
-              `tccc:brand/${brand}`,
+              'custom:brand',
+              `custom:brand/${brand}`,
             );
-            expect(hasBrand, `Employee should not see tccc:brand/${brand} in "${brand}" search`).toBe(false);
+            expect(hasBrand, `Employee should not see custom:brand/${brand} in "${brand}" search`).toBe(false);
           });
         }
 
@@ -222,7 +222,7 @@ if (!cookie) {
             const brandSearch = keywordSearch(brand, 10);
             const res = await searchAsUser(adminUser, brandSearch);
             if (res.status === 200) {
-              const hasBrand = hitsContainMetadataValue(res.body, 'tccc:brand', `tccc:brand/${brand}`);
+              const hasBrand = hitsContainMetadataValue(res.body, 'custom:brand', `custom:brand/${brand}`);
               if (hasBrand) {
                 foundCount += 1;
                 found.push(brand);
@@ -254,23 +254,23 @@ if (!cookie) {
 
             const hasBrand = hitsContainMetadataValue(
               res.body,
-              'tccc:brand',
-              `tccc:brand/${pair.brand}`,
+              'custom:brand',
+              `custom:brand/${pair.brand}`,
             );
             if (!hasBrand) {
               const adminRes = await searchAsUser(adminUser, BROAD_SEARCH);
               const adminHasBrand = hitsContainMetadataValue(
                 adminRes.body,
-                'tccc:brand',
-                `tccc:brand/${pair.brand}`,
+                'custom:brand',
+                `custom:brand/${pair.brand}`,
               );
               if (!adminHasBrand) {
                 // No burn content in index — skip; test requires burn-branded assets in DEV
                 // eslint-disable-next-line no-console
-                console.warn(`  ⚠ No tccc:brand/${pair.brand} assets in index — cannot verify burn user sees burn`);
+                console.warn(`  ⚠ No custom:brand/${pair.brand} assets in index — cannot verify burn user sees burn`);
                 return;
               }
-              expect.fail(`${pair.withAccess.name} (permitted) should see tccc:brand/${pair.brand} but did not`);
+              expect.fail(`${pair.withAccess.name} (permitted) should see custom:brand/${pair.brand} but did not`);
             }
           });
 
@@ -283,13 +283,13 @@ if (!cookie) {
     });
 
     // =======================================================================
-    // Rule 4: Bottler country filtering
+    // Rule 4: Partner country filtering
     // =======================================================================
-    describe('Rule 4: Bottler country filtering', () => {
-      const bottlerUsers = getUsersByRule('bottler-country');
+    describe('Rule 4: Partner country filtering', () => {
+      const partnerUsers = getUsersByRule('partner-country');
 
       // --- Static country check for users with known countriesInResults ---
-      for (const user of bottlerUsers) {
+      for (const user of partnerUsers) {
         if (!user.expectedSearch.countriesInResults) continue;
 
         it(`${user.name} (${user.email}) only sees assets for allowed countries`, async () => {
@@ -305,7 +305,7 @@ if (!cookie) {
 
           const allowed = user.expectedSearch.countriesInResults;
           for (const hit of results) {
-            const assetCountries = hit.assetMetadata?.['tccc:intendedBottlerCountry'];
+            const assetCountries = hit.assetMetadata?.['custom:country'];
             if (!assetCountries) continue;
             const countryList = Array.isArray(assetCountries)
               ? assetCountries : [assetCountries];
@@ -323,7 +323,7 @@ if (!cookie) {
         it(`${user.name} sees 'all-countries' tagged assets`, async () => {
           const res = await searchAsUser(user, BROAD_SEARCH);
           expect(res.status).toBe(200);
-          const countries = extractMetadataValues(res.body, 'tccc:intendedBottlerCountry');
+          const countries = extractMetadataValues(res.body, 'custom:country');
           if (!countries.includes('all-countries')) {
             // eslint-disable-next-line no-console
             console.warn(`  ⚠ ${user.name}: no 'all-countries' assets in top ${BROAD_SEARCH.limit} results`);
@@ -331,8 +331,8 @@ if (!cookie) {
         });
       }
 
-      // --- Dynamic country check for all bottlers (resolve attributes first) ---
-      for (const user of bottlerUsers) {
+      // --- Dynamic country check for all partners (resolve attributes first) ---
+      for (const user of partnerUsers) {
         if (user.expectedSearch.countriesInResults) continue;
 
         it(`${user.name} (${user.email}) search results match resolved countries`, async () => {
@@ -351,7 +351,7 @@ if (!cookie) {
           }
 
           for (const hit of results) {
-            const assetCountries = hit.assetMetadata?.['tccc:intendedBottlerCountry'];
+            const assetCountries = hit.assetMetadata?.['custom:country'];
             if (!assetCountries) continue;
             const countryList = Array.isArray(assetCountries)
               ? assetCountries : [assetCountries];
@@ -368,7 +368,7 @@ if (!cookie) {
       }
 
       // --- Skip proof: employees, agencies, contingent workers see all countries ---
-      const skipUsers = getUsersByRule('bottler-country-skip');
+      const skipUsers = getUsersByRule('partner-country-skip');
 
       for (const user of skipUsers) {
         it(`${user.name} (${user.email}) is NOT country-filtered (sees multiple countries)`, async () => {
@@ -377,7 +377,7 @@ if (!cookie) {
           const results = getSearchResults(res.body);
           expect(results.length).toBeGreaterThan(0);
 
-          const countries = extractMetadataValues(res.body, 'tccc:intendedBottlerCountry');
+          const countries = extractMetadataValues(res.body, 'custom:country');
           expect(
             countries.length,
             `${user.name} should see assets from multiple countries (no country filter)`,
@@ -403,7 +403,7 @@ if (!cookie) {
               // eslint-disable-next-line no-console
               console.warn(
                 `  ⚠ ${pair.withAccess.name}: search for "${pair.searchTerm}" returned results `
-                + 'but none had tccc:contentType=customers. Customer content may not exist for this term.',
+                + 'but none had custom:contentType=customers. Customer content may not exist for this term.',
               );
             }
           });
@@ -415,7 +415,7 @@ if (!cookie) {
             const hasCustomer = hitsContainCustomerContent(res.body);
             expect(
               hasCustomer,
-              'Non-customer user should not see tccc:contentType=customers assets',
+              'Non-customer user should not see custom:contentType=customers assets',
             ).toBe(false);
           });
         });
@@ -435,7 +435,7 @@ if (!cookie) {
         expect(results.length).toBeGreaterThan(0);
 
         for (const hit of results) {
-          const status = hit.assetMetadata?.['tccc:assetStatus'];
+          const status = hit.assetMetadata?.['custom:assetStatus'];
           if (status) {
             const statusList = Array.isArray(status) ? status : [status];
             expect(

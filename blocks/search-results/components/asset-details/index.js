@@ -907,7 +907,7 @@ export async function openAssetDetails(options) {
 
   // Fetch metadata and renditions
   fetchMetadata(asset, render, () => {
-    // Access denied (restricted brand or bottler country) - close modal and show 403
+    // Access denied (restricted brand or partner country) - close modal and show 403
     closeAssetDetails();
     window.location.href = '/403';
   }, prefetchedMetadata);

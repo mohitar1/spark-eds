@@ -5,8 +5,8 @@ Astra Pilot for an Assets Share Portal built on Helix & Content Hub (Dynamic Med
 ## Environments
 
 ### Main site (cloudflare worker):
-- Live: https://pilot.assets.coke.com
-- Preview: https://preview.assets.coke.com
+- Live: https://spark.aem.media
+- Preview: https://preview.spark.aem.media
 - Branch (preview): <https://{branch}-spark-eds.workers.dev>
 - Branch (live): <https://{branch}-live-spark-eds.workers.dev>
 

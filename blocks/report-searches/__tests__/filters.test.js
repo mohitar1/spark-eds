@@ -28,7 +28,7 @@ describe('Search Report Filters', () => {
 
   describe('Filter Value Validation', () => {
     it('should accept valid role values', () => {
-      const validRoles = ['all', 'associate', 'agency', 'bottler'];
+      const validRoles = ['all', 'associate', 'agency', 'partner'];
 
       validRoles.forEach((role) => {
         const state = { filters: { role } };
@@ -71,7 +71,7 @@ describe('Search Report Filters', () => {
           viewType: 'month',
           selectedYear: 2025,
           selectedMonth: 5,
-          role: 'bottler',
+          role: 'partner',
           searchType: 'assets',
           searchTerm: 'non-empty',
           region: 'NA',
@@ -120,7 +120,7 @@ describe('Search Report Filters', () => {
 
     it('should include non-"all" values in URL parameters', () => {
       const filters = {
-        role: 'bottler',
+        role: 'partner',
         searchType: 'all',
         searchTerm: 'non-empty',
         region: 'all',
@@ -133,7 +133,7 @@ describe('Search Report Filters', () => {
         }
       });
 
-      expect(params.get('role')).toBe('bottler');
+      expect(params.get('role')).toBe('partner');
       expect(params.get('searchTerm')).toBe('non-empty');
       expect(params.has('searchType')).toBe(false);
       expect(params.has('region')).toBe(false);
@@ -163,7 +163,7 @@ describe('Search Report Filters', () => {
 
   describe('URL Parameter Parsing', () => {
     it('should parse filter values from URL', () => {
-      const mockURL = new URL('http://example.com/searches?role=bottler&searchType=assets');
+      const mockURL = new URL('http://example.com/searches?role=partner&searchType=assets');
       const params = mockURL.searchParams;
 
       const filters = {
@@ -173,7 +173,7 @@ describe('Search Report Filters', () => {
         region: params.get('region') || 'all',
       };
 
-      expect(filters.role).toBe('bottler');
+      expect(filters.role).toBe('partner');
       expect(filters.searchType).toBe('assets');
       expect(filters.searchTerm).toBe('all');
       expect(filters.region).toBe('all');
@@ -216,7 +216,7 @@ describe('Search Report Filters', () => {
 
     it('should expand when any filter is active', () => {
       const filtersWithActive = {
-        role: 'bottler',
+        role: 'partner',
         searchType: 'all',
         searchTerm: 'all',
         region: 'all',
@@ -277,7 +277,7 @@ describe('Search Report Filters', () => {
     it('should create dropdown with correct ID and options', () => {
       const options = [
         { value: 'all', label: 'All Roles' },
-        { value: 'bottler', label: 'Bottler' },
+        { value: 'partner', label: 'Partner' },
       ];
 
       const id = 'role-select';

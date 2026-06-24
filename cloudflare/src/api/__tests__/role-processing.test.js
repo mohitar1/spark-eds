@@ -20,7 +20,7 @@ import { describe, expect, it } from 'vitest';
 const ROLE_DISPLAY_NAMES = {
   associate: 'Associate',
   agency: 'Agency',
-  bottler: 'Bottler',
+  partner: 'Partner',
 };
 
 const ROLE_ALIASES = {
@@ -28,7 +28,7 @@ const ROLE_ALIASES = {
   'contingent-worker': 'associate',
 };
 
-const KNOWN_ROLES = ['Associate', 'Agency', 'Bottler'];
+const KNOWN_ROLES = ['Associate', 'Agency', 'Partner'];
 
 function resolveRole(rawRole) {
   const role = (rawRole || '').toLowerCase().trim();
@@ -58,7 +58,7 @@ function processRoleData(data, valueField) {
   const roleData = {
     Associate: 0,
     Agency: 0,
-    Bottler: 0,
+    Partner: 0,
     Other: 0,
   };
 
@@ -96,7 +96,7 @@ describe('Cloudflare role-processing', () => {
     it('resolves direct known roles', () => {
       expect(resolveRole('associate')).toBe('Associate');
       expect(resolveRole('agency')).toBe('Agency');
-      expect(resolveRole('bottler')).toBe('Bottler');
+      expect(resolveRole('partner')).toBe('Partner');
     });
 
     it('resolves aliased roles to Associate', () => {
@@ -106,7 +106,7 @@ describe('Cloudflare role-processing', () => {
 
     it('resolves comma-separated roles with known role', () => {
       expect(resolveRole('agency,admin')).toBe('Agency');
-      expect(resolveRole('bottler,admin')).toBe('Bottler');
+      expect(resolveRole('partner,admin')).toBe('Partner');
     });
 
     it('resolves comma-separated roles with aliased role', () => {

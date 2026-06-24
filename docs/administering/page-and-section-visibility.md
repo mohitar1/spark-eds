@@ -24,7 +24,7 @@ In the page's metadata table (at the bottom of the document), add a row:
 
 | Key | Value |
 |-----|-------|
-| `exclude-roles` | `agency, bottler:us, bottler:ca` |
+| `exclude-roles` | `agency, partner:us, partner:ca` |
 
 ### How it works
 
@@ -39,10 +39,10 @@ Enforcement happens at two layers:
 | `exclude-roles` value | Effect |
 |----------------------|--------|
 | `agency` | Hides the page from all agency users. |
-| `bottler` | Hides the page from all bottlers, regardless of country. |
-| `bottler:us` | Hides the page from US bottlers only. Bottlers from other countries can still see it. |
-| `bottler:us, bottler:ca` | Hides the page from US and CA bottlers. |
-| `agency, bottler:us` | Hides the page from all agency users and US bottlers. |
+| `partner` | Hides the page from all partners, regardless of country. |
+| `partner:us` | Hides the page from US partners only. Partners from other countries can still see it. |
+| `partner:us, partner:ca` | Hides the page from US and CA partners. |
+| `agency, partner:us` | Hides the page from all agency users and US partners. |
 | `contingent-worker, agency` | Hides the page from contingent workers and agency users. |
 
 
@@ -56,7 +56,7 @@ In the section metadata block, add a row:
 
 | Key | Value |
 |-----|-------|
-| `roles` | `employee, bottler:us` |
+| `roles` | `employee, partner:us` |
 
 ### How it works
 
@@ -69,10 +69,10 @@ During page load, before sections become visible, the system checks each section
 | `roles` value | Effect |
 |---------------|--------|
 | `employee` | Only employees can see this section. |
-| `bottler` | Only bottlers (any country) can see this section. |
-| `bottler:us, bottler:ca` | Only US and CA bottlers can see this section. |
+| `partner` | Only partners (any country) can see this section. |
+| `partner:us, partner:ca` | Only US and CA partners can see this section. |
 | `employee, agency` | Employees and agency users can see this section. |
-| `employee, bottler:mx` | Employees and Mexican bottlers can see this section. |
+| `employee, partner:mx` | Employees and Mexican partners can see this section. |
 
 
 ## Role Syntax
@@ -84,9 +84,9 @@ Both page-level and section-level visibility use the same role syntax.
 | `agency` | All agency users |
 | `employee` | All employees |
 | `contingent-worker` | All contingent workers |
-| `bottler` | All bottlers, any country |
-| `bottler:us` | Bottlers from US only |
-| `bottler:us, bottler:ca` | Bottlers from US or CA |
+| `partner` | All partners, any country |
+| `partner:us` | Partners from US only |
+| `partner:us, partner:ca` | Partners from US or CA |
 
 Multiple entries can be combined with commas. For page-level (`exclude-roles`), matching **any** entry means the user is excluded. For section-level (`roles`), matching **any** entry means the user can see the section.
 
@@ -98,8 +98,8 @@ Multiple entries can be combined with commas. For page-level (`exclude-roles`), 
 | Scenario | Behavior |
 |----------|----------|
 | User has the `admin` role | Always sees all pages and sections, regardless of visibility settings. |
-| User has multiple roles (e.g. `employee` and `bottler`) | For page exclusion: excluded if **any** role matches. For section inclusion: visible if **any** role matches. |
-| Bottler has multiple countries (e.g. `us, mx`) | Matches if **any** of their countries appears in the configuration. |
+| User has multiple roles (e.g. `employee` and `partner`) | For page exclusion: excluded if **any** role matches. For section inclusion: visible if **any** role matches. |
+| Partner has multiple countries (e.g. `us, mx`) | Matches if **any** of their countries appears in the configuration. |
 | Sudo / impersonation active | Visibility is evaluated against the simulated user's roles and countries, not the original user's. |
 | No metadata set | Page and section are visible to all authenticated users. |
 | Empty metadata value | Treated the same as no metadata — visible to everyone. |
@@ -114,19 +114,19 @@ Add to page metadata:
 
 | Key | Value |
 |-----|-------|
-| `exclude-roles` | `agency, bottler` |
+| `exclude-roles` | `agency, partner` |
 
 This keeps the page visible to employees and contingent workers only.
 
-### Show a section only to bottlers from specific countries
+### Show a section only to partners from specific countries
 
 Add to section metadata:
 
 | Key | Value |
 |-----|-------|
-| `roles` | `bottler:us, bottler:ca, bottler:mx` |
+| `roles` | `partner:us, partner:ca, partner:mx` |
 
-Only bottlers from US, CA, and MX will see this section. Employees, agencies, and bottlers from other countries will not.
+Only partners from US, CA, and MX will see this section. Employees, agencies, and partners from other countries will not.
 
 ### Show a section only to internal users
 
@@ -138,7 +138,7 @@ Add to section metadata:
 
 ### Combine page and section restrictions
 
-You can use both on the same page. For example, exclude agencies from the entire page, then further restrict one section to US bottlers only:
+You can use both on the same page. For example, exclude agencies from the entire page, then further restrict one section to US partners only:
 
 **Page metadata:**
 
@@ -150,6 +150,6 @@ You can use both on the same page. For example, exclude agencies from the entire
 
 | Key | Value |
 |-----|-------|
-| `roles` | `bottler:us` |
+| `roles` | `partner:us` |
 
-The result: agencies cannot see the page at all. Employees, contingent workers, and non-US bottlers see the page but not the restricted section. US bottlers see everything.
+The result: agencies cannot see the page at all. Employees, contingent workers, and non-US partners see the page but not the restricted section. US partners see everything.

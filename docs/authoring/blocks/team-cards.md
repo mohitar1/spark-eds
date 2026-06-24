@@ -24,7 +24,7 @@ Add a single-cell row at the top to create a section title:
 
 | team-cards            |                  |
 |-----------------------|------------------|
-| TCCC Spark Team   |
+| Acme Spark Team   |
 | photo1.jpg            | Name, Job Title  |
 | photo2.jpg            | Name, Job Title  |
 

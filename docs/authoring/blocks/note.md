@@ -47,7 +47,7 @@ Creates styled callout boxes with icons for highlighting important information, 
 
 | note (info) |
 |-------------|
-| Need help? Don't hesitate to reach out to us at assetmanagers@coca-cola.com |
+| Need help? Don't hesitate to reach out to us at assetmanagers@example.com |
 
 ### Warning Note
 

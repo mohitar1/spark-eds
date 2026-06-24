@@ -3,8 +3,8 @@
  * Used by both the Cloudflare worker (ESM import) and migration scripts (CJS require).
  *
  * Transforms old AEM Asset Share search URLs to the new ContentAI search format:
- *   /content/share/us/en/search-assets.html?fulltext=coca-cola
- *   → /en/search/assets?query=coca-cola
+ *   /content/share/us/en/search-assets.html?fulltext=sunset
+ *   → /en/search/assets?query=sunset
  */
 
 function extractFacetName(property) {
@@ -189,10 +189,6 @@ function transformSearchUrlContentAI(url) {
   }
   if (localeMatch && url.includes('/search-assets-pacs.html')) {
     const transformed = transformSearchHtmlUrlContentAI(url, `/${lang}/search/search-assets-pacs`);
-    if (transformed) return transformed;
-  }
-  if (localeMatch && url.includes('/search-assets-mycoke.html')) {
-    const transformed = transformSearchHtmlUrlContentAI(url, `/${lang}/search/search-assets-mycoke`);
     if (transformed) return transformed;
   }
   if (localeMatch && url.includes('/search-assets.html')) {

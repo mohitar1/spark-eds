@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest';
 // For testing purposes, we're recreating it here to test the logic independently
 
 const FILTER_DEFAULT_VALUE = 'all';
-const VALID_ROLES = ['all', 'associate', 'agency', 'bottler'];
+const VALID_ROLES = ['all', 'associate', 'agency', 'partner'];
 const VALID_SEARCH_TYPES = ['all', 'assets', 'products', 'templates'];
 const VALID_SEARCH_TERMS = ['all', 'empty', 'non-empty'];
 const VALID_REGIONS = ['all', 'AFR', 'ASP', 'EME', 'EU', 'GCM', 'INSWA', 'JSK', 'LA', 'NA'];
@@ -144,14 +144,14 @@ describe('buildSearchFilterConditions', () => {
   });
 
   describe('Role Filter', () => {
-    it('should build role filter for bottler', () => {
+    it('should build role filter for partner', () => {
       const result = buildSearchFilterConditions({
-        role: 'bottler',
+        role: 'partner',
         searchType: 'all',
         searchTerm: 'all',
         region: 'all',
       });
-      expect(result).toBe(` AND blob5 LIKE '%bottler%'`);
+      expect(result).toBe(` AND blob5 LIKE '%partner%'`);
     });
 
     it('should build role filter for agency', () => {
@@ -295,10 +295,10 @@ describe('buildSearchFilterConditions', () => {
   describe('Multiple Filters Combined', () => {
     it('should combine role and searchType filters', () => {
       const result = buildSearchFilterConditions({
-        role: 'bottler',
+        role: 'partner',
         searchType: 'assets',
       });
-      expect(result).toBe(` AND blob5 LIKE '%bottler%' AND blob7 = 'assets'`);
+      expect(result).toBe(` AND blob5 LIKE '%partner%' AND blob7 = 'assets'`);
     });
 
     it('should combine role, searchType, and searchTerm filters', () => {
@@ -324,12 +324,12 @@ describe('buildSearchFilterConditions', () => {
 
     it('should ignore "all" values when combining filters', () => {
       const result = buildSearchFilterConditions({
-        role: 'bottler',
+        role: 'partner',
         searchType: 'all',
         searchTerm: 'empty',
         region: 'all',
       });
-      expect(result).toBe(` AND blob5 LIKE '%bottler%' AND (blob6 = '' OR blob6 IS NULL)`);
+      expect(result).toBe(` AND blob5 LIKE '%partner%' AND (blob6 = '' OR blob6 IS NULL)`);
     });
   });
 

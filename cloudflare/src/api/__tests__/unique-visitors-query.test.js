@@ -154,7 +154,7 @@ describe('uniqueVisitorsByMonth Query', () => {
       expect(query).toContain('FROM spark_analyticstest');
     });
 
-    it('should reference correct blob field (blob1 for KOID)', () => {
+    it('should reference correct blob field (blob1 for userId)', () => {
       const query = buildUniqueVisitorsByMonthQuery('2025-01-01', '2025-12-31');
 
       expect(query).toContain('blob1');

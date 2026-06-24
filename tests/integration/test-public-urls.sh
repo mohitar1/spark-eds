@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-HOST="${1:-https://assets.coke.com}"
+HOST="${1:-https://spark.aem.media}"
 # Strip trailing slash
 HOST="${HOST%/}"
 
 URLS=(
-  "/rendition/mycoke1/png/content/dam/tccc/products/ma/coca-cola-zero/coca-cola-zero-sugar/00000090375323/90375323_U1N1_s01"
-  "/rendition/mycoke2/png/content/dam/tccc/products/ma/coca-cola-zero/coca-cola-zero-sugar/00000090375323/90375323_U1N1_s01"
-  "/rendition/preview/png/content/dam/tccc/products/ma/coca-cola-zero/coca-cola-zero-sugar/00000090375323/90375323_U1N1_s01"
-  "/rendition/original/png/content/dam/tccc/products/ma/coca-cola-zero/coca-cola-zero-sugar/00000090375323/90375323_U1N1_s01"
-  "/public/download/original/png/content/dam/tccc/marketing/public-links/SparkLogoTransparent"
-  "/public/download/original/mp4/content/dam/tccc/marketing/public-links/global-sprite-motion-wordmark-immersive-mp4"
+  "/rendition/preview1/png/content/dam/acme/products/ma/brand-a/brand-a-sugar/00000090375323/90375323_U1N1_s01"
+  "/rendition/preview2/png/content/dam/acme/products/ma/brand-a/brand-a-sugar/00000090375323/90375323_U1N1_s01"
+  "/rendition/preview/png/content/dam/acme/products/ma/brand-a/brand-a-sugar/00000090375323/90375323_U1N1_s01"
+  "/rendition/original/png/content/dam/acme/products/ma/brand-a/brand-a-sugar/00000090375323/90375323_U1N1_s01"
+  "/public/download/original/png/content/dam/acme/marketing/public-links/SparkLogoTransparent"
+  "/public/download/original/mp4/content/dam/acme/marketing/public-links/global-sprite-motion-wordmark-immersive-mp4"
 )
 
 echo "Testing: ${HOST}"

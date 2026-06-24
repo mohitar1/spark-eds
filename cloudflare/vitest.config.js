@@ -6,7 +6,7 @@ export default defineWorkersConfig({
       workers: {
         wrangler: { configPath: './wrangler.toml' },
         miniflare: {
-          kvNamespaces: ['AUTH_TOKENS', 'SAVED_SEARCHES', 'RIGHTS_REQUESTS', 'RIGHTS_REQUEST_REVIEWS', 'RIGHTS_REQUEST_REMINDERS', 'MESSAGES'],
+          kvNamespaces: ['AUTH_TOKENS', 'SAVED_SEARCHES', 'MESSAGES'],
         },
       },
     },

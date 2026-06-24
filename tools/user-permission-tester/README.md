@@ -1,6 +1,6 @@
 # User Permission Tester
 
-Tests whether each user can access the assets and templates they are expected to access — via **search** and via the **asset details** page — against the new system (spark-eds.workers.dev) or the old system (assets.coke.com).
+Tests whether each user can access the assets and templates they are expected to access — via **search** and via the **asset details** page. Tests run against the Spark system (the new system), and can optionally also run against a baseline comparison system (any legacy system, configured via `baseUrl`).
 
 The tool runs a test matrix of `user × asset × expected access (0 or 1)` entries, impersonating each user using SUDO cookies/headers, and asserts that results match the expected access. It generates an HTML report with per-user summaries, asset coverage, and individual test results with pass/fail coloring.
 
@@ -8,16 +8,16 @@ The tool runs a test matrix of `user × asset × expected access (0 or 1)` entri
 
 ## How It Works
 
-### Search tests (old or new system)
+### Search tests (baseline or Spark system)
 
 For each `user × asset` pair in `test-matrix.json`, the tool runs a search using the asset's UUID as the query term:
 
-- **Old system** — fetches the AEM HTML search page using Basic auth + `sling.sudo` cookie impersonation
-- **New system** — calls the ContentAI search API (`/api/adobe/assets/contentai/search`) with a Session JWT + `SUDO_*` cookies
+- **Baseline system** — fetches the AEM HTML search page using Basic auth + `sling.sudo` cookie impersonation
+- **Spark system** — calls the ContentAI search API (`/api/adobe/assets/contentai/search`) with a Session JWT + `SUDO_*` cookies
 
 A result count of ≥ 1 = access, 0 = no access. The result is compared against the `access` field in the test matrix (1 = expected access, 0 = expected no access).
 
-### Asset details tests (new system only)
+### Asset details tests (Spark system only)
 
 After search tests complete, the tool also calls the metadata endpoint for each `user × asset` pair:
 
@@ -49,14 +49,14 @@ The test cases — one entry per `user × asset`. Each entry specifies the asset
 [
   {
     "assetId": "fa73f12c-908f-400b-9bba-8f895d8a9c10",
-    "email": "mmukawa@coca-cola.com",
+    "email": "mmukawa@example.com",
     "searchType": "template",
     "access": 1,
-    "reason": "US bottler — should see US templates"
+    "reason": "US partner — should see US templates"
   },
   {
     "assetId": "63cd4942-342e-4229-88d2-32bf4fe4e57c",
-    "email": "restricted@coca-cola.com",
+    "email": "restricted@example.com",
     "searchType": "asset",
     "access": 0,
     "reason": "No brand access"
@@ -74,12 +74,12 @@ The test cases — one entry per `user × asset`. Each entry specifies the asset
 
 ### `test-users.json`
 
-User profile details used to populate SUDO cookies when impersonating users on the new system. The tool merges `employeeType` and `countries` from this file into each test's request.
+User profile details used to populate SUDO cookies when impersonating users on the Spark system. The tool merges `employeeType` and `countries` from this file into each test's request.
 
 ```json
 [
   {
-    "email": "mmukawa@coca-cola.com",
+    "email": "mmukawa@example.com",
     "employeeType": "10",
     "countries": ["US"],
     "name": "Mana Mukawa"
@@ -105,7 +105,7 @@ Asset metadata used to enrich the HTML report (labels, countries, brands, links)
     "label": "T1-us-template",
     "country": "us",
     "searchType": "template",
-    "brand": "minute-maid",
+    "brand": "brand-a",
     "restrictedBrand": false,
     "intendedCustomers": "none"
   }
@@ -118,13 +118,13 @@ Credentials and endpoint configuration. Copy from `config.example.json` and fill
 
 ```json
 {
-  "oldSystem": {
-    "baseUrl": "https://assets.coke.com",
+  "baselineSystem": {
+    "baseUrl": "https://baseline.example.com",
     "searchPath": "/content/share/us/en/search-assets.html",
     "publishApiUser": "user:password"
   },
-  "newSystem": {
-    "baseUrl": "https://spark-eds.workers.dev",
+  "sparkSystem": {
+    "baseUrl": "https://spark.aem.media",
     "searchPath": "/api/adobe/assets/contentai/search",
     "sessionCookie": "eyJ..."
   },
@@ -139,8 +139,8 @@ Credentials and endpoint configuration. Copy from `config.example.json` and fill
 
 | Field | Description |
 |-------|-------------|
-| `oldSystem.publishApiUser` | AEM Basic auth credentials (`user:pass`), or omit and set `SPARK_PUBLISH_API_USER_PROD` env var |
-| `newSystem.sessionCookie` | Session JWT from browser — must belong to an account with `sudo` permission |
+| `baselineSystem.publishApiUser` | AEM Basic auth credentials (`user:pass`), or omit and set `SPARK_PUBLISH_API_USER_PROD` env var |
+| `sparkSystem.sessionCookie` | Session JWT from browser — must belong to an account with `sudo` permission |
 | `newSearchLimit` | Max results per search page (default 50) |
 | `results.outputDir` | Where to write results (default `./test-results`) |
 | `results.maxRetentionDays` | Day folders older than this many days are deleted at the start of each run (default `3`) |
@@ -165,20 +165,20 @@ Get the Session JWT from your browser's DevTools (Application → Cookies → `S
 ## Running
 
 ```bash
-# Default: run both old and new, generate 2 reports
+# Default: run both baseline and Spark, generate 2 reports
 node bin/compare.js
 
-# New system only
+# Spark system only
 node bin/compare.js --new-only
 
-# Old system only (uses sling.sudo)
+# Baseline system only (uses sling.sudo)
 node bin/compare.js --old-only
 
 # Quick mode: first 5 tests only (for sanity-checking the setup)
 node bin/compare.js --quick
 
 # Filter to specific user(s)
-node bin/compare.js --user mmukawa@coca-cola.com
+node bin/compare.js --user mmukawa@example.com
 
 # Filter to specific asset(s) (partial ID match)
 node bin/compare.js --asset fa73f12c
@@ -194,10 +194,10 @@ node bin/compare.js --config path/to/config.json --test-matrix path/to/matrix.js
 
 | Flag | Description |
 |------|-------------|
-| _(default)_ | Runs both old and new independently; generates both reports |
+| _(default)_ | Runs both baseline and Spark independently; generates both reports |
 | `--both` | Same as default — explicit flag |
-| `--old-only` | Old system only; generates `old-results-summary.html` |
-| `--new-only` | New system only; generates `new-results-summary.html` |
+| `--old-only` | Baseline system only; generates `old-results-summary.html` |
+| `--new-only` | Spark system only; generates `new-results-summary.html` |
 | `--quick` | Limits to first 5 tests |
 | `--open` | Opens the generated report(s) in the default browser when done |
 
@@ -210,19 +210,19 @@ Results are written to `test-results/YYYY-MM-DD/run-NN/`. Each run gets its own 
 ```
 test-results/2026-03-03/
   run-01/
-    new-results-summary.html        # New system report  (--new-only or --both/default)
-    old-results-summary.html        # Old system report  (--old-only or --both/default)
+    new-results-summary.html        # Spark system report  (--new-only or --both/default)
+    old-results-summary.html        # Baseline system report  (--old-only or --both/default)
     results.json                    # Full results (all modes)
-    new-results.json                # New system results
-    old-results.json                # Old system results
-    details-results.json            # Asset details test results (new only)
+    new-results.json                # Spark system results
+    old-results.json                # Baseline system results
+    details-results.json            # Asset details test results (Spark only)
     requests/
-      original/  *.json *.sh        # Old system requests as curl scripts
-      new/       *.json *.sh        # New system search requests
-      details/   *.json *.sh        # New system asset details requests
+      original/  *.json *.sh        # Baseline system requests as curl scripts
+      new/       *.json *.sh        # Spark system search requests
+      details/   *.json *.sh        # Spark system asset details requests
     responses/
-      original/  *.html             # Old system raw HTML responses
-      new/       *.json             # New system raw JSON responses
+      original/  *.html             # Baseline system raw HTML responses
+      new/       *.json             # Spark system raw JSON responses
       details/   *.json             # Asset details API responses
   run-02/
     ...
@@ -399,27 +399,27 @@ The section header shows a rollup badge (e.g. **"12 pass | 3 fail"**) so you can
 
 The tool saves a ready-to-run `.sh` curl script for every request it makes (in `requests/original/`, `requests/new/`, `requests/details/`). You can also craft requests manually using the patterns below.
 
-### Old system — impersonated search
+### Baseline system — impersonated search
 
 ```bash
 curl -u "$SPARK_PUBLISH_API_USER_PROD" \
-  "https://assets.coke.com/content/share/us/en/search-assets.html?fulltext={assetId}" \
+  "https://baseline.example.com/content/share/us/en/search-assets.html?fulltext={assetId}" \
   -b "sling.sudo={email}; dmex_login_visited=yes"
 ```
 
-### New system — impersonated search
+### Spark system — impersonated search
 
 ```bash
-curl -X POST "https://spark-eds.workers.dev/api/adobe/assets/contentai/search" \
+curl -X POST "https://spark.aem.media/api/adobe/assets/contentai/search" \
   -H "Content-Type: application/json" \
   -b "Session={jwt}; SUDO_EMAIL={email}; SUDO_EMPLOYEE_TYPE={empType}; SUDO_COUNTRY={country}; LoginVisited=1" \
   -d '{"query":[{"and":[{"term":{"assetId":["urn:aaid:aem:{uuid}"]}}]}],"limit":50}'
 ```
 
-### New system — impersonated asset details
+### Spark system — impersonated asset details
 
 ```bash
-curl "https://spark-eds.workers.dev/api/adobe/assets/urn:aaid:aem:{uuid}/metadata" \
+curl "https://spark.aem.media/api/adobe/assets/urn:aaid:aem:{uuid}/metadata" \
   -b "Session={jwt}; SUDO_EMAIL={email}; SUDO_EMPLOYEE_TYPE={empType}; SUDO_COUNTRY={country}; LoginVisited=1"
 ```
 

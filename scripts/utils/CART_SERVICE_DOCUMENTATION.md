@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Cart Service is a centralized API for managing cart operations across the KO Assets application. It provides a singleton instance that handles both asset and template carts with automatic state synchronization, cross-tab communication, and UI button management.
+The Cart Service is a centralized API for managing cart operations across the Spark application. It provides a singleton instance that handles both asset and template carts with automatic state synchronization, cross-tab communication, and UI button management.
 
 ## Architecture
 
@@ -596,4 +596,4 @@ button.primary-button.primary-is-loading::before {
 ---
 
 **Last Updated:** January 2026
-**Maintained By:** KO Assets Development Team
+**Maintained By:** Spark Development Team

@@ -203,7 +203,7 @@ describe('analytics-constants', () => {
     it('has all primary roles defined', () => {
       expect(ROLE_DISPLAY_NAMES.associate).toBe('Associate');
       expect(ROLE_DISPLAY_NAMES.agency).toBe('Agency');
-      expect(ROLE_DISPLAY_NAMES.bottler).toBe('Bottler');
+      expect(ROLE_DISPLAY_NAMES.partner).toBe('Partner');
     });
   });
 
@@ -219,7 +219,7 @@ describe('analytics-constants', () => {
 
   describe('KNOWN_ROLES', () => {
     it('has roles in correct order', () => {
-      expect(KNOWN_ROLES).toEqual(['Associate', 'Agency', 'Bottler']);
+      expect(KNOWN_ROLES).toEqual(['Associate', 'Agency', 'Partner']);
     });
   });
 
@@ -227,7 +227,7 @@ describe('analytics-constants', () => {
     it('has colors for all known roles and Other', () => {
       expect(ROLE_COLORS.Associate).toBe('#00647D');
       expect(ROLE_COLORS.Agency).toBe('#EBA439');
-      expect(ROLE_COLORS.Bottler).toBe('#58181D');
+      expect(ROLE_COLORS.Partner).toBe('#58181D');
       expect(ROLE_COLORS.Other).toBe('#b8b8b8');
     });
   });
@@ -243,13 +243,13 @@ describe('analytics-constants', () => {
     it('resolves direct known roles', () => {
       expect(resolveRole('associate')).toBe('Associate');
       expect(resolveRole('agency')).toBe('Agency');
-      expect(resolveRole('bottler')).toBe('Bottler');
+      expect(resolveRole('partner')).toBe('Partner');
     });
 
     it('resolves known roles case-insensitively', () => {
       expect(resolveRole('ASSOCIATE')).toBe('Associate');
       expect(resolveRole('Agency')).toBe('Agency');
-      expect(resolveRole('BOTTLER')).toBe('Bottler');
+      expect(resolveRole('PARTNER')).toBe('Partner');
     });
 
     it('resolves aliased roles to Associate', () => {
@@ -259,7 +259,7 @@ describe('analytics-constants', () => {
 
     it('resolves comma-separated roles with known role', () => {
       expect(resolveRole('agency,admin')).toBe('Agency');
-      expect(resolveRole('bottler,admin')).toBe('Bottler');
+      expect(resolveRole('partner,admin')).toBe('Partner');
       expect(resolveRole('associate,admin')).toBe('Associate');
     });
 
@@ -295,13 +295,13 @@ describe('analytics-constants', () => {
       const data = [
         { role: 'associate', users: 10 },
         { role: 'agency', users: 20 },
-        { role: 'bottler', users: 5 },
+        { role: 'partner', users: 5 },
       ];
       const result = processRoleData(data, 'users');
       expect(result).toEqual([
         { type: 'Associate', count: 10 },
         { type: 'Agency', count: 20 },
-        { type: 'Bottler', count: 5 },
+        { type: 'Partner', count: 5 },
       ]);
     });
 
@@ -384,7 +384,7 @@ describe('analytics-constants', () => {
     it('returns correct colors for known roles', () => {
       expect(getRoleColor('Associate')).toBe('#00647D');
       expect(getRoleColor('Agency')).toBe('#EBA439');
-      expect(getRoleColor('Bottler')).toBe('#58181D');
+      expect(getRoleColor('Partner')).toBe('#58181D');
       expect(getRoleColor('Other')).toBe('#b8b8b8');
     });
 

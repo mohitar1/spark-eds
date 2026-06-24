@@ -38,7 +38,7 @@ Tags	タグ
 Type	タイプ
 Job	ジョブ
 Template	テンプレート
-Coca-Cola	コカ・コーラ
+Acme	Acme
 Fanta	ファンタ
 Sprite	スプライト
 Aquarius	アクエリアス
@@ -49,8 +49,8 @@ Nestea	ネスティー
 Schweppes	シュウェップス
 Powerade	パワーエイド
 Georgia	ジョージア
-Coca-Cola light/diet Coke	コカ・コーラ ライト／ダイエットコーク
-Coca-Cola Zero Sugar	コカ・コーラ ゼロ
+Acme Light/Diet	Acme ライト／ダイエット
+Acme Zero Sugar	Acme ゼロ
 Fanta Zero/diet/light	ファンタ ゼロ／ダイエット／ライト
 Nestle	ネスレ
 Dr Pepper	ドクターペッパー
@@ -72,11 +72,11 @@ Mate Tea of the Sun	太陽のマテ茶
 Taiyo no Mate Cha	太陽のマテ茶
 Toreta!	Toreta!（とれた）
 Tsumugi	つむぎ
-Victoria - KO	ビクトリア - KO
-TCCC-All Other Brands	TCCC の他のすべてのブランド
+Victoria	ビクトリア
+Acme-All Other Brands	Acme の他のすべてのブランド
 All Other Manufacturers - All Brands	他のすべての製造者 - すべてのブランド
 Cadbury-Schweppes - All Other Brands	キャドバリー・シュウェップス - 他のすべてのブランド
-TCCC-All Other Schweppes Brands	TCCC の他のすべてのシュウェップスブランド
+Acme-All Other Schweppes Brands	Acme の他のすべてのシュウェップスブランド
 7-Up-Cadbury-Schweppes	7-Up：キャドバリー・シュウェップス
 Asia Pacific	アジア太平洋
 Europe, Middle East and Africa	ヨーロッパ、中東、アフリカ
@@ -101,16 +101,16 @@ Christmas 2017	2017 年クリスマス
 Rio Olympics 2016	2016 年リオオリンピック
 Ramadan 2017	2017 年ラマダン
 100 Years	100 周年
-Coke Side of Life	Coke のきいた人生を
-Coca-Cola Summer 2016	Coca-Cola 2016 年夏
+Acme Side of Life	Acme のきいた人生を
+Acme Summer 2016	Acme 2016 年夏
 Open Happiness	ハッピーをあけよう。
 COPA 2016	2016 年 COPA
 EURO 2016	2016 年 EURO
 Halloween 2016	2016 年ハロウィーン
 Ramadan 2016	2016 年ラマダン
-Coca-Cola Summer 2017	Coca-Cola 2017 年夏
+Acme Summer 2017	Acme 2017 年夏
 Christmas 2016	2016 年クリスマス
-Copa Coca-Cola	コパ コカ・コーラ
+Copa Acme	コパ Acme
 Yes	はい
 No	いいえ
 Description	説明
@@ -223,7 +223,7 @@ Job Description	ジョブの説明
 Job Status	ジョブのステータス
 Legacy Job Number	レガシージョブ番号
 Target Completion Date	目標完了日
-TCCC Lead Associate	TCCC リードアソシエイト
+Acme Lead Associate	Acme リードアソシエイト
 Related Jobs	関連ジョブ
 Adaptations	適応
 Market Entity	マーケットエンティティ
@@ -233,11 +233,11 @@ Market Name	マーケット名
 Country Code	国コード
 Country Entity	国エンティティ
 Country Name	国名
-TCCC Division	TCCC 部門
-TCCC Op Group	TCCC Op グループ
+Acme Division	Acme 部門
+Acme Op Group	Acme Op グループ
 Parent Market	親マーケット
 Countries	国
-Intended Bottler Country	ターゲットボトラーの国
+Intended Partner Country	ターゲットパートナーの国
 Intended Business Unit (BU) or Market	ターゲットの事業単位（BU）またはマーケット
 Intended Customer Commercial Market	ターゲット顧客の商業マーケット
 Funding Business Unit (BU) or Market	ファンディングの事業単位（BU）またはマーケット

@@ -4,8 +4,8 @@
  * User Permission Tester
  *
  * Tests asset search and asset details access for each user defined in
- * test-inputs/test-matrix.json, against old (assets.coke.com) and/or new
- * (spark-eds.workers.dev) systems.
+ * test-inputs/test-matrix.json, against an optional baseline system and/or the
+ * Spark system (spark.aem.media). Both base URLs are configured in config.json.
  *
  * Usage:
  *   node bin/compare.js [--config config.json] [--test-matrix test-matrix.json]
@@ -226,7 +226,7 @@ const SEARCH_TYPES = {
   templates: {
     oldPath: '/content/share/us/en/local-customization/template-search.html',
     oldParams: {
-      '11_group.propertyvalues.property': './jcr:content/metadata/custom:intendedBottlerCountry',
+      '11_group.propertyvalues.property': './jcr:content/metadata/custom:country',
       '11_group.propertyvalues.extractFacet': 'true',
     },
     contentTypeFilter: ['templates'],
@@ -361,7 +361,7 @@ function extractOldItemsFromHtml(html) {
     const altMatch = block.match(/alt="([^"]*)"/);
     const alt = altMatch ? altMatch[1] : '';
 
-    const typeMatch = block.match(/data-tccc-filetype="([^"]*)"/);
+    const typeMatch = block.match(/data-filetype="([^"]*)"/);
     const fileType = typeMatch ? typeMatch[1] : '';
 
     const fileName = damPath.split('/').pop() || '';

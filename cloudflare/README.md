@@ -4,8 +4,8 @@ A Cloudflare Worker that acts as outermost CDN for the Spark project with some a
 
 - [Worker in Cloudflare Dashboard](https://dash.cloudflare.com/d3259185ae56522248254092489d6755/workers/services/view/spark/production/metrics)
 
-- Live: https://pilot.assets.coke.com
-- Preview: https://preview.assets.coke.com
+- Live: https://spark.aem.media
+- Preview: https://preview.spark.aem.media
 - Branch (preview): <https://{branch}-spark-eds.workers.dev>
 - Branch (live): <https://{branch}-live-spark-eds.workers.dev>
 
@@ -20,7 +20,6 @@ Here are the various URL paths handled by the worker:
 | `/api/savedsearches/*` | ✅ | 🔎  Saved searches API (stored in Cloudflare KV) | - | - |
 | `/api/adobe/assets/*`  | ✅ | 🖼️  Adobe Dynamic Media OpenAPI | `delivery-*.adobeaemcloud.com` | Everything after `/api` |
 | `/api/adobe/assets/search-collections`  | ✅ | 🖼️  Adobe Dynamic Media OpenAPI.<br><br>Search index `*_collections` | `delivery-*.adobeaemcloud.com` | `/adobe/assets/search` |
-| `/api/fadel/*`         | ✅ | 🚥  Fadel API | `*.fadelarc.net` | Everything after `/api/fadel` |
 | `/content/share`<br>`/content/experience-fragments`<br>`/content/dam`<br>`/home/users`<br>`/etc.clientlibs`<br>`/libs`       | ✅ | ↪️ AEM CS Publish (for Chili templates functionality only) | `publish-*.adobeaemcloud.com` | as is |
 | `/public/*`<br>`/scripts/*`<br>`/styles/*`<br>&nbsp;[more](src/index.js#L44) | ❌ | 🌎  Public content & code from Adobe Helix. | `*.aem.live` / `*.aem.page` | as is |
 | `/*`                   | ✅ | 📑  Adobe Helix content | `*.aem.live` / `*.aem.page` | `/*` |
@@ -273,7 +272,6 @@ Most configuration is done via environment variables in the `wrangler.toml` file
 | `account_id` | - | Cloudflare account ID |
 | `HELIX_ORIGIN` | - | AEM EDS origin server such as `https://*.aem.live` |
 | `AEM_ENV_ID` | - | AEM Program + Environment ID string such as `pXXXX-eYYYY` |
-| `FADEL_ORIGIN` | - | Fadel environment URL such as `https://test.fadelarc.net` |
 | `HELIX_PUSH_INVALIDATION` | not set (invalidation enabled) | If set to `disabled`, disable push invalidation to the AEN EDS origin server. |
 | `MICROSOFT_ENTRA_TENANT_ID` | - | Directory (tenant) ID from the app registration in [Microsoft Entra admin center](http://entra.microsoft.com). |
 | `MICROSOFT_ENTRA_CLIENT_ID` | - | Application (client) ID from the app registration in [Microsoft Entra admin center](http://entra.microsoft.com). |
@@ -301,10 +299,8 @@ Secret Store ID: `1e5b0170484843c69f8b9bb71c055468`
 | `SPARK_DM_CLIENT_ID` | `DM_CLIENT_ID` | Client ID for the DM IMS technical account used to access `DM_ORIGIN`. From [Adobe developer console](http://developer.adobe.com/console) project with access to the right delivery environment and DM API access. | Only changed if the DM IMS technical account is changed, e.g. new developer console project. |
 | `SPARK_DM_CLIENT_SECRET` | `DM_CLIENT_SECRET` | Client secret for the DM IMS technical account used to access `DM_ORIGIN`. From [Adobe developer console](http://developer.adobe.com/console) project with access to the right delivery environment and DM API access. | Manually rotate in [Adobe developer console](http://developer.adobe.com/console) and then update in secret store. |
 | `SPARK_HELIX_ORIGIN_AUTHENTICATION` | `HELIX_ORIGIN_AUTHENTICATION` | AEM EDS authentication token. | TODO: possible using Helix admin APIs? |
-| `SPARK_FADEL_USER` | `FADEL_USER` | Fadel API username/email. | Only if user is changed in Fadel. |
-| `SPARK_FADEL_PASSWORD` | `FADEL_PASSWORD` | Fadel API password. | Manually rotate in Fadel and then update in secret store. |
 | `SPARK_PUBLISH_API_USER` | `PUBLISH_API_USER` | AEM CS user in the format of `<user>:<password>`. Used for proxying requests to AEM publish environment for certain features not re-implemented in the new portal yet. Must be available on the publish environment. Must have impersonation rights for all portal users on publish. Current user id: `spark-contenthub`. | Manually rotate in AEM CS and then update in secret store. |
-| `SPARK_SMTP_USERNAME` | `SMTP_USERNAME` | Email address for SMTP authentication (e.g., `noreply@coca-cola.com`). This is the Microsoft 365 mailbox that sends emails. | Only if the sending mailbox changes. |
+| `SPARK_SMTP_USERNAME` | `SMTP_USERNAME` | Email address for SMTP authentication (e.g., `noreply@example.com`). This is the Microsoft 365 mailbox that sends emails. | Only if the sending mailbox changes. |
 | `SPARK_MICROSOFT_ENTRA_CLIENT_SECRET` | `MICROSOFT_ENTRA_CLIENT_SECRET` | Client secret for the Microsoft Entra app registration. Used for both user login and SMTP OAuth2 authentication. | **Max 24 months.** Rotate in Microsoft Entra Admin Center before expiration. See [SMTP OAuth2 Configuration](#smtp-oauth2-configuration). |
 
 
@@ -397,21 +393,21 @@ General notes:
 
 Authored at `/config/access/companies`.
 
-This has sheets for each role: `customer`, `bottler`, `agency`, `employee` and `contingent-worker`.
+This has sheets for each role: `customer`, `partner`, `agency`, `employee` and `contingent-worker`.
 
 ##### `customer` sheet
 
 | Column | Values | Description |
 |--------|--------|-------------|
 | `domain` | `customer.com` | Domain of the customer company. Matches all users with an email address ending in `@customer.com`. |
-| `name` | `customerX` | Exact value used in the `tccc:intendedCustomers` asset metadata field. |
+| `name` | `customerX` | Exact value used in the `custom:intendedCustomers` asset metadata field. |
 
-##### `bottler` sheet
+##### `partner` sheet
 
 | Column | Values | Description |
 |--------|--------|-------------|
-| `domain` | `bottler.com` | Domain of the bottler company. Matches all users with an email address ending in `@bottler.com`. |
-| `countries` | `us, ca, es` | Comma separated list of bottler countries the company has access to. 2 letter ISO code. Examples: `us`, `ca`, `es`. |
+| `domain` | `partner.com` | Domain of the partner company. Matches all users with an email address ending in `@partner.com`. |
+| `countries` | `us, ca, es` | Comma separated list of partner countries the company has access to. 2 letter ISO code. Examples: `us`, `ca`, `es`. |
 
 ##### `agency` sheet
 
@@ -441,13 +437,13 @@ Authored at `/config/access/users`.
 |--------|-------|-------------|
 | `email` | `user@example.com` | Email address of the user. |
 | `roles` | | Comma separated list of roles. Optional. Can be empty if it is set via the `companies` sheet already. |
-| | `employee`  | TCCC employee |
-| | `contingent-worker`  | TCCC contingent worker |
+| | `employee`  | Employee |
+| | `contingent-worker`  | Contingent worker |
 | | `agency`  | Agency |
-| | `bottler`  | Bottler |
+| | `partner`  | Partner |
 | | `admin`  | Can always see all content. ⚠️ Only for admin users. |
-| `countries` | `us`, `ca`, `es` | Comma separated list of bottler countries the user has access to. 2 letter ISO code. Optional. |
-| `customers` | `customer1, customer2` | Comma separated list of customers the user has access to. Must use the exact value used in the `tccc:intendedCustomers` asset metadata field. |
+| `countries` | `us`, `ca`, `es` | Comma separated list of partner countries the user has access to. 2 letter ISO code. Optional. |
+| `customers` | `customer1, customer2` | Comma separated list of customers the user has access to. Must use the exact value used in the `custom:intendedCustomers` asset metadata field. |
 
 
 ## SMTP OAuth2 Configuration
@@ -473,9 +469,9 @@ The refresh token is automatically rotated on each use. A monthly cron job (`0 0
 
 ### Initial Setup
 
-#### TCCC Setup Checklist
+#### Customer Setup Checklist
 
-Before Adobe can complete the technical setup, TCCC must configure the Microsoft Entra app:
+Before Adobe can complete the technical setup, the customer must configure the Microsoft Entra app:
 
 - [ ] Add **SMTP.Send** permission (delegated) to the existing Spark app registration
 - [ ] Grant admin consent for SMTP.Send permission
@@ -509,7 +505,7 @@ Before Adobe can complete the technical setup, TCCC must configure the Microsoft
    cd cloudflare/scripts
    ./email-oauth-setup.sh
    ```
-   Sign in as the mailbox user (e.g., `noreply@coca-cola.com`) when prompted.
+   Sign in as the mailbox user (e.g., `noreply@example.com`) when prompted.
 
 ### Rotating the Client Secret
 

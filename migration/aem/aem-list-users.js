@@ -15,7 +15,7 @@ Required:
 
 Optional:
   --path <path>             JCR start path (default: /home/users)
-  --email <glob>            Filter users by email/principalName glob (e.g. "*@coca-cola.com")
+  --email <glob>            Filter users by email/principalName glob (e.g. "*@example.com")
   --email-csv <path>        Only include users whose email is listed in a CSV file
   --include-system          Include system/service users under /home/users/system/ (default: excluded)
   --include-ims-ta          Include IMS technical accounts (*@techacct.adobe.com, default: excluded)

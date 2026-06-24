@@ -18,7 +18,7 @@ Optional:
   --execute                 Actually make changes (default: dry-run / report mode)
   --no-replicate            Skip replication to publish after updating
   --path <path>             JCR path for user query (default: /home/users) or a single user node
-  --email <glob>            Filter users by email/principalName glob (e.g. "*@coca-cola.com")
+  --email <glob>            Filter users by email/principalName glob (e.g. "*@example.com")
   --include-system          Include system/service users under /home/users/system/ (default: excluded)
   --include-ims-ta          Include IMS technical accounts (*@techacct.adobe.com, default: excluded)
   --include-local           Include local accounts with passwords (default: excluded)

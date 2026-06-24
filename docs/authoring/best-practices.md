@@ -1,6 +1,6 @@
 # Best Practices
 
-This guide covers tips and recommendations for effective content authoring in KO Assets.
+This guide covers tips and recommendations for effective content authoring in Spark.
 
 ## General Authoring
 
@@ -10,7 +10,7 @@ This guide covers tips and recommendations for effective content authoring in KO
 - **Use descriptive page names** - Page names become URLs (`about-us` not `page1`)
 - **Keep content focused** - One main topic per page
 - **Write for scanning** - Use headings, lists, and short paragraphs
-- **Test on mobile** - Many users access KO Assets on smaller screens
+- **Test on mobile** - Many users access Spark on smaller screens
 
 ### Don't
 
@@ -85,7 +85,7 @@ Use default content (paragraphs, headings, lists) for:
 ### File Naming
 
 - Use lowercase letters and hyphens
-- Be descriptive: `coca-cola-holiday-2025.jpg` not `IMG_1234.jpg`
+- Be descriptive: `acme-holiday-2025.jpg` not `IMG_1234.jpg`
 - Avoid spaces and special characters
 
 ## Writing for the Web

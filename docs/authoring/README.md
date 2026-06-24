@@ -1,16 +1,16 @@
-# KO Assets Content Authoring Guide
+# Spark Content Authoring Guide
 
-This guide helps content authors create and manage informational pages on the KO Assets portal.
+This guide helps content authors create and manage informational pages on the Spark portal.
 
 ## About This Guide
 
-KO Assets is built on Adobe Experience Manager Edge Delivery Services (EDS) using **Document Authoring**. This guide focuses on KO Assets-specific patterns and blocks. For general Document Authoring concepts, refer to the [Document Authoring documentation](https://docs.da.live/).
+Spark is built on Adobe Experience Manager Edge Delivery Services (EDS) using **Document Authoring**. This guide focuses on Spark-specific patterns and blocks. For general Document Authoring concepts, refer to the [Document Authoring documentation](https://docs.da.live/).
 
 ## Prerequisites
 
 Before you begin, ensure you have:
 
-- Access to the KO Assets content repository in Document Authoring
+- Access to the Spark content repository in Document Authoring
 - The AEM Sidekick browser extension installed
 - Appropriate permissions to create and publish content
 

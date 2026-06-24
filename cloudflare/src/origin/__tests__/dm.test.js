@@ -310,9 +310,9 @@ describe('dm.js - Search Type Detection', () => {
 
 describe('dm.js - Analytics Event Data', () => {
   describe('extractCommonUserData', () => {
-    it('should extract koid as user identifier (not email)', () => {
+    it('should extract userId as user identifier (not email)', () => {
       const user = {
-        koid: 'S700855',
+        userId: 'U700855',
         email: 'user@example.com', // email present but not used
         country: 'US',
         employeeType: 'employee',
@@ -322,14 +322,14 @@ describe('dm.js - Analytics Event Data', () => {
 
       // Simulating extractCommonUserData behavior
       const commonData = {
-        koid: user.koid,
+        userId: user.userId,
         country: user.country,
         employeeType: user.employeeType,
         company: user.company,
         roles: user.roles || [],
       };
 
-      expect(commonData.koid).toBe('S700855');
+      expect(commonData.userId).toBe('U700855');
       expect(commonData).not.toHaveProperty('email');
       expect(commonData.country).toBe('US');
       expect(commonData.roles).toEqual(['admin', 'editor']);
@@ -337,7 +337,7 @@ describe('dm.js - Analytics Event Data', () => {
 
     it('should default roles to empty array if undefined', () => {
       const user = {
-        koid: 'S700855',
+        userId: 'U700855',
         country: 'US',
         employeeType: 'employee',
         company: 'Acme Corp',
@@ -559,7 +559,7 @@ describe('dm.js - Archive Analytics Tracking', () => {
   describe('archive analytics event data', () => {
     it('should include all required fields for archive download event', () => {
       const user = {
-        koid: 'S700855',
+        userId: 'U700855',
         country: 'US',
         employeeType: 'employee',
         company: 'Adobe',
@@ -578,7 +578,7 @@ describe('dm.js - Archive Analytics Tracking', () => {
 
       // Simulating event data construction in trackArchiveAnalytics
       const eventData = {
-        koid: user.koid,
+        userId: user.userId,
         country: user.country,
         employeeType: user.employeeType,
         company: user.company,
@@ -593,7 +593,7 @@ describe('dm.js - Archive Analytics Tracking', () => {
       };
 
       // Verify all fields are present
-      expect(eventData).toHaveProperty('koid', 'S700855');
+      expect(eventData).toHaveProperty('userId', 'U700855');
       expect(eventData).toHaveProperty('country', 'US');
       expect(eventData).toHaveProperty('resourceType', 'asset');
       expect(eventData).toHaveProperty('downloadId', downloadId);

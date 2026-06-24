@@ -2,7 +2,7 @@
 
 ## System Overview
 
-Spark (`assets.coke.com`) is an authenticated digital asset portal for The Coca-Cola Company. Three layers work together:
+Spark (`spark.aem.media`) is an authenticated digital asset portal for Acme. Three layers work together:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -16,11 +16,11 @@ Spark (`assets.coke.com`) is an authenticated digital asset portal for The Coca-
 │                                                                 │
 │  Auth (Entra OIDC)  ·  Routing  ·  APIs  ·  Access control     │
 │  KV · D1 · Analytics Engine · Cron                             │
-└────┬────────────┬──────────────┬───────────────┬───────────────┘
-     │            │              │               │
-     ▼            ▼              ▼               ▼
-  Helix/EDS    AEM Publish   Dynamic Media    Fadel
-  (content)    (assets)      (renditions)    (rights)
+└────┬────────────┬──────────────┬───────────────────────────────┘
+     │            │              │
+     ▼            ▼              ▼
+  Helix/EDS    AEM Publish   Dynamic Media
+  (content)    (assets)      (renditions)
      ▲
      │ authored in
   Document Authoring (da.live)
@@ -195,5 +195,5 @@ git push → GitHub Actions
   3. Biome lint (cloudflare/)
   4. Vitest (unit, dom, integration, authz, migration)
   5. wrangler deploy --ci        (uses CLOUDFLARE_API_TOKEN secret)
-     → assets.coke.com updated
+     → spark.aem.media updated
 ```

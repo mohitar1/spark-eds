@@ -82,7 +82,7 @@ Post logout redirect not working:
 
 ## Email
 
-* [AEM config for mail service](https://github.com/search?q=repo%3AThe-Coca-Cola-Company%2Fko-assets+smtp&type=code)
+* [AEM config for mail service](https://github.com/search?q=repo%3Aadobe%2Fspark-eds+smtp&type=code)
 * [Sending emails with Outlook SMTP](https://learn.microsoft.com/en-us/exchange/mail-flow-best-practices/how-to-set-up-a-multifunction-device-or-application-to-send-email-using-microsoft-365-or-office-365)
   * [Oauth for Outlook SMTP](https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth)
 

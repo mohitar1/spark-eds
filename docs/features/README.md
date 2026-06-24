@@ -122,7 +122,7 @@ Include these sections **if they apply** to your feature:
 - **Pages/Components** - Required if feature has UI
   - EDS pages, blocks, client-side code
 - **External Integrations** - Required if calling external services
-  - Third-party APIs (FADEL, etc.), webhooks, authentication
+  - Third-party APIs, webhooks, authentication
 - **Notifications** - Required if feature sends notifications
   - Email templates, in-app notification messages (persistent), toast notifications (temporary), triggers
 - **Security & Permissions** - Required if feature has authorization logic

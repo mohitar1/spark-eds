@@ -36,7 +36,7 @@ export const ROLE_OPTIONS = [
   { value: 'all', label: 'All Roles' },
   { value: 'associate', label: 'Associate' },
   { value: 'agency', label: 'Agency' },
-  { value: 'bottler', label: 'Bottler' },
+  { value: 'partner', label: 'Partner' },
 ];
 
 /**

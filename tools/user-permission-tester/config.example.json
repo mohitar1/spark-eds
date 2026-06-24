@@ -1,6 +1,6 @@
 {
   "oldSystem": {
-    "baseUrl": "https://assets.coke.com",
+    "baseUrl": "https://spark.aem.media",
     "searchPath": "/content/share/us/en/search-assets.html",
     "publishApiUser": "SET_VIA_ENV_VAR_SPARK_PUBLISH_API_USER_PROD"
   },
