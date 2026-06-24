@@ -5,11 +5,96 @@
  * Converted from React AdobePDFViewer.tsx
  */
 
-// eslint-disable-next-line import/no-unresolved
-import { loadAdobePdfScript, getAdobeClientId } from '../../pdfviewer/pdfviewer.js';
-
 // Module state
 let adobeDCViewInstance = null;
+
+// Adobe PDF Embed API – one client ID per allowed domain
+const CLIENT_IDS = {
+  localhost: '5b30e43dabf0482480341b9395596694',
+  'adobecocacola.workers.dev': '96d28392f9e54037abef530dcbe8b23f',
+  'pilot.assets.coke.com': 'a1ad48e243e64b19a49ea8bd4e999537',
+  'assets.coke.com': '2cf82e1563b54682be6db9c151d8eec9',
+};
+
+/**
+ * Resolve the Adobe PDF Embed API client ID for the current host.
+ * @returns {string}
+ */
+function getAdobeClientId() {
+  const { hostname } = window.location;
+  if (hostname === 'localhost') return CLIENT_IDS.localhost;
+  const domain = Object.keys(CLIENT_IDS).find(
+    (d) => d !== 'localhost' && (hostname === d || hostname.endsWith(`.${d}`)),
+  );
+  return domain ? CLIENT_IDS[domain] : CLIENT_IDS.localhost;
+}
+
+// Cached promise so concurrent callers share the same Adobe SDK load cycle.
+let adobePdfScriptPromise = null;
+
+/**
+ * Load Adobe PDF Embed API script.
+ * Returns a cached promise so concurrent callers share the same load cycle.
+ * @returns {Promise<void>} Resolves when window.AdobeDC is available
+ */
+async function loadAdobePdfScript() {
+  if (adobePdfScriptPromise) return adobePdfScriptPromise;
+
+  adobePdfScriptPromise = new Promise((resolve, reject) => {
+    if (window.AdobeDC) {
+      resolve();
+      return;
+    }
+
+    /**
+     * Poll for window.AdobeDC with a timeout.
+     * @param {number} timeoutMs - Maximum time to wait
+     */
+    function waitForAdobeDC(timeoutMs) {
+      let settled = false;
+      const checkReady = setInterval(() => {
+        if (window.AdobeDC && !settled) {
+          settled = true;
+          clearInterval(checkReady);
+          resolve();
+        }
+      }, 100);
+
+      setTimeout(() => {
+        if (!settled) {
+          settled = true;
+          clearInterval(checkReady);
+          if (window.AdobeDC) {
+            resolve();
+          } else {
+            reject(new Error('Timeout waiting for Adobe PDF Embed API'));
+          }
+        }
+      }, timeoutMs);
+    }
+
+    // Check if script tag is already in the DOM (e.g. added by another block)
+    const existingScript = document.querySelector('script[src*="acrobatservices.adobe.com"]');
+    if (existingScript) {
+      waitForAdobeDC(10000);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://acrobatservices.adobe.com/view-sdk/viewer.js';
+    script.async = true;
+    script.onload = () => waitForAdobeDC(5000);
+    script.onerror = () => reject(new Error('Failed to load Adobe PDF Embed API'));
+    document.body.appendChild(script);
+  });
+
+  // If loading fails, clear the cached promise so a retry is possible
+  adobePdfScriptPromise.catch(() => {
+    adobePdfScriptPromise = null;
+  });
+
+  return adobePdfScriptPromise;
+}
 
 /**
  * Create Adobe PDF Viewer
