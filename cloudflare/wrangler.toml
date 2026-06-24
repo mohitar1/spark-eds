@@ -63,13 +63,6 @@ secret_name = "SPARK_DM_CLIENT_SECRET"
 binding = "AUTH_TOKENS"
 id = "36672f6acf244f80855367c1322110d5"
 
-# Per-user notifications store (notifications API: src/api/notifications.js).
-# Local `wrangler dev` auto-creates a local KV store and ignores `id`.
-# Before deploying, create the remote namespace and replace the placeholder id:
-#   npx wrangler kv namespace create MESSAGES
-[[kv_namespaces]]
-binding = "MESSAGES"
-id = "00000000000000000000000000000000"
 
 # Local dev uses .wrangler/state/v3/d1/ (see scripts/local-d1-setup.sh).
 # Create the remote database with: npx wrangler d1 create spark-user-logins
