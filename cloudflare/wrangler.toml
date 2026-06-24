@@ -61,7 +61,7 @@ secret_name = "SPARK_DM_CLIENT_SECRET"
 
 [[kv_namespaces]]
 binding = "AUTH_TOKENS"
-id = "a87b67da2f294dc8a7ea5ea6332f2ba"
+id = "36672f6acf244f80855367c1322110d5"
 
 # Per-user notifications store (notifications API: src/api/notifications.js).
 # Local `wrangler dev` auto-creates a local KV store and ignores `id`.
