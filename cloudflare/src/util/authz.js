@@ -9,13 +9,15 @@ import { hasPermission } from '../../../scripts/auth/permissions.js';
 export function assertPermission(request, permission) {
   const ok = hasPermission(request.user, permission);
   if (!ok) {
-    console.warn(JSON.stringify({
-      evt: 'authz',
-      decision: 'deny',
-      permission,
-      email: request.user?.email ?? null,
-      path: new URL(request.url).pathname,
-    }));
+    console.warn(
+      JSON.stringify({
+        evt: 'authz',
+        decision: 'deny',
+        permission,
+        email: request.user?.email ?? null,
+        path: new URL(request.url).pathname,
+      }),
+    );
   }
   return ok ? null : error(403, 'Forbidden');
 }

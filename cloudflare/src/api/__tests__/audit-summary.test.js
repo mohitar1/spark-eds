@@ -1,8 +1,6 @@
-import {
-  describe, it, expect, vi,
-} from 'vitest';
-import { auditGetSummary } from '../audit.js';
+import { describe, expect, it, vi } from 'vitest';
 import { PERMISSIONS } from '../../../../scripts/auth/permissions.js';
+import { auditGetSummary } from '../audit.js';
 
 const ALPHABET = '8gGQeDOJsS069Pod4mU2BKWRXjpiThLkZEHCantwuV7IrcqfAzMbN3vx1YlF5y';
 
@@ -52,7 +50,11 @@ function makeEnv(recorder) {
 }
 
 function summaryRequest(query) {
-  return { user: { permissions: [PERMISSIONS.VIEW_AUDIT], email: 'u@x' }, url: `https://host/api/audit/summary?${query}`, method: 'GET' };
+  return {
+    user: { permissions: [PERMISSIONS.VIEW_AUDIT], email: 'u@x' },
+    url: `https://host/api/audit/summary?${query}`,
+    method: 'GET',
+  };
 }
 
 describe('auditGetSummary', () => {
@@ -92,7 +94,10 @@ describe('auditGetSummary', () => {
 
   it('returns 403 without view-audit permission', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const res = await auditGetSummary({ user: { permissions: [] }, url: 'https://host/api/audit/summary', method: 'GET' }, {});
+    const res = await auditGetSummary(
+      { user: { permissions: [] }, url: 'https://host/api/audit/summary', method: 'GET' },
+      {},
+    );
     expect(res.status).toBe(403);
   });
 });

@@ -21,20 +21,18 @@
  */
 
 import { decodeJwt } from 'jose';
-import { ROLE } from '../user.js';
 import {
   CollectionCreatedByMeVisibility,
   CollectionListSegment,
 } from '../../../scripts/collections/collection-search-constants.js';
+import { ROLE } from '../user.js';
+import { enforceAssetMetadataAuthorization } from './asset-access.js';
 import {
   extractSearchContext,
   handleArchiveAnalytics,
   handleDownloadAnalytics,
   handleSearchAnalytics,
 } from './dm-analytics.js';
-import {
-  enforceAssetMetadataAuthorization,
-} from './asset-access.js';
 
 // ==========================================
 // IMS Authentication Constants
@@ -256,12 +254,11 @@ async function getIMSToken(request, env) {
     const clientId = await env.DM_CLIENT_ID.get();
     const cachedTokenName = `dm-token-${clientId}`;
 
-
     // get cached token
     const { value: token, metadata } = await env.AUTH_TOKENS.getWithMetadata(cachedTokenName);
 
     // use token until 5 minutes before expiry
-    if (token && metadata?.expiration > (Math.floor(Date.now() / 1000) + IMS_TOKEN_EXPIRY_BUFFER)) {
+    if (token && metadata?.expiration > Math.floor(Date.now() / 1000) + IMS_TOKEN_EXPIRY_BUFFER) {
       return token;
     } else {
       const clientSecret = await env.DM_CLIENT_SECRET.get();
@@ -275,8 +272,8 @@ async function getIMSToken(request, env) {
       await env.AUTH_TOKENS.put(cachedTokenName, tokenData.access_token, {
         expiration,
         metadata: {
-          expiration
-        }
+          expiration,
+        },
       });
 
       return tokenData.access_token;
@@ -326,7 +323,10 @@ async function validateCollectionAccess(collectionId, userEmail, requiredRole, i
   });
 
   if (!response.ok) {
-    return { allowed: false, reason: `Failed to fetch collection metadata: ${metadataUrl} => ${response.status} ${response.statusText}` };
+    return {
+      allowed: false,
+      reason: `Failed to fetch collection metadata: ${metadataUrl} => ${response.status} ${response.statusText}`,
+    };
   }
 
   const collection = await response.json();
@@ -377,8 +377,14 @@ async function validateCollectionAccess(collectionId, userEmail, requiredRole, i
  * @param {string} resourceDescription - Description for logging (e.g., "collection", "collection items")
  * @returns {Response|null} Returns Response with 403 if denied, null if allowed
  */
-async function checkCollectionAuthorization(collectionId, request, imsToken, origin, resourceDescription = 'collection') {
-  const requiredRole = (request.method === 'GET') ? PERMISSION_READ : PERMISSION_WRITE;
+async function checkCollectionAuthorization(
+  collectionId,
+  request,
+  imsToken,
+  origin,
+  resourceDescription = 'collection',
+) {
+  const requiredRole = request.method === 'GET' ? PERMISSION_READ : PERMISSION_WRITE;
 
   const access = await validateCollectionAccess(
     collectionId,
@@ -389,11 +395,15 @@ async function checkCollectionAuthorization(collectionId, request, imsToken, ori
   );
 
   if (!access.allowed) {
-    console.warn(`[${request.user.email}] denied ${request.method} on ${resourceDescription} ${collectionId}: ${access.reason}`);
+    console.warn(
+      `[${request.user.email}] denied ${request.method} on ${resourceDescription} ${collectionId}: ${access.reason}`,
+    );
     return new Response('Forbidden', { status: 403 });
   }
 
-  console.warn(`[${request.user.email}] allowed ${request.method} on ${resourceDescription} ${collectionId} as ${access.role}`);
+  console.warn(
+    `[${request.user.email}] allowed ${request.method} on ${resourceDescription} ${collectionId} as ${access.role}`,
+  );
   return null; // null means authorized
 }
 
@@ -622,9 +632,11 @@ function collectionsSearchContentAIAuthorization(request, search, options = {}) 
   const userEmailLower = user?.email?.toLowerCase();
 
   if (!userEmailLower) {
-    forceContentAISearchFilter(search, [{
-      term: { [CONTENTAI_COLLECTION_SEARCH_ACL.owner]: ['___does_not_exist___'] },
-    }]);
+    forceContentAISearchFilter(search, [
+      {
+        term: { [CONTENTAI_COLLECTION_SEARCH_ACL.owner]: ['___does_not_exist___'] },
+      },
+    ]);
     return;
   }
 
@@ -865,21 +877,33 @@ export async function originDynamicMedia(request, env, ctx) {
   // This applied for BOTH Algolia search and ContentAI search
   if (url.pathname.match(/^\/adobe\/assets\/collections\/[^/]+\/items$/)) {
     const collectionId = url.pathname.split('/')[4];
-    const authResponse = await checkCollectionAuthorization(collectionId, request, imsToken, url.origin, 'collection items');
+    const authResponse = await checkCollectionAuthorization(
+      collectionId,
+      request,
+      imsToken,
+      url.origin,
+      'collection items',
+    );
     if (authResponse) return authResponse;
   }
 
   const isSearchOrCollections = url.pathname.includes('/search') || url.pathname.includes('/collections');
   if (isSearchOrCollections) {
     const debugHeaders = [
-      'authorization', 'x-api-key', 'x-ch-request', 'x-polaris-search-provider', 'x-adobe-accept-experimental',
+      'authorization',
+      'x-api-key',
+      'x-ch-request',
+      'x-polaris-search-provider',
+      'x-adobe-accept-experimental',
     ];
     const curlHeaders = [...headers.entries()]
       .filter(([k]) => debugHeaders.includes(k.toLowerCase()))
       .map(([k, v]) => `-H '${k}: ${v}'`)
       .join(' \\\n  ');
     const curlBody = body ? `-d '${body.replace(/'/g, "\\'")}'` : '';
-    console.warn(`[DM CURL] curl -X ${request.method} '${url}' \\\n  ${curlHeaders}${curlBody ? ` \\\n  ${curlBody}` : ''}`);
+    console.warn(
+      `[DM CURL] curl -X ${request.method} '${url}' \\\n  ${curlHeaders}${curlBody ? ` \\\n  ${curlBody}` : ''}`,
+    );
   }
 
   // The browser's Referer can be enormous (search URLs with many facet filters
@@ -915,8 +939,8 @@ export async function originDynamicMedia(request, env, ctx) {
   // forever because the first 200 was cached with cacheEverything:true on custom
   // zone domains — workers.dev bypasses edge cache automatically, custom zones do not).
   const noCachePaths = [
-    /^\/adobe\/assets\/archives(\/|$)/,  // archive creation + status polling
-    /^\/adobe\/assets\/[^/]+\/token$/,   // download tokens (short-lived, user-specific)
+    /^\/adobe\/assets\/archives(\/|$)/, // archive creation + status polling
+    /^\/adobe\/assets\/[^/]+\/token$/, // download tokens (short-lived, user-specific)
   ];
   const bypassEdgeCache = noCachePaths.some((pattern) => pattern.test(url.pathname));
 
@@ -932,26 +956,25 @@ export async function originDynamicMedia(request, env, ctx) {
   return response;
 }
 
+// Re-export from asset-access.js for convenience
+export {
+  ancestorsToTaxonomyPath,
+  checkAssetMetadataAuthorization,
+  enforceAssetMetadataAuthorization,
+  extractTaxonomyPaths,
+} from './asset-access.js';
 // Export authorization functions for testing
 export {
-  forceContentAISearchFilter,
-  searchContentAIAuthorization,
-  collectionsSearchContentAIAuthorization,
   // Asset metadata authorization
   buildAssetAuthClauses,
+  COLLECTION_ROLE_EDITOR,
   // Collection roles
   COLLECTION_ROLE_OWNER,
-  COLLECTION_ROLE_EDITOR,
   COLLECTION_ROLE_VIEWER,
   // Query chunking utilities
   chunkIntoAnd,
   chunkIntoOr,
+  collectionsSearchContentAIAuthorization,
+  forceContentAISearchFilter,
+  searchContentAIAuthorization,
 };
-
-// Re-export from asset-access.js for convenience
-export {
-  ancestorsToTaxonomyPath,
-  extractTaxonomyPaths,
-  checkAssetMetadataAuthorization,
-  enforceAssetMetadataAuthorization,
-} from './asset-access.js';

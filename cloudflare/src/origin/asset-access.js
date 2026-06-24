@@ -216,7 +216,7 @@ async function enforceAssetMetadataAuthorization(authClauses, response, userEmai
 
 export {
   ancestorsToTaxonomyPath,
-  extractTaxonomyPaths,
   checkAssetMetadataAuthorization,
   enforceAssetMetadataAuthorization,
+  extractTaxonomyPaths,
 };

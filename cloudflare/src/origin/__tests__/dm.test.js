@@ -1,12 +1,10 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  describe, it, expect, vi, beforeEach, afterEach,
-} from 'vitest';
-import {
-  forceContentAISearchFilter,
-  searchContentAIAuthorization,
-  collectionsSearchContentAIAuthorization,
   chunkIntoAnd,
   chunkIntoOr,
+  collectionsSearchContentAIAuthorization,
+  forceContentAISearchFilter,
+  searchContentAIAuthorization,
 } from '../dm.js';
 
 /**
@@ -78,7 +76,7 @@ describe('dm.js - Download Context Extraction', () => {
       const pathParts = url.pathname.split('/');
       const assetsIndex = pathParts.indexOf('assets');
       const assetId = pathParts[assetsIndex + 1];
-      
+
       expect(assetId).toBe('asset-123');
     });
 
@@ -87,17 +85,19 @@ describe('dm.js - Download Context Extraction', () => {
       const pathParts = url.pathname.split('/');
       const assetsIndex = pathParts.indexOf('assets');
       const assetId = pathParts[assetsIndex + 1];
-      
+
       expect(assetId).toBe('asset-456');
     });
 
     it('should extract analytics parameters from URL', () => {
-      const url = new URL('https://example.com/adobe/assets/asset-123/as/file.jpg?x-analytics-brand=coke&x-analytics-campaign=summer2024&x-analytics-resource-type=asset');
-      
+      const url = new URL(
+        'https://example.com/adobe/assets/asset-123/as/file.jpg?x-analytics-brand=coke&x-analytics-campaign=summer2024&x-analytics-resource-type=asset',
+      );
+
       const brand = url.searchParams.get('x-analytics-brand');
       const campaign = url.searchParams.get('x-analytics-campaign');
       const resourceType = url.searchParams.get('x-analytics-resource-type');
-      
+
       expect(brand).toBe('coke');
       expect(campaign).toBe('summer2024');
       expect(resourceType).toBe('asset');
@@ -105,11 +105,11 @@ describe('dm.js - Download Context Extraction', () => {
 
     it('should return null if no analytics parameters present', () => {
       const url = new URL('https://example.com/adobe/assets/asset-123/as/file.jpg');
-      
+
       const brand = url.searchParams.get('x-analytics-brand');
       const campaign = url.searchParams.get('x-analytics-campaign');
       const resourceType = url.searchParams.get('x-analytics-resource-type');
-      
+
       // Simulating the logic: should return null if no params
       const shouldSkip = !brand && !campaign && !resourceType;
       expect(shouldSkip).toBe(true);
@@ -117,17 +117,17 @@ describe('dm.js - Download Context Extraction', () => {
 
     it('should default unknown brand/campaign to "unknown"', () => {
       const url = new URL('https://example.com/adobe/assets/asset-123/as/file.jpg?x-analytics-resource-type=asset');
-      
+
       const brand = url.searchParams.get('x-analytics-brand') || 'unknown';
       const campaign = url.searchParams.get('x-analytics-campaign') || 'unknown';
-      
+
       expect(brand).toBe('unknown');
       expect(campaign).toBe('unknown');
     });
 
     it('should validate resourceType to be asset or template', () => {
       const validTypes = ['asset', 'template'];
-      
+
       expect(validTypes.includes('asset')).toBe(true);
       expect(validTypes.includes('template')).toBe(true);
       expect(validTypes.includes('invalid')).toBe(false);
@@ -137,7 +137,7 @@ describe('dm.js - Download Context Extraction', () => {
       const resourceType = 'invalid-type';
       const validTypes = ['asset', 'template'];
       const defaultType = 'asset';
-      
+
       const validResourceType = validTypes.includes(resourceType) ? resourceType : defaultType;
       expect(validResourceType).toBe('asset');
     });
@@ -153,7 +153,7 @@ describe('dm.js - Collection Authorization', () => {
         'custom:assetCollectionEditor': [],
         'custom:assetCollectionViewer': [],
       };
-      
+
       const isOwner = acl['custom:assetCollectionOwner']?.toLowerCase() === userEmail.toLowerCase();
       expect(isOwner).toBe(true);
     });
@@ -165,8 +165,9 @@ describe('dm.js - Collection Authorization', () => {
         'custom:assetCollectionEditor': ['user@example.com', 'other@example.com'],
         'custom:assetCollectionViewer': [],
       };
-      
-      const isEditor = Array.isArray(acl['custom:assetCollectionEditor']) &&
+
+      const isEditor =
+        Array.isArray(acl['custom:assetCollectionEditor']) &&
         acl['custom:assetCollectionEditor'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
       expect(isEditor).toBe(true);
     });
@@ -179,8 +180,9 @@ describe('dm.js - Collection Authorization', () => {
         'custom:assetCollectionEditor': [],
         'custom:assetCollectionViewer': ['user@example.com'],
       };
-      
-      const isViewer = requiredRole === 'read' &&
+
+      const isViewer =
+        requiredRole === 'read' &&
         Array.isArray(acl['custom:assetCollectionViewer']) &&
         acl['custom:assetCollectionViewer'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
       expect(isViewer).toBe(true);
@@ -194,9 +196,10 @@ describe('dm.js - Collection Authorization', () => {
         'custom:assetCollectionEditor': [],
         'custom:assetCollectionViewer': ['user@example.com'],
       };
-      
+
       // Viewer check only passes for 'read' role
-      const isViewer = requiredRole === 'read' &&
+      const isViewer =
+        requiredRole === 'read' &&
         Array.isArray(acl['custom:assetCollectionViewer']) &&
         acl['custom:assetCollectionViewer'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
       expect(isViewer).toBe(false);
@@ -209,13 +212,15 @@ describe('dm.js - Collection Authorization', () => {
         'custom:assetCollectionEditor': ['editor@example.com'],
         'custom:assetCollectionViewer': ['viewer@example.com'],
       };
-      
+
       const isOwner = acl['custom:assetCollectionOwner']?.toLowerCase() === userEmail.toLowerCase();
-      const isEditor = Array.isArray(acl['custom:assetCollectionEditor']) &&
+      const isEditor =
+        Array.isArray(acl['custom:assetCollectionEditor']) &&
         acl['custom:assetCollectionEditor'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
-      const isViewer = Array.isArray(acl['custom:assetCollectionViewer']) &&
+      const isViewer =
+        Array.isArray(acl['custom:assetCollectionViewer']) &&
         acl['custom:assetCollectionViewer'].some((e) => e.toLowerCase() === userEmail.toLowerCase());
-      
+
       expect(isOwner || isEditor || isViewer).toBe(false);
     });
 
@@ -224,7 +229,7 @@ describe('dm.js - Collection Authorization', () => {
       const acl = {
         'custom:assetCollectionOwner': 'user@example.com',
       };
-      
+
       const isOwner = acl['custom:assetCollectionOwner']?.toLowerCase() === userEmail.toLowerCase();
       expect(isOwner).toBe(true);
     });
@@ -239,8 +244,8 @@ describe('dm.js - Collection Authorization', () => {
 
     it('should map POST/PUT/PATCH/DELETE to write permission', () => {
       const methods = ['POST', 'PUT', 'PATCH', 'DELETE'];
-      
-      methods.forEach(method => {
+
+      methods.forEach((method) => {
         const requiredRole = method === 'GET' ? 'read' : 'write';
         expect(requiredRole).toBe('write');
       });
@@ -380,7 +385,7 @@ describe('dm.js - Analytics Event Data', () => {
       const maxLength = 200;
       const longTerm = 'a'.repeat(300);
       const truncated = longTerm.substring(0, maxLength);
-      
+
       expect(truncated.length).toBe(200);
     });
 
@@ -388,17 +393,15 @@ describe('dm.js - Analytics Event Data', () => {
       const maxLength = 200;
       const shortTerm = 'test search';
       const truncated = shortTerm.substring(0, maxLength);
-      
+
       expect(truncated).toBe(shortTerm);
     });
 
     it('should extract result count from response', () => {
       const responseData = {
-        results: [
-          { nbHits: 1234, hitsPerPage: 24 },
-        ],
+        results: [{ nbHits: 1234, hitsPerPage: 24 }],
       };
-      
+
       const resultCount = responseData.results?.[0]?.nbHits || 0;
       expect(resultCount).toBe(1234); // Total results, not page size
     });
@@ -416,14 +419,14 @@ describe('dm.js - URL Transformations', () => {
     it('should construct correct delivery host for AEM env', () => {
       const aemEnvId = 'p12345-e67890';
       const deliveryHost = `delivery-${aemEnvId}.adobeaemcloud.com`;
-      
+
       expect(deliveryHost).toBe('delivery-p12345-e67890.adobeaemcloud.com');
     });
 
     it('should parse AEM env ID correctly', () => {
       const aemEnvId = 'p12345-e67890';
       const match = aemEnvId.match(/^p(.*)-e(.*)$/);
-      
+
       expect(match).not.toBeNull();
       expect(match[1]).toBe('12345');
       expect(match[2]).toBe('67890');
@@ -432,14 +435,14 @@ describe('dm.js - URL Transformations', () => {
     it('should construct index name for regular search', () => {
       const envId = '12345-67890';
       const indexName = envId;
-      
+
       expect(indexName).toBe('12345-67890');
     });
 
     it('should construct index name for collections search', () => {
       const envId = '12345-67890';
       const indexName = `${envId}_collections`;
-      
+
       expect(indexName).toBe('12345-67890_collections');
     });
   });
@@ -448,14 +451,14 @@ describe('dm.js - URL Transformations', () => {
     it('should remove /api prefix from path', () => {
       const originalPath = '/api/adobe/assets/asset123';
       const transformedPath = originalPath.replace(/^\/api/, '');
-      
+
       expect(transformedPath).toBe('/adobe/assets/asset123');
     });
 
     it('should handle paths without /api prefix', () => {
       const originalPath = '/adobe/assets/asset123';
       const transformedPath = originalPath.replace(/^\/api/, '');
-      
+
       expect(transformedPath).toBe('/adobe/assets/asset123');
     });
 
@@ -463,12 +466,11 @@ describe('dm.js - URL Transformations', () => {
       const originalPath = '/adobe/assets/search-collections';
       const shouldRewrite = originalPath === '/adobe/assets/search-collections';
       const newPath = shouldRewrite ? '/adobe/assets/search' : originalPath;
-      
+
       expect(newPath).toBe('/adobe/assets/search');
     });
   });
 });
-
 
 describe('dm.js - Constants Validation', () => {
   it('should have defined IMS token expiry buffer', () => {
@@ -548,10 +550,7 @@ describe('dm.js - Archive Analytics Tracking', () => {
       };
 
       // Calculate expected event count
-      const expectedEventCount = analyticsContext.assets.reduce(
-        (total, asset) => total + asset.renditions.length,
-        0,
-      );
+      const expectedEventCount = analyticsContext.assets.reduce((total, asset) => total + asset.renditions.length, 0);
 
       expect(expectedEventCount).toBe(3); // 2 + 1
     });
@@ -778,7 +777,6 @@ describe('dm.js - ContentAI Authorization', () => {
   });
 
   describe('searchContentAIAuthorization', () => {
-
     it('should not modify query (no-op — RBAC pending Phase 2g)', async () => {
       const request = {
         user: {

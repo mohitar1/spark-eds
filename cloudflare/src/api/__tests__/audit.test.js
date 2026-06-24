@@ -1,16 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { defaultFrom } from '../../../../scripts/audit/asset-audit-constants.js';
 import {
-  parseDate,
-  parseToBoundary,
-  daysBetween,
   bucketExpr,
-  enumerateBuckets,
   buildWhere,
   csvEscape,
+  daysBetween,
+  enumerateBuckets,
+  parseDate,
   parseFilterParams,
+  parseToBoundary,
   validateFilterParams,
 } from '../audit.js';
-import { defaultFrom } from '../../../../scripts/audit/asset-audit-constants.js';
 
 describe('parseDate', () => {
   it('returns ISO string for a valid date', () => {
@@ -71,18 +71,18 @@ describe('bucketExpr', () => {
 
 describe('enumerateBuckets', () => {
   it('enumerates inclusive day labels', () => {
-    expect(enumerateBuckets('2026-01-01', '2026-01-03', 'day'))
-      .toEqual(['2026-01-01', '2026-01-02', '2026-01-03']);
+    expect(enumerateBuckets('2026-01-01', '2026-01-03', 'day')).toEqual(['2026-01-01', '2026-01-02', '2026-01-03']);
   });
   it('enumerates month labels inclusively', () => {
-    expect(enumerateBuckets('2026-01-15', '2026-03-02', 'month'))
-      .toEqual(['2026-01', '2026-02', '2026-03']);
+    expect(enumerateBuckets('2026-01-15', '2026-03-02', 'month')).toEqual(['2026-01', '2026-02', '2026-03']);
   });
   it('enumerates Monday-aligned week labels 7 days apart', () => {
     const weeks = enumerateBuckets('2026-01-01', '2026-01-20', 'week');
     expect(weeks.length).toBeGreaterThan(0);
     // every label is a Monday and consecutive labels are 7 days apart
-    weeks.forEach((w) => { expect(new Date(`${w}T00:00:00Z`).getUTCDay()).toBe(1); });
+    weeks.forEach((w) => {
+      expect(new Date(`${w}T00:00:00Z`).getUTCDay()).toBe(1);
+    });
     for (let i = 1; i < weeks.length; i += 1) {
       const diff = (new Date(weeks[i]) - new Date(weeks[i - 1])) / 86_400_000;
       expect(diff).toBe(7);
@@ -95,14 +95,11 @@ describe('buildWhere', () => {
     expect(buildWhere({})).toEqual({ clause: '', values: [] });
   });
   it('parameterises scalar filters', () => {
-    expect(buildWhere({ user: 'a@b.com' }))
-      .toEqual({ clause: 'WHERE user_email = ?', values: ['a@b.com'] });
+    expect(buildWhere({ user: 'a@b.com' })).toEqual({ clause: 'WHERE user_email = ?', values: ['a@b.com'] });
   });
   it('maps "unknown" to IS NULL without a bound value', () => {
-    expect(buildWhere({ country: 'unknown' }))
-      .toEqual({ clause: 'WHERE user_country IS NULL', values: [] });
-    expect(buildWhere({ userType: 'unknown' }))
-      .toEqual({ clause: 'WHERE user_type IS NULL', values: [] });
+    expect(buildWhere({ country: 'unknown' })).toEqual({ clause: 'WHERE user_country IS NULL', values: [] });
+    expect(buildWhere({ userType: 'unknown' })).toEqual({ clause: 'WHERE user_type IS NULL', values: [] });
   });
   it('combines multiple conditions with AND', () => {
     const { clause, values } = buildWhere({ from: 'X', to: 'Y' });

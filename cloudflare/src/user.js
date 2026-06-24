@@ -29,7 +29,7 @@ function getEmailDomain(email) {
 
 function pushUnique(array, items) {
   items = Array.isArray(items) ? items : [items];
-  array.push(...items.filter(item => !array.includes(item)));
+  array.push(...items.filter((item) => !array.includes(item)));
 }
 
 /**
@@ -71,7 +71,9 @@ async function getUserAttributes(request, env, user) {
       key: 'email',
       arrays: userArrays,
       merge: (existing, incoming) => {
-        userArrays.forEach((f) => { pushUnique(existing[f], incoming[f]); });
+        userArrays.forEach((f) => {
+          pushUnique(existing[f], incoming[f]);
+        });
         // userType: first non-empty value wins
         if (!existing.userType && incoming.userType) existing.userType = incoming.userType;
         return existing;
@@ -92,7 +94,7 @@ async function getUserAttributes(request, env, user) {
 }
 
 async function handleSudo(request, env, user) {
-  if (['SUDO_NAME', 'SUDO_EMAIL', 'SUDO_COUNTRY', 'SUDO_EMPLOYEE_TYPE'].some(c => request.cookies[c])) {
+  if (['SUDO_NAME', 'SUDO_EMAIL', 'SUDO_COUNTRY', 'SUDO_EMPLOYEE_TYPE'].some((c) => request.cookies[c])) {
     if (!user.permissions.includes('sudo')) {
       console.warn('Sudo denied for user:', user.email);
       return user;
@@ -147,10 +149,7 @@ export async function createSession(request, env) {
   ];
 
   const host = request.headers.get('host') || '';
-  const liveHosts = [
-    'localhost',
-    'spark-eds.adobe.workers.dev',
-  ];
+  const liveHosts = ['localhost', 'spark-eds.adobe.workers.dev'];
   const isNonLiveHost = !liveHosts.some((h) => host === h || host.startsWith(`${h}:`));
   if (isNonLiveHost) {
     if (!permissions.includes('preview')) {
@@ -200,9 +199,7 @@ export async function apiUser(request, env) {
   const user = {
     ...request.user,
     sessionExpiresInSec: request.user.exp && Math.floor((request.user.exp * 1000 - Date.now()) / 1000),
-    aemLoginUrl: env.AEM_ENV_ID
-      ? `https://publish-${env.AEM_ENV_ID}.adobeaemcloud.com/content/share/us/en.html`
-      : '',
+    aemLoginUrl: env.AEM_ENV_ID ? `https://publish-${env.AEM_ENV_ID}.adobeaemcloud.com/content/share/us/en.html` : '',
   };
 
   delete user.sub;

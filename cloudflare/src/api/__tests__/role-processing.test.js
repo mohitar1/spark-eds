@@ -10,7 +10,7 @@
  * These functions are intentionally duplicated and should be kept in sync.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 // =============================================================================
 // ROLE CONFIGURATION (Copied from analytics.js for testing)
@@ -140,9 +140,7 @@ describe('Cloudflare role-processing', () => {
         { role: 'contingent-worker', downloaders: 5 },
       ];
       const result = processRoleData(data, 'downloaders');
-      expect(result).toEqual([
-        { type: 'Associate', count: 15 },
-      ]);
+      expect(result).toEqual([{ type: 'Associate', count: 15 }]);
     });
 
     it('handles comma-separated roles', () => {

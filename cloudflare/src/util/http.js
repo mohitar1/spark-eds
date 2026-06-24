@@ -1,4 +1,4 @@
-import { jwtVerify, SignJWT } from "jose";
+import { jwtVerify, SignJWT } from 'jose';
 
 /**
  * Sets an HTTP cookie on the response with security-first defaults.
@@ -30,17 +30,18 @@ import { jwtVerify, SignJWT } from "jose";
  * });
  */
 export function setCookie(response, name, value, options = {}) {
-  response.headers.append("Set-Cookie",
+  response.headers.append(
+    'Set-Cookie',
     `${name}=${value}; ` +
-    `${options.Domain ? `Domain=${options.Domain}; ` : ''}` +
-    `Path=${options.Path || '/'};` +
-    // use HttpOnly and Secure by default
-    `${options.HttpOnly === false ? '' : ' HttpOnly;'}` +
-    `${options.Secure === false ? '': ' Secure;'} ` +
-    `${options.SameSite === false ? '' : `SameSite=${options.SameSite || 'Strict'};`}` +
-    `${options.Expires ? ` Expires=${options.Expires};` : ''}` +
-    `${options.MaxAge ? ` Max-Age=${options.MaxAge};` : ''}` +
-    `${options.Partitioned ? ` Partitioned;` : ''}`
+      `${options.Domain ? `Domain=${options.Domain}; ` : ''}` +
+      `Path=${options.Path || '/'};` +
+      // use HttpOnly and Secure by default
+      `${options.HttpOnly === false ? '' : ' HttpOnly;'}` +
+      `${options.Secure === false ? '' : ' Secure;'} ` +
+      `${options.SameSite === false ? '' : `SameSite=${options.SameSite || 'Strict'};`}` +
+      `${options.Expires ? ` Expires=${options.Expires};` : ''}` +
+      `${options.MaxAge ? ` Max-Age=${options.MaxAge};` : ''}` +
+      `${options.Partitioned ? ` Partitioned;` : ''}`,
   );
 }
 
@@ -55,24 +56,18 @@ export function setCookie(response, name, value, options = {}) {
  * deleteCookie(response, 'session');
  */
 export function deleteCookie(response, name) {
-  setCookie(
-    response,
-    name,
-    '', {
-      Path: "/",
-      Secure: false,
-      SameSite: false,
-      Expires: "Thu, 01 Jan 1970 00:00:00 GMT",
-    }
-  );
+  setCookie(response, name, '', {
+    Path: '/',
+    Secure: false,
+    SameSite: false,
+    Expires: 'Thu, 01 Jan 1970 00:00:00 GMT',
+  });
 }
 
 export async function createSignedCookie(response, secret, name, payload, options = {}) {
   const key = new TextEncoder().encode(secret);
 
-  const jwt = await new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
-    .sign(key);
+  const jwt = await new SignJWT(payload).setProtectedHeader({ alg: 'HS256' }).sign(key);
 
   setCookie(response, name, jwt, options);
 }
@@ -89,7 +84,6 @@ export async function validateSignedCookie(request, secret, name) {
 
     const { payload } = await jwtVerify(jwt, key);
     return payload;
-
   } catch (error) {
     request.error = `Error validating signed cookie '${name}': ${error.message}`;
     return null;

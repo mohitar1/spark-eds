@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ASSET_URN_PREFIX, stripAssetUrn } from '../constants.js';
 
 describe('ASSET_URN_PREFIX', () => {
@@ -9,8 +9,9 @@ describe('ASSET_URN_PREFIX', () => {
 
 describe('stripAssetUrn', () => {
   it('strips the urn:aaid:aem: prefix from a full URN', () => {
-    expect(stripAssetUrn('urn:aaid:aem:7c2eb8e8-7c55-4484-b236-bc9ccdb7117a'))
-      .toBe('7c2eb8e8-7c55-4484-b236-bc9ccdb7117a');
+    expect(stripAssetUrn('urn:aaid:aem:7c2eb8e8-7c55-4484-b236-bc9ccdb7117a')).toBe(
+      '7c2eb8e8-7c55-4484-b236-bc9ccdb7117a',
+    );
   });
 
   it('returns a bare UUID unchanged', () => {

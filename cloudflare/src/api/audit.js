@@ -1,9 +1,11 @@
 import { error, json } from 'itty-router';
-import { assertPermission } from '../util/authz.js';
-import { PERMISSIONS } from '../../../scripts/auth/permissions.js';
 import {
-  defaultFrom, ASSET_AUDIT_ACTION_VALUES, ASSET_AUDIT_USER_TYPES,
+  ASSET_AUDIT_ACTION_VALUES,
+  ASSET_AUDIT_USER_TYPES,
+  defaultFrom,
 } from '../../../scripts/audit/asset-audit-constants.js';
+import { PERMISSIONS } from '../../../scripts/auth/permissions.js';
+import { assertPermission } from '../util/authz.js';
 
 const AUDIT_ACTIONS = ASSET_AUDIT_ACTION_VALUES;
 const USER_TYPES = ASSET_AUDIT_USER_TYPES;
@@ -71,21 +73,45 @@ export function buildWhere(p) {
   const conds = [];
   const vals = [];
 
-  if (p.user) { conds.push('user_email = ?'); vals.push(p.user); }
+  if (p.user) {
+    conds.push('user_email = ?');
+    vals.push(p.user);
+  }
 
   if (p.country === 'unknown') conds.push('user_country IS NULL');
-  else if (p.country) { conds.push('user_country = ?'); vals.push(p.country); }
+  else if (p.country) {
+    conds.push('user_country = ?');
+    vals.push(p.country);
+  }
 
   if (p.userType === 'unknown') conds.push('user_type IS NULL');
-  else if (p.userType) { conds.push('user_type = ?'); vals.push(p.userType); }
+  else if (p.userType) {
+    conds.push('user_type = ?');
+    vals.push(p.userType);
+  }
 
   if (p.organisation === 'unknown') conds.push('user_organisation IS NULL');
-  else if (p.organisation) { conds.push('user_organisation = ?'); vals.push(p.organisation); }
+  else if (p.organisation) {
+    conds.push('user_organisation = ?');
+    vals.push(p.organisation);
+  }
 
-  if (p.assetId) { conds.push('asset_id = ?'); vals.push(p.assetId); }
-  if (p.action) { conds.push('action = ?'); vals.push(p.action); }
-  if (p.from) { conds.push('occurred_at >= ?'); vals.push(p.from); }
-  if (p.to) { conds.push('occurred_at <= ?'); vals.push(p.to); }
+  if (p.assetId) {
+    conds.push('asset_id = ?');
+    vals.push(p.assetId);
+  }
+  if (p.action) {
+    conds.push('action = ?');
+    vals.push(p.action);
+  }
+  if (p.from) {
+    conds.push('occurred_at >= ?');
+    vals.push(p.from);
+  }
+  if (p.to) {
+    conds.push('occurred_at <= ?');
+    vals.push(p.to);
+  }
 
   return { clause: conds.length ? `WHERE ${conds.join(' AND ')}` : '', values: vals };
 }
@@ -117,7 +143,11 @@ export function validateFilterParams(p) {
 
 export async function auditPostEvent(request, env) {
   let body;
-  try { body = await request.json(); } catch { return error(400, 'Invalid JSON body'); }
+  try {
+    body = await request.json();
+  } catch {
+    return error(400, 'Invalid JSON body');
+  }
 
   const { action, assetId } = body;
   if (!action || !AUDIT_ACTIONS.includes(action)) {
@@ -126,7 +156,11 @@ export async function auditPostEvent(request, env) {
   if (!assetId) return error(400, 'assetId is required');
 
   const {
-    sub: userId, email: userEmail, country: userCountry, type: userType, organisation: userOrganisation,
+    sub: userId,
+    email: userEmail,
+    country: userCountry,
+    type: userType,
+    organisation: userOrganisation,
   } = request.user ?? {};
   if (!userId || !userEmail) return error(401, 'User session is incomplete');
 
@@ -135,16 +169,18 @@ export async function auditPostEvent(request, env) {
       `INSERT INTO audit_events
        (user_id, user_email, user_country, user_type, user_organisation, action, asset_id, occurred_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    ).bind(
-      userId ?? null,
-      userEmail ?? null,
-      userCountry ?? null,
-      userType ?? null,
-      userOrganisation ?? null,
-      action,
-      assetId,
-      new Date().toISOString(),
-    ).run();
+    )
+      .bind(
+        userId ?? null,
+        userEmail ?? null,
+        userCountry ?? null,
+        userType ?? null,
+        userOrganisation ?? null,
+        action,
+        assetId,
+        new Date().toISOString(),
+      )
+      .run();
   } catch (err) {
     console.error('[audit] INSERT failed:', err?.message);
     return error(500, 'Failed to record event');
@@ -166,22 +202,84 @@ export async function auditGetSummary(request, env) {
   const db = env.AUDIT_EVENTS;
 
   const topAssetsInner = `SELECT asset_id FROM audit_events ${clause} GROUP BY asset_id ORDER BY COUNT(*) DESC LIMIT ${TOP_ASSETS_LIMIT}`;
-  const topAssetsWhere = clause ? `${clause} AND asset_id IN (${topAssetsInner})` : `WHERE asset_id IN (${topAssetsInner})`;
+  const topAssetsWhere = clause
+    ? `${clause} AND asset_id IN (${topAssetsInner})`
+    : `WHERE asset_id IN (${topAssetsInner})`;
   const topAssetsSql = `SELECT asset_id, action, COUNT(*) AS count FROM audit_events ${topAssetsWhere} GROUP BY asset_id, action`;
 
-  let totalResult, uniqueUsersResult, uniqueAssetsResult, timelineResult, byActionResult, byUserTypeResult, byOrgResult, byCountryResult, byAssetResult, topAssetsResult;
+  let totalResult,
+    uniqueUsersResult,
+    uniqueAssetsResult,
+    timelineResult,
+    byActionResult,
+    byUserTypeResult,
+    byOrgResult,
+    byCountryResult,
+    byAssetResult,
+    topAssetsResult;
   try {
-    [totalResult, uniqueUsersResult, uniqueAssetsResult, timelineResult, byActionResult, byUserTypeResult, byOrgResult, byCountryResult, byAssetResult, topAssetsResult] = await Promise.all([
-      db.prepare(`SELECT COUNT(*) AS total FROM audit_events ${clause}`).bind(...values).first(),
-      db.prepare(`SELECT COUNT(DISTINCT user_email) AS unique_users FROM audit_events ${clause}`).bind(...values).first(),
-      db.prepare(`SELECT COUNT(DISTINCT asset_id) AS unique_assets FROM audit_events ${clause}`).bind(...values).first(),
-      db.prepare(`SELECT ${expr} AS bucket, COALESCE(action, 'unknown') AS action, COUNT(*) AS count FROM audit_events ${clause} GROUP BY bucket, action ORDER BY bucket`).bind(...values).all(),
-      db.prepare(`SELECT action, COUNT(*) AS count FROM audit_events ${clause} GROUP BY action`).bind(...values).all(),
-      db.prepare(`SELECT COALESCE(user_type, 'unknown') AS user_type, COUNT(*) AS count FROM audit_events ${clause} GROUP BY user_type`).bind(...values).all(),
-      db.prepare(`SELECT COALESCE(user_organisation, 'unknown') AS user_organisation, COUNT(*) AS count FROM audit_events ${clause} GROUP BY user_organisation ORDER BY count DESC`).bind(...values).all(),
-      db.prepare(`SELECT COALESCE(user_country, 'unknown') AS user_country, COUNT(*) AS count FROM audit_events ${clause} GROUP BY user_country ORDER BY count DESC LIMIT 10`).bind(...values).all(),
-      db.prepare(`SELECT REPLACE(asset_id, 'urn:aaid:aem:', '') AS asset_id, COUNT(*) AS count FROM audit_events ${clause} GROUP BY asset_id ORDER BY count DESC LIMIT 10`).bind(...values).all(),
-      db.prepare(topAssetsSql).bind(...values, ...values).all(),
+    [
+      totalResult,
+      uniqueUsersResult,
+      uniqueAssetsResult,
+      timelineResult,
+      byActionResult,
+      byUserTypeResult,
+      byOrgResult,
+      byCountryResult,
+      byAssetResult,
+      topAssetsResult,
+    ] = await Promise.all([
+      db
+        .prepare(`SELECT COUNT(*) AS total FROM audit_events ${clause}`)
+        .bind(...values)
+        .first(),
+      db
+        .prepare(`SELECT COUNT(DISTINCT user_email) AS unique_users FROM audit_events ${clause}`)
+        .bind(...values)
+        .first(),
+      db
+        .prepare(`SELECT COUNT(DISTINCT asset_id) AS unique_assets FROM audit_events ${clause}`)
+        .bind(...values)
+        .first(),
+      db
+        .prepare(
+          `SELECT ${expr} AS bucket, COALESCE(action, 'unknown') AS action, COUNT(*) AS count FROM audit_events ${clause} GROUP BY bucket, action ORDER BY bucket`,
+        )
+        .bind(...values)
+        .all(),
+      db
+        .prepare(`SELECT action, COUNT(*) AS count FROM audit_events ${clause} GROUP BY action`)
+        .bind(...values)
+        .all(),
+      db
+        .prepare(
+          `SELECT COALESCE(user_type, 'unknown') AS user_type, COUNT(*) AS count FROM audit_events ${clause} GROUP BY user_type`,
+        )
+        .bind(...values)
+        .all(),
+      db
+        .prepare(
+          `SELECT COALESCE(user_organisation, 'unknown') AS user_organisation, COUNT(*) AS count FROM audit_events ${clause} GROUP BY user_organisation ORDER BY count DESC`,
+        )
+        .bind(...values)
+        .all(),
+      db
+        .prepare(
+          `SELECT COALESCE(user_country, 'unknown') AS user_country, COUNT(*) AS count FROM audit_events ${clause} GROUP BY user_country ORDER BY count DESC LIMIT 10`,
+        )
+        .bind(...values)
+        .all(),
+      db
+        .prepare(
+          `SELECT REPLACE(asset_id, 'urn:aaid:aem:', '') AS asset_id, COUNT(*) AS count FROM audit_events ${clause} GROUP BY asset_id ORDER BY count DESC LIMIT 10`,
+        )
+        .bind(...values)
+        .all(),
+      db
+        .prepare(topAssetsSql)
+        .bind(...values, ...values)
+        .all(),
     ]);
   } catch (err) {
     console.error('[audit] summary query failed:', err?.message);
@@ -243,9 +341,7 @@ export async function auditGetOrganisations(request, env) {
       env.AUDIT_EVENTS.prepare(
         'SELECT DISTINCT user_organisation FROM audit_events WHERE user_organisation IS NOT NULL ORDER BY user_organisation',
       ).all(),
-      env.AUDIT_EVENTS.prepare(
-        'SELECT 1 FROM audit_events WHERE user_organisation IS NULL LIMIT 1',
-      ).first(),
+      env.AUDIT_EVENTS.prepare('SELECT 1 FROM audit_events WHERE user_organisation IS NULL LIMIT 1').first(),
     ]);
   } catch (err) {
     console.error('[audit] organisations query failed:', err?.message);
@@ -273,7 +369,9 @@ export async function auditGetExportCsv(request, env) {
     result = await env.AUDIT_EVENTS.prepare(
       `SELECT occurred_at, user_id, user_email, user_country, user_type, user_organisation, action, asset_id
        FROM audit_events ${clause} ORDER BY occurred_at DESC LIMIT ${EXPORT_LIMIT + 1}`,
-    ).bind(...values).all();
+    )
+      .bind(...values)
+      .all();
   } catch (err) {
     console.error('[audit] export query failed:', err?.message);
     return error(500, 'Failed to export audit data');
@@ -284,8 +382,11 @@ export async function auditGetExportCsv(request, env) {
 
   const header = 'Occurred At,User ID,Email,Country,User Type,Organisation,Action,Asset ID\r\n';
   const csvBody = rows
-    .map((r) => [r.occurred_at, r.user_id, r.user_email, r.user_country, r.user_type, r.user_organisation, r.action, r.asset_id]
-      .map(csvEscape).join(','))
+    .map((r) =>
+      [r.occurred_at, r.user_id, r.user_email, r.user_country, r.user_type, r.user_organisation, r.action, r.asset_id]
+        .map(csvEscape)
+        .join(','),
+    )
     .join('\r\n');
 
   const date = new Date().toISOString().slice(0, 10);

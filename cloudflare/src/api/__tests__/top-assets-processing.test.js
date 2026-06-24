@@ -6,7 +6,7 @@
  * logic separately (copied from analytics.js).
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 // =============================================================================
 // CONSTANTS (Copied from analytics.js for testing)
@@ -76,9 +76,7 @@ function processTopAssets(data) {
   }));
 
   // Sort by totalDownloads DESC and return top 10
-  return assets
-    .sort((a, b) => b.totalDownloads - a.totalDownloads)
-    .slice(0, TOP_ASSETS_LIMIT);
+  return assets.sort((a, b) => b.totalDownloads - a.totalDownloads).slice(0, TOP_ASSETS_LIMIT);
 }
 
 // =============================================================================
@@ -90,13 +88,28 @@ describe('Cloudflare top-assets-processing', () => {
     it('aggregates downloads by asset ID', () => {
       const data = [
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', email: 'user2@test.com', country: 'UK', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user2@test.com',
+          country: 'UK',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:asset2', brand: 'Sprite', campaign: 'Winter', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset2',
+          brand: 'Sprite',
+          campaign: 'Winter',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
       ];
 
@@ -124,13 +137,28 @@ describe('Cloudflare top-assets-processing', () => {
     it('counts unique downloaders (same user multiple downloads)', () => {
       const data = [
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
       ];
 
@@ -144,10 +172,20 @@ describe('Cloudflare top-assets-processing', () => {
     it('counts unique OUs (same OU multiple downloads)', () => {
       const data = [
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', email: 'user2@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user2@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
       ];
 
@@ -161,22 +199,52 @@ describe('Cloudflare top-assets-processing', () => {
     it('sorts by totalDownloads descending', () => {
       const data = [
         {
-          assetId: 'urn:aaid:aem:low', brand: 'A', campaign: 'A', email: 'u1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:low',
+          brand: 'A',
+          campaign: 'A',
+          email: 'u1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:high', brand: 'B', campaign: 'B', email: 'u1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:high',
+          brand: 'B',
+          campaign: 'B',
+          email: 'u1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:high', brand: 'B', campaign: 'B', email: 'u2@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:high',
+          brand: 'B',
+          campaign: 'B',
+          email: 'u2@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:high', brand: 'B', campaign: 'B', email: 'u3@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:high',
+          brand: 'B',
+          campaign: 'B',
+          email: 'u3@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:medium', brand: 'C', campaign: 'C', email: 'u1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:medium',
+          brand: 'C',
+          campaign: 'C',
+          email: 'u1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:medium', brand: 'C', campaign: 'C', email: 'u2@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:medium',
+          brand: 'C',
+          campaign: 'C',
+          email: 'u2@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
       ];
 
@@ -217,10 +285,20 @@ describe('Cloudflare top-assets-processing', () => {
     it('skips entries with empty assetId', () => {
       const data = [
         {
-          assetId: '', brand: 'Acme Corp', campaign: 'Summer', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: '',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:valid', brand: 'Sprite', campaign: 'Winter', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:valid',
+          brand: 'Sprite',
+          campaign: 'Winter',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
       ];
 
@@ -233,13 +311,27 @@ describe('Cloudflare top-assets-processing', () => {
     it('skips entries with undefined/null assetId', () => {
       const data = [
         {
-          brand: 'Acme Corp', campaign: 'Summer', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         }, // assetId missing
         {
-          assetId: null, brand: 'Sprite', campaign: 'Winter', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: null,
+          brand: 'Sprite',
+          campaign: 'Winter',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:valid', brand: 'Fanta', campaign: 'Fall', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:valid',
+          brand: 'Fanta',
+          campaign: 'Fall',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
       ];
 
@@ -252,7 +344,10 @@ describe('Cloudflare top-assets-processing', () => {
     it('uses "unknown" as default for missing brand/campaign', () => {
       const data = [
         {
-          assetId: 'urn:aaid:aem:asset1', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset1',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         }, // brand and campaign missing
       ];
 
@@ -266,7 +361,11 @@ describe('Cloudflare top-assets-processing', () => {
     it('handles missing email gracefully (0 unique downloaders)', () => {
       const data = [
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          country: 'US',
+          downloadCount: 1,
         },
       ];
 
@@ -280,7 +379,11 @@ describe('Cloudflare top-assets-processing', () => {
     it('handles missing country gracefully (0 OUs)', () => {
       const data = [
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', email: 'user1@test.com', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user1@test.com',
+          downloadCount: 1,
         },
       ];
 
@@ -294,10 +397,19 @@ describe('Cloudflare top-assets-processing', () => {
     it('defaults downloadCount to 1 if missing or invalid', () => {
       const data = [
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', email: 'user1@test.com', country: 'US',
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user1@test.com',
+          country: 'US',
         }, // downloadCount missing
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', email: 'user2@test.com', country: 'US', downloadCount: 'invalid',
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user2@test.com',
+          country: 'US',
+          downloadCount: 'invalid',
         },
       ];
 
@@ -315,10 +427,19 @@ describe('Cloudflare top-assets-processing', () => {
     it('returns empty array when all entries have invalid assetIds', () => {
       const data = [
         {
-          assetId: '', brand: 'Acme Corp', campaign: 'Summer', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: '',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          brand: 'Sprite', campaign: 'Winter', email: 'user2@test.com', country: 'UK', downloadCount: 1,
+          brand: 'Sprite',
+          campaign: 'Winter',
+          email: 'user2@test.com',
+          country: 'UK',
+          downloadCount: 1,
         },
       ];
 
@@ -330,10 +451,20 @@ describe('Cloudflare top-assets-processing', () => {
       // Different brand/campaign values for same asset - first one wins
       const data = [
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'First Brand', campaign: 'First Campaign', email: 'user1@test.com', country: 'US', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'First Brand',
+          campaign: 'First Campaign',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1,
         },
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Second Brand', campaign: 'Second Campaign', email: 'user2@test.com', country: 'UK', downloadCount: 1,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Second Brand',
+          campaign: 'Second Campaign',
+          email: 'user2@test.com',
+          country: 'UK',
+          downloadCount: 1,
         },
       ];
 
@@ -347,10 +478,20 @@ describe('Cloudflare top-assets-processing', () => {
     it('rounds totalDownloads to nearest integer', () => {
       const data = [
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', email: 'user1@test.com', country: 'US', downloadCount: 1.5,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user1@test.com',
+          country: 'US',
+          downloadCount: 1.5,
         },
         {
-          assetId: 'urn:aaid:aem:asset1', brand: 'Acme Corp', campaign: 'Summer', email: 'user2@test.com', country: 'UK', downloadCount: 1.7,
+          assetId: 'urn:aaid:aem:asset1',
+          brand: 'Acme Corp',
+          campaign: 'Summer',
+          email: 'user2@test.com',
+          country: 'UK',
+          downloadCount: 1.7,
         },
       ];
 

@@ -8,7 +8,7 @@
  * Note: maskEmail was removed when we switched from email to koid for user identification.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ASSET_URN_PREFIX, stripAssetUrn } from '../../util/constants.js';
 
 /**
@@ -115,7 +115,9 @@ describe('raw downloads CSV generation', () => {
 
     const csvRow = generateCSVRow(row);
     // asset: Asset ID = downloadItemId, Template ID empty, campaign/brand after IDs
-    expect(csvRow).toBe('2026-01-20T14:30:22Z,S700855,US,employee,Adobe,associate,550e8400-e29b-41d4-a716-446655440000,asset,abc123-def4-5678-9abc-def012345678,,,Christmas 2025,Acme Corp,ready-to-use,original');
+    expect(csvRow).toBe(
+      '2026-01-20T14:30:22Z,S700855,US,employee,Adobe,associate,550e8400-e29b-41d4-a716-446655440000,asset,abc123-def4-5678-9abc-def012345678,,,Christmas 2025,Acme Corp,ready-to-use,original',
+    );
   });
 
   it('strips urn:aaid:aem: prefix from asset downloadItemId', () => {

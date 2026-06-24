@@ -3,8 +3,8 @@
  * Tracks user events using CloudFlare Analytics Engine
  */
 
-import { json, error } from 'itty-router';
-import { TOP_CAMPAIGNS_LIMIT, TOP_ASSETS_LIMIT, stripAssetUrn } from '../util/constants.js';
+import { error, json } from 'itty-router';
+import { stripAssetUrn, TOP_ASSETS_LIMIT, TOP_CAMPAIGNS_LIMIT } from '../util/constants.js';
 
 // Analytics constants
 const UNKNOWN_VALUE = 'unknown';
@@ -37,11 +37,52 @@ const REGION_TO_COUNTRIES = {
   AFR: ['ZA', 'NG', 'KE', 'EG', 'MA', 'GH', 'TZ', 'UG', 'ET', 'DZ'],
   ASP: ['AU', 'NZ', 'SG', 'MY', 'TH', 'VN', 'PH', 'ID', 'HK', 'TW'],
   EME: ['RU', 'TR', 'SA', 'AE', 'PK', 'UA', 'KZ', 'QA', 'KW', 'BH'],
-  EU: ['GB', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'CH', 'AT', 'SE', 'NO', 'DK', 'FI', 'PL', 'PT', 'IE', 'GR', 'CZ', 'RO', 'HU'],
+  EU: [
+    'GB',
+    'DE',
+    'FR',
+    'IT',
+    'ES',
+    'NL',
+    'BE',
+    'CH',
+    'AT',
+    'SE',
+    'NO',
+    'DK',
+    'FI',
+    'PL',
+    'PT',
+    'IE',
+    'GR',
+    'CZ',
+    'RO',
+    'HU',
+  ],
   GCM: ['CN', 'MN'],
   INSWA: ['IN', 'BD', 'LK', 'NP', 'AF'],
   JSK: ['JP', 'KR'],
-  LA: ['MX', 'BR', 'AR', 'CO', 'CL', 'PE', 'EC', 'VE', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'NI', 'CR', 'PA', 'UY'],
+  LA: [
+    'MX',
+    'BR',
+    'AR',
+    'CO',
+    'CL',
+    'PE',
+    'EC',
+    'VE',
+    'GT',
+    'CU',
+    'BO',
+    'DO',
+    'HN',
+    'PY',
+    'SV',
+    'NI',
+    'CR',
+    'PA',
+    'UY',
+  ],
   NA: ['US', 'CA'],
 };
 
@@ -295,7 +336,7 @@ async function getReportMetrics(request, env) {
               bucket,
               searches: result.data?.[0]?.searches || 0,
             };
-          })
+          }),
         );
 
         return json({
@@ -321,8 +362,10 @@ async function getReportMetrics(request, env) {
     // Otherwise, return full downloads report metrics
 
     console.info('[Analytics API] Date range:', { startDate, endDate });
-    console.info('[Analytics API] Timestamp filter will be:',
-      `timestamp >= toDateTime('${startDate} 00:00:00') AND timestamp <= toDateTime('${endDate} 23:59:59')`);
+    console.info(
+      '[Analytics API] Timestamp filter will be:',
+      `timestamp >= toDateTime('${startDate} 00:00:00') AND timestamp <= toDateTime('${endDate} 23:59:59')`,
+    );
 
     // Execute all queries in parallel for efficiency
     const [
@@ -342,21 +385,13 @@ async function getReportMetrics(request, env) {
       userActivityByMonthResult,
       firstTimeUsersByMonthResult,
     ] = await Promise.all([
-      executeReportQuery(
-        accountId,
-        apiToken,
-        buildReportMetricQuery('uniqueUsers', startDate, endDate),
-      ),
+      executeReportQuery(accountId, apiToken, buildReportMetricQuery('uniqueUsers', startDate, endDate)),
       executeReportQuery(
         accountId,
         apiToken,
         buildReportMetricQuery('uniqueDownloaders', startDate, endDate, downloadFilters),
       ),
-      executeReportQuery(
-        accountId,
-        apiToken,
-        buildReportMetricQuery('firstTimeUsers', startDate, endDate),
-      ),
+      executeReportQuery(accountId, apiToken, buildReportMetricQuery('firstTimeUsers', startDate, endDate)),
       executeReportQuery(
         accountId,
         apiToken,
@@ -402,21 +437,9 @@ async function getReportMetrics(request, env) {
         apiToken,
         buildReportMetricQuery('topCampaigns', startDate, endDate, downloadFilters),
       ),
-      executeReportQuery(
-        accountId,
-        apiToken,
-        buildReportMetricQuery('topAssets', startDate, endDate, downloadFilters),
-      ),
-      executeReportQuery(
-        accountId,
-        apiToken,
-        buildReportMetricQuery('userActivityByMonth', startDate, endDate),
-      ),
-      executeReportQuery(
-        accountId,
-        apiToken,
-        buildReportMetricQuery('firstTimeUsersByMonth', startDate, endDate),
-      ),
+      executeReportQuery(accountId, apiToken, buildReportMetricQuery('topAssets', startDate, endDate, downloadFilters)),
+      executeReportQuery(accountId, apiToken, buildReportMetricQuery('userActivityByMonth', startDate, endDate)),
+      executeReportQuery(accountId, apiToken, buildReportMetricQuery('firstTimeUsersByMonth', startDate, endDate)),
     ]);
 
     // Extract values from results (parse as integers since SQL may return strings)
@@ -426,10 +449,11 @@ async function getReportMetrics(request, env) {
     const firstTimeDownloaders = parseInt(firstTimeDownloadersResult.data?.[0]?.first_time_count, 10) || 0;
 
     // Log raw query results for debugging
-    console.info('[Analytics API] Raw downloadsByMonth query result:',
-      JSON.stringify(downloadsByMonthResult.data || []));
-    console.info('[Analytics API] Raw uniqueDownloaders result:',
-      JSON.stringify(uniqueDownloadersResult.data || []));
+    console.info(
+      '[Analytics API] Raw downloadsByMonth query result:',
+      JSON.stringify(downloadsByMonthResult.data || []),
+    );
+    console.info('[Analytics API] Raw uniqueDownloaders result:', JSON.stringify(uniqueDownloadersResult.data || []));
 
     // Process chart data
     const downloadsByMonth = processDownloadsByMonth(downloadsByMonthResult.data || [], year);
@@ -444,10 +468,7 @@ async function getReportMetrics(request, env) {
     );
 
     // Process first-time downloaders by OU
-    const firstTimeDownloadersByOU = processFirstTimeDownloadersByOU(
-      firstTimeByOUResult.data || [],
-      year,
-    );
+    const firstTimeDownloadersByOU = processFirstTimeDownloadersByOU(firstTimeByOUResult.data || [], year);
 
     // Process top campaigns
     const topCampaigns = processTopCampaigns(topCampaignsResult.data || []);
@@ -966,32 +987,157 @@ function processDownloadsByMonth(data, year) {
  */
 const COUNTRY_TO_REGION = {
   // Africa (AFR) - codes and names
-  ZA: 'AFR', NG: 'AFR', KE: 'AFR', EG: 'AFR', MA: 'AFR', GH: 'AFR', TZ: 'AFR', UG: 'AFR', ET: 'AFR', DZ: 'AFR',
-  'SOUTH AFRICA': 'AFR', NIGERIA: 'AFR', KENYA: 'AFR', EGYPT: 'AFR', MOROCCO: 'AFR', GHANA: 'AFR',
+  ZA: 'AFR',
+  NG: 'AFR',
+  KE: 'AFR',
+  EG: 'AFR',
+  MA: 'AFR',
+  GH: 'AFR',
+  TZ: 'AFR',
+  UG: 'AFR',
+  ET: 'AFR',
+  DZ: 'AFR',
+  'SOUTH AFRICA': 'AFR',
+  NIGERIA: 'AFR',
+  KENYA: 'AFR',
+  EGYPT: 'AFR',
+  MOROCCO: 'AFR',
+  GHANA: 'AFR',
   // Asia Pacific (ASP)
-  AU: 'ASP', NZ: 'ASP', SG: 'ASP', MY: 'ASP', TH: 'ASP', VN: 'ASP', PH: 'ASP', ID: 'ASP', HK: 'ASP', TW: 'ASP',
-  AUSTRALIA: 'ASP', 'NEW ZEALAND': 'ASP', SINGAPORE: 'ASP', MALAYSIA: 'ASP', THAILAND: 'ASP', VIETNAM: 'ASP', PHILIPPINES: 'ASP', INDONESIA: 'ASP', 'HONG KONG': 'ASP', TAIWAN: 'ASP',
+  AU: 'ASP',
+  NZ: 'ASP',
+  SG: 'ASP',
+  MY: 'ASP',
+  TH: 'ASP',
+  VN: 'ASP',
+  PH: 'ASP',
+  ID: 'ASP',
+  HK: 'ASP',
+  TW: 'ASP',
+  AUSTRALIA: 'ASP',
+  'NEW ZEALAND': 'ASP',
+  SINGAPORE: 'ASP',
+  MALAYSIA: 'ASP',
+  THAILAND: 'ASP',
+  VIETNAM: 'ASP',
+  PHILIPPINES: 'ASP',
+  INDONESIA: 'ASP',
+  'HONG KONG': 'ASP',
+  TAIWAN: 'ASP',
   // Eurasia & Middle East (EME)
-  RU: 'EME', TR: 'EME', SA: 'EME', AE: 'EME', PK: 'EME', UA: 'EME', KZ: 'EME', QA: 'EME', KW: 'EME', BH: 'EME',
-  RUSSIA: 'EME', TURKEY: 'EME', 'SAUDI ARABIA': 'EME', UAE: 'EME', 'UNITED ARAB EMIRATES': 'EME', PAKISTAN: 'EME', UKRAINE: 'EME',
+  RU: 'EME',
+  TR: 'EME',
+  SA: 'EME',
+  AE: 'EME',
+  PK: 'EME',
+  UA: 'EME',
+  KZ: 'EME',
+  QA: 'EME',
+  KW: 'EME',
+  BH: 'EME',
+  RUSSIA: 'EME',
+  TURKEY: 'EME',
+  'SAUDI ARABIA': 'EME',
+  UAE: 'EME',
+  'UNITED ARAB EMIRATES': 'EME',
+  PAKISTAN: 'EME',
+  UKRAINE: 'EME',
   // Europe (EU)
-  GB: 'EU', DE: 'EU', FR: 'EU', IT: 'EU', ES: 'EU', NL: 'EU', BE: 'EU', CH: 'EU', AT: 'EU', SE: 'EU', NO: 'EU', DK: 'EU', FI: 'EU', PL: 'EU', PT: 'EU', IE: 'EU', GR: 'EU', CZ: 'EU', RO: 'EU', HU: 'EU',
-  'UNITED KINGDOM': 'EU', UK: 'EU', GERMANY: 'EU', FRANCE: 'EU', ITALY: 'EU', SPAIN: 'EU', NETHERLANDS: 'EU', BELGIUM: 'EU', SWITZERLAND: 'EU', AUSTRIA: 'EU', SWEDEN: 'EU', NORWAY: 'EU', DENMARK: 'EU', FINLAND: 'EU', POLAND: 'EU', PORTUGAL: 'EU', IRELAND: 'EU', GREECE: 'EU',
+  GB: 'EU',
+  DE: 'EU',
+  FR: 'EU',
+  IT: 'EU',
+  ES: 'EU',
+  NL: 'EU',
+  BE: 'EU',
+  CH: 'EU',
+  AT: 'EU',
+  SE: 'EU',
+  NO: 'EU',
+  DK: 'EU',
+  FI: 'EU',
+  PL: 'EU',
+  PT: 'EU',
+  IE: 'EU',
+  GR: 'EU',
+  CZ: 'EU',
+  RO: 'EU',
+  HU: 'EU',
+  'UNITED KINGDOM': 'EU',
+  UK: 'EU',
+  GERMANY: 'EU',
+  FRANCE: 'EU',
+  ITALY: 'EU',
+  SPAIN: 'EU',
+  NETHERLANDS: 'EU',
+  BELGIUM: 'EU',
+  SWITZERLAND: 'EU',
+  AUSTRIA: 'EU',
+  SWEDEN: 'EU',
+  NORWAY: 'EU',
+  DENMARK: 'EU',
+  FINLAND: 'EU',
+  POLAND: 'EU',
+  PORTUGAL: 'EU',
+  IRELAND: 'EU',
+  GREECE: 'EU',
   // Greater China & Mongolia (GCM)
-  CN: 'GCM', MN: 'GCM',
-  CHINA: 'GCM', MONGOLIA: 'GCM',
+  CN: 'GCM',
+  MN: 'GCM',
+  CHINA: 'GCM',
+  MONGOLIA: 'GCM',
   // India, South West Asia (INSWA)
-  IN: 'INSWA', BD: 'INSWA', LK: 'INSWA', NP: 'INSWA', AF: 'INSWA',
-  INDIA: 'INSWA', BANGLADESH: 'INSWA', 'SRI LANKA': 'INSWA', NEPAL: 'INSWA', AFGHANISTAN: 'INSWA',
+  IN: 'INSWA',
+  BD: 'INSWA',
+  LK: 'INSWA',
+  NP: 'INSWA',
+  AF: 'INSWA',
+  INDIA: 'INSWA',
+  BANGLADESH: 'INSWA',
+  'SRI LANKA': 'INSWA',
+  NEPAL: 'INSWA',
+  AFGHANISTAN: 'INSWA',
   // Japan & South Korea (JSK)
-  JP: 'JSK', KR: 'JSK',
-  JAPAN: 'JSK', 'SOUTH KOREA': 'JSK', KOREA: 'JSK',
+  JP: 'JSK',
+  KR: 'JSK',
+  JAPAN: 'JSK',
+  'SOUTH KOREA': 'JSK',
+  KOREA: 'JSK',
   // Latin America (LA)
-  BR: 'LA', MX: 'LA', AR: 'LA', CO: 'LA', CL: 'LA', PE: 'LA', VE: 'LA', EC: 'LA', GT: 'LA', CU: 'LA', DO: 'LA', HN: 'LA', PA: 'LA', CR: 'LA', PR: 'LA', UY: 'LA', PY: 'LA', BO: 'LA', SV: 'LA', NI: 'LA',
-  BRAZIL: 'LA', MEXICO: 'LA', ARGENTINA: 'LA', COLOMBIA: 'LA', CHILE: 'LA', PERU: 'LA', VENEZUELA: 'LA', ECUADOR: 'LA',
+  BR: 'LA',
+  MX: 'LA',
+  AR: 'LA',
+  CO: 'LA',
+  CL: 'LA',
+  PE: 'LA',
+  VE: 'LA',
+  EC: 'LA',
+  GT: 'LA',
+  CU: 'LA',
+  DO: 'LA',
+  HN: 'LA',
+  PA: 'LA',
+  CR: 'LA',
+  PR: 'LA',
+  UY: 'LA',
+  PY: 'LA',
+  BO: 'LA',
+  SV: 'LA',
+  NI: 'LA',
+  BRAZIL: 'LA',
+  MEXICO: 'LA',
+  ARGENTINA: 'LA',
+  COLOMBIA: 'LA',
+  CHILE: 'LA',
+  PERU: 'LA',
+  VENEZUELA: 'LA',
+  ECUADOR: 'LA',
   // North America (NA)
-  US: 'NA', CA: 'NA',
-  USA: 'NA', 'UNITED STATES': 'NA', CANADA: 'NA',
+  US: 'NA',
+  CA: 'NA',
+  USA: 'NA',
+  'UNITED STATES': 'NA',
+  CANADA: 'NA',
 };
 
 const GEO_CODES = ['AFR', 'ASP', 'EME', 'EU', 'GCM', 'INSWA', 'JSK', 'LA', 'NA'];
@@ -1111,7 +1257,9 @@ function processFirstTimeDownloadersByOU(data, year) {
   monthNames.forEach((name, index) => {
     const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`;
     monthlyData[monthKey] = { month: name };
-    OU_CODES.forEach((ou) => { monthlyData[monthKey][ou] = 0; });
+    OU_CODES.forEach((ou) => {
+      monthlyData[monthKey][ou] = 0;
+    });
   });
 
   // Helper to get OU from country
@@ -1303,9 +1451,7 @@ function processTopCampaigns(data) {
   }));
 
   // Sort by totalDownloads DESC and return top 10
-  return campaigns
-    .sort((a, b) => b.totalDownloads - a.totalDownloads)
-    .slice(0, TOP_CAMPAIGNS_LIMIT);
+  return campaigns.sort((a, b) => b.totalDownloads - a.totalDownloads).slice(0, TOP_CAMPAIGNS_LIMIT);
 }
 
 /**
@@ -1363,9 +1509,7 @@ function processTopAssets(data) {
   }));
 
   // Sort by totalDownloads DESC and return top 10
-  return assets
-    .sort((a, b) => b.totalDownloads - a.totalDownloads)
-    .slice(0, TOP_ASSETS_LIMIT);
+  return assets.sort((a, b) => b.totalDownloads - a.totalDownloads).slice(0, TOP_ASSETS_LIMIT);
 }
 
 /**
@@ -1423,12 +1567,14 @@ function processUserActivityByMonth(data, firstTimeUsersData, year) {
     const activity = monthlyActivity[monthKey];
 
     // Calculate percentages
-    const searchersPct = activity.uniqueVisitors > 0
-      ? Math.round((activity.uniqueSearchers / activity.uniqueVisitors) * PERCENTAGE_MULTIPLIER)
-      : 0;
-    const downloadersPct = activity.uniqueVisitors > 0
-      ? Math.round((activity.uniqueDownloaders / activity.uniqueVisitors) * PERCENTAGE_MULTIPLIER)
-      : 0;
+    const searchersPct =
+      activity.uniqueVisitors > 0
+        ? Math.round((activity.uniqueSearchers / activity.uniqueVisitors) * PERCENTAGE_MULTIPLIER)
+        : 0;
+    const downloadersPct =
+      activity.uniqueVisitors > 0
+        ? Math.round((activity.uniqueDownloaders / activity.uniqueVisitors) * PERCENTAGE_MULTIPLIER)
+        : 0;
 
     return {
       month: activity.month,
@@ -1724,11 +1870,11 @@ export async function writeAnalyticsEvent(analyticsEngine, eventType, data, env)
   // Common blobs for all events (WHO + context)
   // Note: userId replaces email as user identifier for privacy
   const commonBlobs = [
-    data.userId,              // blob1 - WHO (user ID)
-    data.country,           // blob2
-    data.employeeType,      // blob3
-    data.company,           // blob4
-    data.roles.join(','),   // blob5
+    data.userId, // blob1 - WHO (user ID)
+    data.country, // blob2
+    data.employeeType, // blob3
+    data.company, // blob4
+    data.roles.join(','), // blob5
   ];
 
   let dataPoint;
@@ -1747,11 +1893,18 @@ export async function writeAnalyticsEvent(analyticsEngine, eventType, data, env)
     case 'search':
       dataPoint = {
         blobs: [...commonBlobs, data.searchTerm, data.searchType || 'unknown'], // blob6 = searchTerm, blob7 = searchType
-        doubles: [data.resultCount],               // double1 = resultCount
+        doubles: [data.resultCount], // double1 = resultCount
         indexes: [eventType],
       };
       if (debug) {
-        console.info('[Analytics Engine] 🔍 SEARCH EVENT - searchTerm:', data.searchTerm, 'searchType:', data.searchType, 'resultCount:', data.resultCount);
+        console.info(
+          '[Analytics Engine] 🔍 SEARCH EVENT - searchTerm:',
+          data.searchTerm,
+          'searchType:',
+          data.searchType,
+          'resultCount:',
+          data.resultCount,
+        );
       }
       break;
 
@@ -1760,20 +1913,37 @@ export async function writeAnalyticsEvent(analyticsEngine, eventType, data, env)
       // Each event = 1 download (no count/double1 needed)
       dataPoint = {
         blobs: [
-          ...commonBlobs,                           // blob1-5
-          data.resourceType,                        // blob6 - asset/template
-          data.campaigns,                           // blob7 - campaign name
-          data.brand,                               // blob8 - brand name
-          data.downloadId || '',                    // blob9 - session grouping UUID
-          data.downloadItemId || '',                // blob10 - asset ID (base template for customized)
-          data.downloadType || '',                  // blob11 - ready-to-use/restricted
-          data.rendition || '',                     // blob12 - rendition name
-          data.publicationId || '',                 // blob13 - customized/derived template ID
+          ...commonBlobs, // blob1-5
+          data.resourceType, // blob6 - asset/template
+          data.campaigns, // blob7 - campaign name
+          data.brand, // blob8 - brand name
+          data.downloadId || '', // blob9 - session grouping UUID
+          data.downloadItemId || '', // blob10 - asset ID (base template for customized)
+          data.downloadType || '', // blob11 - ready-to-use/restricted
+          data.rendition || '', // blob12 - rendition name
+          data.publicationId || '', // blob13 - customized/derived template ID
         ],
         indexes: [eventType],
       };
       if (debug) {
-        console.info('[Analytics Engine] 📥 DOWNLOAD EVENT - resourceType:', data.resourceType, 'campaigns:', data.campaigns, 'brand:', data.brand, 'downloadId:', data.downloadId, 'itemId:', data.downloadItemId, 'pubId:', data.publicationId, 'type:', data.downloadType, 'rendition:', data.rendition);
+        console.info(
+          '[Analytics Engine] 📥 DOWNLOAD EVENT - resourceType:',
+          data.resourceType,
+          'campaigns:',
+          data.campaigns,
+          'brand:',
+          data.brand,
+          'downloadId:',
+          data.downloadId,
+          'itemId:',
+          data.downloadItemId,
+          'pubId:',
+          data.publicationId,
+          'type:',
+          data.downloadType,
+          'rendition:',
+          data.rendition,
+        );
       }
       break;
 
@@ -1820,13 +1990,15 @@ function buildSearchD1Conditions(startDate, endDate, filters = {}) {
   }
 
   if (filters.searchType && filters.searchType !== FILTER_DEFAULT_VALUE) {
-    if (!VALID_SEARCH_TYPES.includes(filters.searchType)) throw new Error(`Invalid searchType filter: ${filters.searchType}`);
+    if (!VALID_SEARCH_TYPES.includes(filters.searchType))
+      throw new Error(`Invalid searchType filter: ${filters.searchType}`);
     conditions.push(`search_type = ?`);
     bindings.push(filters.searchType);
   }
 
   if (filters.searchTerm && filters.searchTerm !== FILTER_DEFAULT_VALUE) {
-    if (!VALID_SEARCH_TERMS.includes(filters.searchTerm)) throw new Error(`Invalid searchTerm filter: ${filters.searchTerm}`);
+    if (!VALID_SEARCH_TERMS.includes(filters.searchTerm))
+      throw new Error(`Invalid searchTerm filter: ${filters.searchTerm}`);
     if (filters.searchTerm === 'empty') {
       conditions.push(`(search_term = '' OR search_term IS NULL)`);
     } else {
@@ -1906,112 +2078,146 @@ async function executeSearchMetric(db, env, metricType, startDate, endDate, filt
     case 'uniqueUsers': {
       const logins = env.USER_LOGINS;
       if (!logins) return [{ unique_count: 0 }];
-      const row = await logins.prepare(
-        `SELECT COUNT(DISTINCT email) as unique_count FROM user_logins
+      const row = await logins
+        .prepare(
+          `SELECT COUNT(DISTINCT email) as unique_count FROM user_logins
          WHERE last_login_date >= ? AND first_login_date <= ?`,
-      ).bind(`${startDate}T00:00:00.000Z`, `${endDate}T23:59:59.999Z`).first();
+        )
+        .bind(`${startDate}T00:00:00.000Z`, `${endDate}T23:59:59.999Z`)
+        .first();
       return [{ unique_count: row?.unique_count ?? 0 }];
     }
 
     case 'firstTimeUsers': {
       const logins = env.USER_LOGINS;
       if (!logins) return [{ first_time_count: 0 }];
-      const row = await logins.prepare(
-        `SELECT COUNT(*) as first_time_count FROM user_logins
+      const row = await logins
+        .prepare(
+          `SELECT COUNT(*) as first_time_count FROM user_logins
          WHERE first_login_date >= ? AND first_login_date <= ?`,
-      ).bind(`${startDate}T00:00:00.000Z`, `${endDate}T23:59:59.999Z`).first();
+        )
+        .bind(`${startDate}T00:00:00.000Z`, `${endDate}T23:59:59.999Z`)
+        .first();
       return [{ first_time_count: row?.first_time_count ?? 0 }];
     }
 
     case 'uniqueSearchers': {
-      const row = await db.prepare(
-        `SELECT COUNT(DISTINCT user_id) as unique_count FROM search_events WHERE ${whereClause}`,
-      ).bind(...bindings).first();
+      const row = await db
+        .prepare(`SELECT COUNT(DISTINCT user_id) as unique_count FROM search_events WHERE ${whereClause}`)
+        .bind(...bindings)
+        .first();
       return [{ unique_count: row?.unique_count ?? 0 }];
     }
 
     case 'firstTimeSearchers': {
       const { whereClause: wc, bindings: bs } = buildSearchD1Conditions(startDate, endDate, filters);
-      const row = await db.prepare(
-        `SELECT COUNT(*) as first_time_count FROM (
+      const row = await db
+        .prepare(
+          `SELECT COUNT(*) as first_time_count FROM (
           SELECT user_id, MIN(occurred_at) as first_search
           FROM search_events
           WHERE ${wc}
           GROUP BY user_id
         )`,
-      ).bind(...bs).first();
+        )
+        .bind(...bs)
+        .first();
       return [{ first_time_count: row?.first_time_count ?? 0 }];
     }
 
     case 'uniqueSearchersByMonth': {
-      const rows = await db.prepare(
-        `SELECT strftime('%Y-%m', occurred_at) as month, COUNT(DISTINCT user_id) as users
+      const rows = await db
+        .prepare(
+          `SELECT strftime('%Y-%m', occurred_at) as month, COUNT(DISTINCT user_id) as users
          FROM search_events WHERE ${whereClause}
          GROUP BY month ORDER BY month`,
-      ).bind(...bindings).all();
+        )
+        .bind(...bindings)
+        .all();
       return rows.results || [];
     }
 
     case 'searchesByMonth': {
-      const rows = await db.prepare(
-        `SELECT strftime('%Y-%m', occurred_at) as month, search_type as searchType, COUNT(*) as searches
+      const rows = await db
+        .prepare(
+          `SELECT strftime('%Y-%m', occurred_at) as month, search_type as searchType, COUNT(*) as searches
          FROM search_events WHERE ${whereClause}
          GROUP BY month, searchType ORDER BY month`,
-      ).bind(...bindings).all();
+        )
+        .bind(...bindings)
+        .all();
       return rows.results || [];
     }
 
     case 'uniqueSearchersByRole': {
-      const rows = await db.prepare(
-        `SELECT user_role as role, COUNT(DISTINCT user_id) as users
+      const rows = await db
+        .prepare(
+          `SELECT user_role as role, COUNT(DISTINCT user_id) as users
          FROM search_events WHERE ${whereClause}
          GROUP BY role ORDER BY users DESC`,
-      ).bind(...bindings).all();
+        )
+        .bind(...bindings)
+        .all();
       return rows.results || [];
     }
 
     case 'searchesByRole': {
-      const rows = await db.prepare(
-        `SELECT user_role as role, COUNT(*) as searches
+      const rows = await db
+        .prepare(
+          `SELECT user_role as role, COUNT(*) as searches
          FROM search_events WHERE ${whereClause}
          GROUP BY role ORDER BY searches DESC`,
-      ).bind(...bindings).all();
+        )
+        .bind(...bindings)
+        .all();
       return rows.results || [];
     }
 
     case 'uniqueSearchersByGeo': {
-      const rows = await db.prepare(
-        `SELECT user_country as geo, COUNT(DISTINCT user_id) as users
+      const rows = await db
+        .prepare(
+          `SELECT user_country as geo, COUNT(DISTINCT user_id) as users
          FROM search_events WHERE ${whereClause}
          GROUP BY geo ORDER BY users DESC`,
-      ).bind(...bindings).all();
+        )
+        .bind(...bindings)
+        .all();
       return rows.results || [];
     }
 
     case 'searchesByGeo': {
-      const rows = await db.prepare(
-        `SELECT user_country as geo, COUNT(*) as searches
+      const rows = await db
+        .prepare(
+          `SELECT user_country as geo, COUNT(*) as searches
          FROM search_events WHERE ${whereClause}
          GROUP BY geo ORDER BY searches DESC`,
-      ).bind(...bindings).all();
+        )
+        .bind(...bindings)
+        .all();
       return rows.results || [];
     }
 
     case 'searchesByGeoAndType': {
-      const rows = await db.prepare(
-        `SELECT user_country as geo, search_type as searchType, COUNT(*) as searches
+      const rows = await db
+        .prepare(
+          `SELECT user_country as geo, search_type as searchType, COUNT(*) as searches
          FROM search_events WHERE ${whereClause}
          GROUP BY geo, searchType ORDER BY searches DESC`,
-      ).bind(...bindings).all();
+        )
+        .bind(...bindings)
+        .all();
       return rows.results || [];
     }
 
     case 'searchDistributionByType': {
-      const rows = await db.prepare(
-        `SELECT search_type as searchType, COUNT(*) as searches
+      const rows = await db
+        .prepare(
+          `SELECT search_type as searchType, COUNT(*) as searches
          FROM search_events WHERE ${whereClause}
          GROUP BY searchType ORDER BY searches DESC`,
-      ).bind(...bindings).all();
+        )
+        .bind(...bindings)
+        .all();
       return rows.results || [];
     }
 
@@ -2029,9 +2235,10 @@ async function executeSearchMetric(db, env, metricType, startDate, endDate, filt
       ];
       const results = await Promise.all(
         buckets.map(async ({ bucket, condition }) => {
-          const row = await db.prepare(
-            `SELECT COUNT(*) as searches FROM search_events WHERE ${whereClause} AND ${condition}`,
-          ).bind(...bindings).first();
+          const row = await db
+            .prepare(`SELECT COUNT(*) as searches FROM search_events WHERE ${whereClause} AND ${condition}`)
+            .bind(...bindings)
+            .first();
           return { bucket, searches: row?.searches ?? 0 };
         }),
       );
@@ -2039,25 +2246,31 @@ async function executeSearchMetric(db, env, metricType, startDate, endDate, filt
     }
 
     case 'topSearches': {
-      const rows = await db.prepare(
-        `SELECT search_term as searchTerm, search_type as searchType,
+      const rows = await db
+        .prepare(
+          `SELECT search_term as searchTerm, search_type as searchType,
                 COUNT(DISTINCT user_id) as uniqueSearchers, COUNT(*) as totalSearches
          FROM search_events WHERE ${whereClause} AND search_term != ''
          GROUP BY searchTerm, searchType
          ORDER BY totalSearches DESC LIMIT ${SEARCH_TOP_LIMIT}`,
-      ).bind(...bindings).all();
+        )
+        .bind(...bindings)
+        .all();
       return rows.results || [];
     }
 
     case 'topZeroResultSearches': {
-      const rows = await db.prepare(
-        `SELECT search_term as searchTerm, search_type as searchType,
+      const rows = await db
+        .prepare(
+          `SELECT search_term as searchTerm, search_type as searchType,
                 COUNT(DISTINCT user_id) as uniqueSearchers, COUNT(*) as totalSearches
          FROM search_events WHERE ${whereClause} AND search_term != ''
                               AND (result_count = 0 OR result_count IS NULL)
          GROUP BY searchTerm, searchType
          ORDER BY totalSearches DESC LIMIT ${SEARCH_TOP_LIMIT}`,
-      ).bind(...bindings).all();
+        )
+        .bind(...bindings)
+        .all();
       return rows.results || [];
     }
 
@@ -2071,18 +2284,20 @@ async function executeSearchMetric(db, env, metricType, startDate, endDate, filt
  * Called fire-and-forget from analytics-helper.js.
  */
 export async function writeSearchEvent(db, data) {
-  await db.prepare(
-    `INSERT INTO search_events (user_id, user_email, user_country, user_role, search_term, search_type, result_count, occurred_at)
+  await db
+    .prepare(
+      `INSERT INTO search_events (user_id, user_email, user_country, user_role, search_term, search_type, result_count, occurred_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-  ).bind(
-    data.userId || '',
-    data.userEmail || null,
-    data.country || null,
-    data.roles?.[0] || null,
-    (data.searchTerm || '').substring(0, 200),
-    data.searchType || 'all',
-    data.resultCount ?? null,
-    new Date().toISOString(),
-  ).run();
+    )
+    .bind(
+      data.userId || '',
+      data.userEmail || null,
+      data.country || null,
+      data.roles?.[0] || null,
+      (data.searchTerm || '').substring(0, 200),
+      data.searchType || 'all',
+      data.resultCount ?? null,
+      new Date().toISOString(),
+    )
+    .run();
 }
-

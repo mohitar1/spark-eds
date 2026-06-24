@@ -11,19 +11,17 @@
  */
 
 import { error, Router, withCookies } from 'itty-router';
+import { analyticsApi, searchMetricsApi } from './api/analytics';
+import { auditGetExportCsv, auditGetOrganisations, auditGetSummary, auditPostEvent } from './api/audit';
+import { notificationsApi } from './api/notifications';
+import { exportUserLoginsCSV } from './api/user-logins';
 import { authRouter, withAuthentication } from './auth';
 import { originDynamicMedia } from './origin/dm';
 import { originHelix } from './origin/helix';
-import { parsePageExclusions, isUserExcluded } from './origin/page-access';
-import { cors } from './util/itty';
-import { apiUser } from './user';
-import { notificationsApi } from './api/notifications';
-import { analyticsApi, searchMetricsApi } from './api/analytics';
-import { exportUserLoginsCSV } from './api/user-logins';
-import {
-  auditPostEvent, auditGetSummary, auditGetOrganisations, auditGetExportCsv,
-} from './api/audit';
+import { isUserExcluded, parsePageExclusions } from './origin/page-access';
 import { handleScheduledTokenRefresh } from './scheduled/token-refresh';
+import { apiUser } from './user';
+import { cors } from './util/itty';
 
 // Shared CORS origins
 const allowedOrigins = [
@@ -42,10 +40,7 @@ function withTlsCheck(request) {
 
   const tlsVersion = request.cf?.tlsVersion;
   if (BLOCKED_TLS.includes(tlsVersion)) {
-    return new Response(
-      'Please use newer TLS version',
-      { status: 403 },
-    );
+    return new Response('Please use newer TLS version', { status: 403 });
   }
   return undefined;
 }
@@ -158,7 +153,9 @@ router
     const html = await response.clone().text();
     const exclusions = parsePageExclusions(html);
     if (isUserExcluded(request.user, exclusions)) {
-      console.warn(`[PageAccess] Denied ${request.user.email} from ${new URL(request.url).pathname} (user roles: ${request.user.roles}, excluded: ${JSON.stringify(exclusions)})`);
+      console.warn(
+        `[PageAccess] Denied ${request.user.email} from ${new URL(request.url).pathname} (user roles: ${request.user.roles}, excluded: ${JSON.stringify(exclusions)})`,
+      );
       return Response.redirect(`${new URL(request.url).origin}/404.html`, 302);
     }
 
@@ -178,4 +175,4 @@ export default {
         console.warn(`[Cron] Unknown cron schedule: ${controller.cron}`);
     }
   },
-}
+};

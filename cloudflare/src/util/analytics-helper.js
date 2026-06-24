@@ -32,4 +32,3 @@ export async function trackAnalyticsEvent(env, eventType, eventData) {
     console.error(`[Analytics] Failed to track ${eventType} event:`, err);
   }
 }
-

@@ -1,13 +1,7 @@
 import { Router } from 'itty-router';
 import { createRemoteJWKSet, jwtVerify, SignJWT } from 'jose';
 import { createSession, getUser } from './user.js';
-import {
-  createSignedCookie,
-  deleteCookie,
-  isValidUrl,
-  setCookie,
-  validateSignedCookie,
-} from './util/http.js';
+import { createSignedCookie, deleteCookie, isValidUrl, setCookie, validateSignedCookie } from './util/http.js';
 import { maskEmail } from './util/log-utils.js';
 
 /* Configure the path of a custom login/welcome page here.
@@ -25,11 +19,7 @@ const COOKIE_LOGIN_VISITED = 'LoginVisited';
 const ORIGINAL_URL_PARAM = 'url';
 
 /* Required Cloudflare configuration = env variables */
-const REQUIRED_ENV_VARS = [
-  'MICROSOFT_ENTRA_TENANT_ID',
-  'MICROSOFT_ENTRA_CLIENT_ID',
-  'COOKIE_SECRET',
-];
+const REQUIRED_ENV_VARS = ['MICROSOFT_ENTRA_TENANT_ID', 'MICROSOFT_ENTRA_CLIENT_ID', 'COOKIE_SECRET'];
 
 async function createSessionJWT(request, env, session) {
   const payload = {
@@ -47,7 +37,7 @@ async function createSessionJWT(request, env, session) {
     // use same audience as MS entra IDP app
     .setAudience(env.MICROSOFT_ENTRA_CLIENT_ID)
     .setExpirationTime(env.SESSION_COOKIE_EXPIRATION || '6h')
-    .setNotBefore("0m")
+    .setNotBefore('0m')
     .sign(key);
 
   return jwt;
@@ -63,7 +53,6 @@ async function validateSessionJWT(request, env, sessionJWT) {
       clockTolerance: 5,
     });
     return payload;
-
   } catch (error) {
     request.error = `Invalid ${COOKIE_SESSION} cookie: ${error.message}`;
     return null;
@@ -114,7 +103,6 @@ async function validateIdToken(request, rawIdToken, env, nonce) {
       return null;
     }
     return payload;
-
   } catch (error) {
     request.error = `OIDC error: Invalid id_token: ${error.message}`;
     return null;
@@ -160,9 +148,7 @@ function redirectToLoginPage(request, seenBefore = request.cookies[COOKIE_LOGIN_
 function getOriginalRedirectUrl(request, originalUrl) {
   let redirectUrl = `${request.uri.origin}/`;
   // get original redirect url from url param (if present)
-  if (originalUrl?.startsWith('/')
-      && originalUrl !== LOGIN_PAGE
-      && originalUrl !== `${AUTH_PREFIX}/login`) {
+  if (originalUrl?.startsWith('/') && originalUrl !== LOGIN_PAGE && originalUrl !== `${AUTH_PREFIX}/login`) {
     redirectUrl = originalUrl;
   }
   return redirectUrl;
@@ -219,7 +205,7 @@ export const authRouter = Router({
         console.error(`Missing required environment variables: ${missing.join(', ')}`);
         return new Response('Service Unavailable', { status: 503 });
       }
-    }
+    },
   ],
 });
 
@@ -236,12 +222,7 @@ authRouter
       // b) if valid session cookie, redirect to url param or main page
       const session = await validateSessionJWT(request, env, sessionJWT);
       if (session) {
-        return redirect(
-          getOriginalRedirectUrl(
-            request,
-            request.uri.searchParams.get(ORIGINAL_URL_PARAM)
-          )
-        );
+        return redirect(getOriginalRedirectUrl(request, request.uri.searchParams.get(ORIGINAL_URL_PARAM)));
       }
 
       // c) otherwise show login page = do nothing here and pass through
@@ -274,7 +255,8 @@ authRouter
     };
 
     // redirect to MS login page
-    const authorizeUrl = `https://login.microsoftonline.com/${env.MICROSOFT_ENTRA_TENANT_ID}/oauth2/v2.0/authorize?` +
+    const authorizeUrl =
+      `https://login.microsoftonline.com/${env.MICROSOFT_ENTRA_TENANT_ID}/oauth2/v2.0/authorize?` +
       new URLSearchParams({
         client_id: env.MICROSOFT_ENTRA_CLIENT_ID,
         response_type: 'id_token',
@@ -387,7 +369,8 @@ authRouter
     console.log('User logout:', request.user.email);
 
     // redirect to MS logout page
-    const logoutUrl = `https://login.microsoftonline.com/${env.MICROSOFT_ENTRA_TENANT_ID}/oauth2/logout?` +
+    const logoutUrl =
+      `https://login.microsoftonline.com/${env.MICROSOFT_ENTRA_TENANT_ID}/oauth2/logout?` +
       new URLSearchParams({
         post_logout_redirect_uri: `${request.uri.origin}/en/`,
       });

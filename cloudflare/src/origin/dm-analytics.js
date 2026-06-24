@@ -11,7 +11,7 @@
  * @module origin/dm-analytics
  */
 
-import { VALID_DOWNLOAD_TYPES, stripAssetUrn } from '../util/constants.js';
+import { stripAssetUrn, VALID_DOWNLOAD_TYPES } from '../util/constants.js';
 
 // ==========================================
 // Debug Flag
@@ -205,7 +205,9 @@ function findContentAISearchTerm(node) {
  * @returns {boolean}
  */
 function isDownloadRequest(url) {
-  return url.pathname.includes(PATH_DOWNLOAD_SEGMENT) || url.searchParams.get(PARAM_ATTACHMENT) === PARAM_ATTACHMENT_VALUE;
+  return (
+    url.pathname.includes(PATH_DOWNLOAD_SEGMENT) || url.searchParams.get(PARAM_ATTACHMENT) === PARAM_ATTACHMENT_VALUE
+  );
 }
 
 /**
@@ -230,9 +232,8 @@ function extractDownloadContext(url, _request) {
   // Extract rendition name from URL path (if present)
   // Pattern: /adobe/assets/{assetId}/renditions/{renditionName}/as/{filename}
   const renditionsIndex = pathParts.indexOf('renditions');
-  const renditionFromPath = renditionsIndex !== -1 && pathParts.length > renditionsIndex + 1
-    ? pathParts[renditionsIndex + 1]
-    : 'original';
+  const renditionFromPath =
+    renditionsIndex !== -1 && pathParts.length > renditionsIndex + 1 ? pathParts[renditionsIndex + 1] : 'original';
 
   // Extract analytics metadata from URL parameters (sent by client)
   const brand = url.searchParams.get(ANALYTICS_PARAM_BRAND);
@@ -249,7 +250,9 @@ function extractDownloadContext(url, _request) {
   // This filters out archive downloads and other automatic downloads
   if (!brand && !campaign && !resourceType) {
     if (DEBUG_ANALYTICS) {
-      console.log(`[Analytics] Skipping download tracking for asset ${assetId} - no analytics parameters (likely archive file)`);
+      console.log(
+        `[Analytics] Skipping download tracking for asset ${assetId} - no analytics parameters (likely archive file)`,
+      );
     }
     return null; // Don't track!
   }
@@ -270,7 +273,9 @@ function extractDownloadContext(url, _request) {
   // Validate and default resourceType
   let validResourceType = resourceType || ANALYTICS_DEFAULT_RESOURCE_TYPE;
   if (!ANALYTICS_VALID_RESOURCE_TYPES.includes(validResourceType)) {
-    console.warn(`[Analytics] Invalid resourceType: ${validResourceType}, defaulting to '${ANALYTICS_DEFAULT_RESOURCE_TYPE}'`);
+    console.warn(
+      `[Analytics] Invalid resourceType: ${validResourceType}, defaulting to '${ANALYTICS_DEFAULT_RESOURCE_TYPE}'`,
+    );
     validResourceType = ANALYTICS_DEFAULT_RESOURCE_TYPE;
   }
 
@@ -356,7 +361,9 @@ async function trackDownloadAnalytics(user, downloadContext, env) {
     await trackAnalyticsEvent(env, 'download', eventData);
 
     if (DEBUG_ANALYTICS) {
-      console.info(`[Analytics] Download tracked: ${user.userId} downloaded ${downloadContext.resourceType} (${downloadContext.rendition}) from ${downloadContext.campaign} (brand: ${downloadContext.brand})`);
+      console.info(
+        `[Analytics] Download tracked: ${user.userId} downloaded ${downloadContext.resourceType} (${downloadContext.rendition}) from ${downloadContext.campaign} (brand: ${downloadContext.brand})`,
+      );
     }
   } catch (err) {
     console.error('[Analytics] Download tracking error:', err);
@@ -398,9 +405,7 @@ async function trackArchiveAnalytics(user, analyticsContext, env) {
         renditionsToTrack = ['original'];
       }
 
-      renditionsToTrack = renditionsToTrack
-        .map((r) => r || 'original')
-        .filter((r) => typeof r === 'string');
+      renditionsToTrack = renditionsToTrack.map((r) => r || 'original').filter((r) => typeof r === 'string');
 
       if (renditionsToTrack.length === 0) {
         renditionsToTrack = ['original'];
@@ -476,7 +481,9 @@ function extractSearchResultCount(data) {
   const hitsTotal = data.hits?.total;
   if (hitsTotal != null) return hitsTotal;
 
-  console.error('[Analytics] extractSearchResultCount: could not find result count in response — checked results[0].nbHits, search_metadata.totalCount.total, hits.total');
+  console.error(
+    '[Analytics] extractSearchResultCount: could not find result count in response — checked results[0].nbHits, search_metadata.totalCount.total, hits.total',
+  );
   return 0;
 }
 
@@ -512,7 +519,9 @@ async function processSearchAnalytics(clonedResponse, user, searchContext, env) 
     });
 
     if (DEBUG_ANALYTICS) {
-      console.info(`[Analytics] Search tracked: ${user.userId} searched for "${searchContext.searchTerm}" (${searchContext.searchType}), ${resultCount} results`);
+      console.info(
+        `[Analytics] Search tracked: ${user.userId} searched for "${searchContext.searchTerm}" (${searchContext.searchType}), ${resultCount} results`,
+      );
     }
   } catch (err) {
     console.error('[Analytics] Search processing error:', err);
@@ -540,9 +549,7 @@ export function extractSearchContext(request, search) {
     const referer = request.headers.get(HEADER_REFERER) || '(none)';
     const userAgent = request.headers.get('user-agent') || '(none)';
     const userId = request.user?.userId || '(unauthenticated)';
-    const searchTerm = findContentAISearchTerm(search.query)
-      || search.requests?.[0]?.params?.query
-      || '(unknown)';
+    const searchTerm = findContentAISearchTerm(search.query) || search.requests?.[0]?.params?.query || '(unknown)';
     console.warn(
       '[Analytics] Search not from UI — skipping analytics.',
       `user=${userId}`,
@@ -573,7 +580,9 @@ export function extractSearchContext(request, search) {
     return;
   }
 
-  console.error('[Analytics] extractSearchContext: unrecognized search body format — search analytics will NOT be tracked for this request');
+  console.error(
+    '[Analytics] extractSearchContext: unrecognized search body format — search analytics will NOT be tracked for this request',
+  );
 }
 
 /**
@@ -597,8 +606,9 @@ export function handleArchiveAnalytics(url, request, headers, env, ctx) {
       if (DEBUG_ANALYTICS) {
         console.info('[Analytics] Tracking archive:', analyticsContext.assets.length, 'assets');
       }
-      const analyticsPromise = trackArchiveAnalytics(request.user, analyticsContext, env)
-        .catch((err) => console.error('[Analytics] Archive tracking error:', err));
+      const analyticsPromise = trackArchiveAnalytics(request.user, analyticsContext, env).catch((err) =>
+        console.error('[Analytics] Archive tracking error:', err),
+      );
       trackWithWaitUntil(ctx, analyticsPromise);
     }
   } catch (parseErr) {
@@ -628,11 +638,14 @@ export function handleTemplateDownloadAnalytics(request, headers, env, ctx) {
     if (analyticsContext.downloadId && analyticsContext.assets?.length > 0) {
       if (DEBUG_ANALYTICS) {
         analyticsContext.assets.forEach((a, i) => {
-          console.info(`[Analytics] Template event[${i}]: assetId(base)=${a.assetId} pubId(copy)=${a.publicationId || ''} brand=${a.brand} campaign=${a.campaign}`);
+          console.info(
+            `[Analytics] Template event[${i}]: assetId(base)=${a.assetId} pubId(copy)=${a.publicationId || ''} brand=${a.brand} campaign=${a.campaign}`,
+          );
         });
       }
-      const analyticsPromise = trackArchiveAnalytics(request.user, analyticsContext, env)
-        .catch((err) => console.error('[Analytics] Template download tracking error:', err));
+      const analyticsPromise = trackArchiveAnalytics(request.user, analyticsContext, env).catch((err) =>
+        console.error('[Analytics] Template download tracking error:', err),
+      );
       trackWithWaitUntil(ctx, analyticsPromise);
     }
   } catch (parseErr) {
@@ -657,8 +670,9 @@ export function handleDownloadAnalytics(url, request, response, env, ctx) {
 
   const downloadContext = extractDownloadContext(url, request);
   if (response.ok && downloadContext) {
-    const analyticsPromise = trackDownloadAnalytics(request.user, downloadContext, env)
-      .catch((err) => console.error('[Analytics] Download tracking error:', err));
+    const analyticsPromise = trackDownloadAnalytics(request.user, downloadContext, env).catch((err) =>
+      console.error('[Analytics] Download tracking error:', err),
+    );
     trackWithWaitUntil(ctx, analyticsPromise);
   }
 }
@@ -677,7 +691,11 @@ export function handleSearchAnalytics(url, request, response, env, ctx) {
 
   if (!request.searchContext) {
     // Expected for non-UI requests (no matching Referer) — extractSearchContext skips them intentionally.
-    console.warn('[Analytics] Search request to', url.pathname, 'has no searchContext — non-UI request, skipping analytics.');
+    console.warn(
+      '[Analytics] Search request to',
+      url.pathname,
+      'has no searchContext — non-UI request, skipping analytics.',
+    );
     return;
   }
 
@@ -687,7 +705,8 @@ export function handleSearchAnalytics(url, request, response, env, ctx) {
   }
 
   const clonedResponse = response.clone();
-  const analyticsPromise = processSearchAnalytics(clonedResponse, request.user, request.searchContext, env)
-    .catch((err) => console.error('[Analytics] Search tracking error:', err));
+  const analyticsPromise = processSearchAnalytics(clonedResponse, request.user, request.searchContext, env).catch(
+    (err) => console.error('[Analytics] Search tracking error:', err),
+  );
   trackWithWaitUntil(ctx, analyticsPromise);
 }

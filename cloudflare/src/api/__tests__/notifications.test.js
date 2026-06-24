@@ -1,11 +1,6 @@
 import { env } from 'cloudflare:test';
-import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  getNotification,
-  createNotification,
-  updateNotification,
-  deleteNotification,
-} from '../notifications.js';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { createNotification, deleteNotification, getNotification, updateNotification } from '../notifications.js';
 
 /**
  * Helper to create a request with authenticated user
@@ -152,10 +147,7 @@ describe('Notifications API', () => {
         priority: 'normal',
         status: 'unread',
       };
-      await env.MESSAGES.put(
-        `${testUserEmail}:notif-get`,
-        JSON.stringify(notification),
-      );
+      await env.MESSAGES.put(`${testUserEmail}:notif-get`, JSON.stringify(notification));
 
       const request = createAuthenticatedRequest('http://test/api/messages/notif-get');
       const response = await getNotification(request, env, 'notif-get');
@@ -204,10 +196,7 @@ describe('Notifications API', () => {
         priority: 'normal',
         status: 'unread',
       };
-      await env.MESSAGES.put(
-        `${testUserEmail}:notif-update`,
-        JSON.stringify(notification),
-      );
+      await env.MESSAGES.put(`${testUserEmail}:notif-update`, JSON.stringify(notification));
 
       const request = createAuthenticatedRequest('http://test/api/messages/notif-update', {
         method: 'POST',
@@ -234,10 +223,7 @@ describe('Notifications API', () => {
         priority: 'normal',
         status: 'unread',
       };
-      await env.MESSAGES.put(
-        `${testUserEmail}:notif-immutable`,
-        JSON.stringify(notification),
-      );
+      await env.MESSAGES.put(`${testUserEmail}:notif-immutable`, JSON.stringify(notification));
 
       const request = createAuthenticatedRequest('http://test/api/messages/notif-immutable', {
         method: 'POST',
@@ -293,10 +279,7 @@ describe('Notifications API', () => {
         owner: testUserEmail,
         date: new Date().toISOString(),
       };
-      await env.MESSAGES.put(
-        `${testUserEmail}:notif-delete`,
-        JSON.stringify(notification),
-      );
+      await env.MESSAGES.put(`${testUserEmail}:notif-delete`, JSON.stringify(notification));
 
       const request = createAuthenticatedRequest('http://test/api/messages/notif-delete', {
         method: 'DELETE',
@@ -313,4 +296,3 @@ describe('Notifications API', () => {
     });
   });
 });
-
