@@ -5,7 +5,7 @@
 
 import { fetchHelixSheet } from './helixutil.js';
 
-const PERMISSIONS = { ADMIN_SYSTEM: 'admin' };
+const PERMISSIONS = { ADMIN_SYSTEM: 'admin-system' };
 
 /**
  * Generate a unique message ID

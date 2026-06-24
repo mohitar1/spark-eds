@@ -24,7 +24,7 @@ export function createShareAssetButton({ assetId, filename, disabled = false }) 
   button.removeAttribute('aria-label');
 
   const icon = document.createElement('span');
-  icon.className = 'icon-mask icon-mask--share';
+  icon.className = 'icon-mask icon-mask-share';
   icon.setAttribute('aria-hidden', 'true');
   button.appendChild(icon);
   const fallbackCopyToClipboard = (text) => {

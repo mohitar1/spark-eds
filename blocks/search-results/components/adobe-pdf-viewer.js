@@ -5,6 +5,7 @@
  * Converted from React AdobePDFViewer.tsx
  */
 
+// eslint-disable-next-line import/no-unresolved
 import { loadAdobePdfScript, getAdobeClientId } from '../../pdfviewer/pdfviewer.js';
 
 // Module state

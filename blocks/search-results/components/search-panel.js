@@ -106,15 +106,15 @@ export async function createSearchPanel(container, callbacks) {
         <div class="right-panel-group">
           <div class="card-view-container">
             <button class="view-toggle-btn grid-view-btn ${viewType === 'grid' ? 'active' : ''}" type="button" data-tooltip="${gridViewLabel}" aria-pressed="${viewType === 'grid'}">
-              <span class="icon-mask icon-mask--gridview" aria-hidden="true"></span>
+              <span class="icon-mask icon-mask-gridview" aria-hidden="true"></span>
             </button>
             <button class="view-toggle-btn list-view-btn ${viewType === 'list' ? 'active' : ''}" type="button" data-tooltip="${listViewLabel}" aria-pressed="${viewType === 'list'}">
-              <span class="icon-mask icon-mask--listview" aria-hidden="true"></span>
+              <span class="icon-mask icon-mask-listview" aria-hidden="true"></span>
             </button>
           </div>
           
           <button class="filter-button" type="button" aria-label="${filterLabel}">
-            <span class="icon-mask icon-mask--filter-search filter-icon" aria-hidden="true"></span>
+            <span class="icon-mask icon-mask-filter-search filter-icon" aria-hidden="true"></span>
             ${isMobileFilterOpen ? hideFilterLabel : showFilterLabel}
           </button>
         </div>

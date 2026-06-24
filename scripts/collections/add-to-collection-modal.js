@@ -414,7 +414,9 @@ async function handleAddToSelectedCollections(event) {
     hideCollectionsModal();
 
     if (updatedCount > 0) {
-      assets.forEach((asset) => dispatchAssetAction(ASSET_AUDIT_ACTIONS.COLLECTION_ADD, asset.assetId || asset.id));
+      assets.forEach((asset) => {
+        dispatchAssetAction(ASSET_AUDIT_ACTIONS.COLLECTION_ADD, asset.assetId || asset.id);
+      });
       showToast('ASSETS ADDED TO COLLECTIONS SUCCESSFULLY', 'success');
     } else {
       showToast('Failed to add assets to collections', 'error');

@@ -474,7 +474,7 @@ function render(callbacks) {
     filtersTabContent = `
           <div class="facet-filter-list facet-filters-loading" id="facet-list">
             <div class="facet-loading-spinner">
-              <div class="loading-spinner loading-spinner--lg" role="status" aria-label="Loading"></div>
+              <div class="loading-spinner loading-spinner-lg" role="status" aria-label="Loading"></div>
             </div>
           </div>
         `;
@@ -545,7 +545,7 @@ function showFacetSpinner(facetId) {
   const loadingTagsLabel = ph(placeholders, 'loadingTags', 'Loading...');
   checkboxList.innerHTML = `
     <div class="facet-loading-spinner">
-      <div class="loading-spinner loading-spinner--sm" role="status" aria-label="Loading"></div>
+      <div class="loading-spinner loading-spinner-sm" role="status" aria-label="Loading"></div>
       <span>${loadingTagsLabel}</span>
     </div>
   `;
@@ -1109,7 +1109,7 @@ async function openFacetModal(facetKey, callbacks) {
           </div>
         </div>
         <div class="facet-modal-values-list">
-          <div class="facet-loading-spinner"><div class="loading-spinner loading-spinner--sm" role="status" aria-label="Loading"></div><span>Loading...</span></div>
+          <div class="facet-loading-spinner"><div class="loading-spinner loading-spinner-sm" role="status" aria-label="Loading"></div><span>Loading...</span></div>
         </div>
       </div>
       <div class="facet-modal-footer">
@@ -2200,7 +2200,7 @@ function renderFacetSections(excFacets, facetsData, facetCheckedState, expandedF
         checkboxListHtml = `
           <div class="facet-filter-checkbox-list facet-tags-loading">
             <div class="facet-loading-spinner">
-              <div class="loading-spinner loading-spinner--sm" role="status" aria-label="Loading"></div>
+              <div class="loading-spinner loading-spinner-sm" role="status" aria-label="Loading"></div>
               <span>${loadingTagsLabel}</span>
             </div>
           </div>

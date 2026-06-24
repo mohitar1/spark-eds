@@ -67,7 +67,7 @@
 
   /* fonts */
   --body-font-family: var(--type-base-font-family);
-  --heading-font-family: Baskerville, serif;
+  --heading-font-family: baskerville, serif;
 
   /* font sizes */
   --body-font-size-m: 18px;
@@ -189,7 +189,9 @@ body > main {
 }
 
 /* -------------------------------------------------------------------------- */
+
 /* Shared UI components                                                       */
+
 /* -------------------------------------------------------------------------- */
 
 /* Themeable toggle — checkbox variant */
@@ -293,36 +295,40 @@ body > main {
   display: block;
   flex-shrink: 0;
   background-color: var(--icon-color, var(--dark-color));
-  -webkit-mask: var(--icon-mask) center / contain no-repeat;
   mask: var(--icon-mask) center / contain no-repeat;
 }
 
-.icon-mask--gridview {
+.icon-mask-gridview {
   --icon-mask: url('/icons/gridview.svg');
+
   width: 18px;
   height: 18px;
 }
 
-.icon-mask--listview {
+.icon-mask-listview {
   --icon-mask: url('/icons/listview.svg');
+
   width: 20px;
   height: 16px;
 }
 
-.icon-mask--filter-search {
+.icon-mask-filter-search {
   --icon-mask: url('/icons/filter-search.svg');
+
   width: 16px;
   height: 16px;
 }
 
-.icon-mask--share {
+.icon-mask-share {
   --icon-mask: url('/icons/share.svg');
+
   width: 16px;
   height: 16px;
 }
 
-.icon-mask--arrow {
+.icon-mask-arrow {
   --icon-mask: url('/icons/arrow-black.svg');
+
   width: 20px;
   height: 20px;
 }
@@ -1268,12 +1274,12 @@ picture.missing img {
   flex-shrink: 0;
 }
 
-.loading-spinner--lg {
+.loading-spinner-lg {
   width: 48px;
   height: 48px;
 }
 
-.loading-spinner--sm {
+.loading-spinner-sm {
   width: 24px;
   height: 24px;
   border-width: 2px;
@@ -1365,7 +1371,6 @@ main > .section + .background > div {
 }
 
 @media (width >= 900px) {
-  
 .frescopa-background-red {
   background-color: var(--color-red);
 }

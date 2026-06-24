@@ -11,7 +11,7 @@ import {
   mapCountryToRegion,
   buildDateRange as sharedBuildDateRange,
 } from '../../scripts/analytics/data-utils.js';
-import { buildSimulatedLoginMetrics } from '../../scripts/analytics/simulated-login-metrics.js';
+import buildSimulatedLoginMetrics from '../../scripts/analytics/simulated-login-metrics.js';
 
 export {
   COUNTRY_TO_REGION,

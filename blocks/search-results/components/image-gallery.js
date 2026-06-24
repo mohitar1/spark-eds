@@ -136,7 +136,7 @@ export async function createImageGallery(container, callbacks) {
       <div class="image-grid-wrapper">
         ${isLoading && visibleImages.length === 0 ? `
           <div class="loading-container" role="status" aria-live="polite">
-            <div class="loading-spinner loading-spinner--lg" aria-hidden="true"></div>
+            <div class="loading-spinner loading-spinner-lg" aria-hidden="true"></div>
           </div>
         ` : ''}
         ${isLoading && visibleImages.length > 0 ? '<div class="search-overlay"></div>' : ''}
@@ -153,7 +153,7 @@ export async function createImageGallery(container, callbacks) {
           </div>
           ${state.isLoadingMore ? `
             <div class="loading-more-container">
-              <div class="loading-spinner loading-spinner--sm" role="status" aria-label="Loading"></div>
+              <div class="loading-spinner loading-spinner-sm" role="status" aria-label="Loading"></div>
             </div>
           ` : ''}
           ${!state.isLoadingMore && hasMorePages ? `
@@ -303,7 +303,7 @@ export async function createImageGallery(container, callbacks) {
     if (state.isLoadingMore) {
       const loadingDiv = document.createElement('div');
       loadingDiv.className = 'loading-more-container';
-      loadingDiv.innerHTML = '<div class="loading-spinner loading-spinner--sm" role="status" aria-label="Loading"></div>';
+      loadingDiv.innerHTML = '<div class="loading-spinner loading-spinner-sm" role="status" aria-label="Loading"></div>';
       gridWrapper.appendChild(loadingDiv);
     } else if (hasMorePages) {
       const loadMoreDiv = document.createElement('div');

@@ -18,7 +18,7 @@ function demoCount(year, monthIndex) {
  * @param {number} filters.selectedYear
  * @param {number} filters.selectedMonth - 0-11
  */
-export function buildSimulatedLoginMetrics(filters) {
+export default function buildSimulatedLoginMetrics(filters) {
   const { viewType, selectedYear, selectedMonth } = filters;
 
   const uniqueUsersByMonth = MONTH_NAMES.map((month, index) => ({

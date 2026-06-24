@@ -235,7 +235,6 @@
   width: 20px;
   height: 20px;
   background-color: var(--dark-color);
-  -webkit-mask: url('/icons/arrow-black.svg') center / contain no-repeat;
   mask: url('/icons/arrow-black.svg') center / contain no-repeat;
   vertical-align: bottom;
   transition: transform 0s ease, background-color 0.2s ease;

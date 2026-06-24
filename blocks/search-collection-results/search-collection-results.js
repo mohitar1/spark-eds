@@ -744,8 +744,8 @@ export default async function decorate(block) {
     listBtn.classList.toggle('active', view === 'list');
     listBtn.setAttribute('aria-pressed', view === 'list' ? 'true' : 'false');
     if (!gridBtn.querySelector('.icon-mask')) {
-      gridBtn.innerHTML = '<span class="icon-mask icon-mask--gridview" aria-hidden="true"></span>';
-      listBtn.innerHTML = '<span class="icon-mask icon-mask--listview" aria-hidden="true"></span>';
+      gridBtn.innerHTML = '<span class="icon-mask icon-mask-gridview" aria-hidden="true"></span>';
+      listBtn.innerHTML = '<span class="icon-mask icon-mask-listview" aria-hidden="true"></span>';
     }
     results.textContent = '';
     results.className = `scr-results scr-${view}`;
