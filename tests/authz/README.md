@@ -67,7 +67,7 @@ To add a new test user, add an entry to the `testUsers` array. If it tests restr
 
 ### Where the user data comes from
 
-The test users map to entries configured in the permission simulator, documented in the [KOAssets Demo and Validation Script — Access Control](https://wiki.corp.adobe.com/display/WEM/KOAssets+-+Demo+and+Validation+Script#KOAssetsDemoandValidationScript-AccessControl) wiki page.
+The test users map to entries configured in the permission simulator, documented in the [Spark Demo and Validation Script — Access Control](https://wiki.corp.adobe.com/display/WEM/Spark+-+Demo+and+Validation+Script#SparkDemoandValidationScript-AccessControl) wiki page.
 
 The relevant permission sheets are:
 

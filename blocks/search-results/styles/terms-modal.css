@@ -1,0 +1,240 @@
+/* Terms and Conditions Modal Styles */
+
+/* ==========================================================================
+   Modal Overlay
+   ========================================================================== */
+
+.terms-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(0 0 0 / 85%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 40px 20px;
+  overflow-y: auto;
+}
+
+/* ==========================================================================
+   Modal Container
+   ========================================================================== */
+
+.terms-modal-container {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgb(0 0 0 / 15%);
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  animation: terms-modal-fade-in 0.3s ease-out;
+  overflow: hidden; /* Clip children to rounded corners */
+}
+
+@keyframes terms-modal-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ==========================================================================
+   Modal Header
+   ========================================================================== */
+
+.terms-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e4e4e4;
+  flex-shrink: 0;
+}
+
+.terms-modal-title {
+  margin: 0;
+  font-size: var(--font-size-05);
+  font-weight: 700;
+  color: #333;
+}
+
+.terms-modal-close {
+  border: none;
+  background: none;
+  font-size: var(--font-size-07);
+  line-height: 1;
+  cursor: pointer;
+  padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: #666;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.terms-modal-close:hover {
+  background-color: var(--light-color);
+  color: #333;
+}
+
+.terms-modal-close .close-icon {
+  display: block;
+}
+
+/* ==========================================================================
+   Modal Content
+   ========================================================================== */
+
+.terms-modal-content {
+  padding: 24px;
+  overflow: hidden auto;
+  flex: 1;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  border-radius: 0 0 16px 16px; /* Match container's bottom corners */
+}
+
+/* Reset styles for fragment content */
+.terms-modal-content main {
+  padding: 0;
+  margin: 0;
+}
+
+.terms-modal-content .section {
+  padding: 0;
+  margin: 0;
+}
+
+/* Typography for terms content */
+.terms-modal-content h1,
+.terms-modal-content h2,
+.terms-modal-content h3,
+.terms-modal-content h4 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: #333;
+}
+
+.terms-modal-content h1:first-child,
+.terms-modal-content h2:first-child,
+.terms-modal-content h3:first-child {
+  margin-top: 0;
+}
+
+.terms-modal-content p {
+  margin: 0 0 1em;
+  line-height: var(--line-height-03);
+  color: #444;
+}
+
+.terms-modal-content ul,
+.terms-modal-content ol {
+  margin: 0 0 1em;
+  padding-left: 1.5em;
+}
+
+.terms-modal-content li {
+  margin-bottom: 0.5em;
+  line-height: var(--line-height-03);
+}
+
+.terms-modal-content a {
+  color: var(--color-error);
+  text-decoration: none;
+}
+
+.terms-modal-content a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Loading State
+   ========================================================================== */
+
+.terms-modal-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.terms-modal-loading .loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e4e4e4;
+  border-top-color: var(--color-error);
+  border-radius: 50%;
+  animation: terms-spinner 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes terms-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.terms-modal-loading p {
+  margin: 0;
+  font-size: var(--font-size-02);
+}
+
+/* ==========================================================================
+   Error State
+   ========================================================================== */
+
+.terms-modal-error {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.terms-modal-error p {
+  margin: 0 0 8px;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+/* Tablet (iPad landscape and smaller tablets) */
+@media (width <= 1024px) {
+  .terms-modal-container {
+    max-width: 700px;
+  }
+}
+
+/* Mobile and iPad portrait */
+@media (width <= 768px) {
+  .terms-modal-overlay {
+    padding: 20px 10px;
+  }
+
+  .terms-modal-container {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .terms-modal-header {
+    padding: 16px 20px;
+  }
+
+  .terms-modal-content {
+    padding: 20px;
+  }
+
+  .terms-modal-title {
+    font-size: var(--font-size-04);
+  }
+}

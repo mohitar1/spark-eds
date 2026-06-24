@@ -12,7 +12,7 @@ then replicate modified users to publish.
 Required:
   --host <url>              AEM author URL (e.g. https://author-pXXXXX-eXXXXXX.adobeaemcloud.com)
   --credentials <user:pass> AEM admin credentials (or set AEM_CREDENTIALS env var)
-  --impersonator <id>       System user authorizable ID to add (e.g. koassets-contenthub)
+  --impersonator <id>       System user authorizable ID to add (e.g. spark-contenthub)
 
 Optional:
   --execute                 Actually make changes (default: dry-run / report mode)

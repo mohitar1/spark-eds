@@ -56,8 +56,10 @@ export async function originHelix(request, env) {
   searchParams.sort();
 
   const helixOrigin = request.helixOrigin || env.HELIX_ORIGIN;
-  if (!helixOrigin.match(/^http:\/\/localhost:\d+$/)
-      && !helixOrigin.match(/^https:\/\/.*--.*--.*\.(?:aem|hlx)\.(live|page)$/)) {
+  if (
+    !helixOrigin.match(/^http:\/\/localhost:\d+$/) &&
+    !helixOrigin.match(/^https:\/\/.*--.*--.*\.(?:aem|hlx)\.(live|page)$/)
+  ) {
     return new Response('Invalid HELIX_ORIGIN', { status: 500 });
   }
   const protocolAndHost = helixOrigin.split('://');
@@ -120,4 +122,4 @@ export async function originHelix(request, env) {
   resp.headers.delete('age');
   resp.headers.delete('x-robots-tag');
   return resp;
-};
+}

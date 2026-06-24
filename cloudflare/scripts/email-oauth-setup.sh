@@ -62,7 +62,7 @@ NC='\033[0m' # No Color
 
 echo ""
 echo -e "${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║       OAuth2 SMTP Setup Helper for KO Assets               ║${NC}"
+echo -e "${BLUE}║       OAuth2 SMTP Setup Helper for Spark               ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
@@ -279,8 +279,8 @@ echo -e "${YELLOW}Step 5: Configure Cloudflare Secrets${NC}"
 echo ""
 echo "Add these secrets to Cloudflare Secret Store (if not already done):"
 echo ""
-echo -e "  ${BLUE}KOASSETS_SMTP_USERNAME${NC}=${SMTP_EMAIL}"
-echo -e "  ${BLUE}KOASSETS_MICROSOFT_ENTRA_CLIENT_SECRET${NC}=<your client secret>"
+echo -e "  ${BLUE}SPARK_SMTP_USERNAME${NC}=${SMTP_EMAIL}"
+echo -e "  ${BLUE}SPARK_MICROSOFT_ENTRA_CLIENT_SECRET${NC}=<your client secret>"
 echo ""
 if [ "$TENANT_ID" != "$DEFAULT_TENANT_ID" ]; then
     echo -e "${YELLOW}⚠️  You're using a non-default tenant. Also update wrangler.toml:${NC}"
@@ -290,7 +290,7 @@ fi
 echo -e "${BLUE}Notes:${NC}"
 echo "• Refresh token: Valid for 90 days of inactivity (auto-refreshed on each email send)"
 echo "• Client secret: Expires per your Entra config (max 24 months). Set a calendar reminder!"
-echo "  When rotating: update KOASSETS_MICROSOFT_ENTRA_CLIENT_SECRET in Cloudflare (no re-auth needed)"
+echo "  When rotating: update SPARK_MICROSOFT_ENTRA_CLIENT_SECRET in Cloudflare (no re-auth needed)"
 echo ""
 
 # Offer to append client secret to .secrets (for local dev)
@@ -302,8 +302,8 @@ if [ -f "$SECRETS_FILE" ]; then
     if [ "$APPEND_CHOICE" = "y" ] || [ "$APPEND_CHOICE" = "Y" ]; then
         echo "" >> "$SECRETS_FILE"
         echo "# SMTP OAuth2 Configuration (added by oauth-setup.sh)" >> "$SECRETS_FILE"
-        echo "KOASSETS_SMTP_USERNAME=${SMTP_EMAIL}" >> "$SECRETS_FILE"
-        echo "KOASSETS_MICROSOFT_ENTRA_CLIENT_SECRET=${CLIENT_SECRET}" >> "$SECRETS_FILE"
+        echo "SPARK_SMTP_USERNAME=${SMTP_EMAIL}" >> "$SECRETS_FILE"
+        echo "SPARK_MICROSOFT_ENTRA_CLIENT_SECRET=${CLIENT_SECRET}" >> "$SECRETS_FILE"
         echo ""
         echo -e "${GREEN}✓ Added to .secrets file${NC}"
     fi

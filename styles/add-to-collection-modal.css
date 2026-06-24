@@ -79,7 +79,7 @@
   height: 80px;
   border-radius: 8px;
   overflow: hidden;
-  background-color: #f0f0f0;
+  background-color: var(--light-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -157,7 +157,7 @@
   height: 18px;
   margin: 2px 0 0;
   cursor: pointer;
-  accent-color: #e60012;
+  accent-color: var(--button-primary);
 }
 
 .collection-label {
@@ -214,7 +214,7 @@
 }
 
 .no-collections-message a {
-  color: #e60012;
+  color: var(--button-primary);
   text-decoration: none;
   font-weight: 500;
 }
@@ -226,7 +226,7 @@
 .error {
   text-align: center;
   padding: 1rem;
-  color: #e60012;
+  color: var(--button-primary);
   font-weight: 500;
 }
 
@@ -295,7 +295,7 @@
 /* Modal buttons use global primary-button and secondary-button classes from styles.css */
 
 .btn-add {
-  background-color: #e60012;
+  background-color: var(--button-primary);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -366,12 +366,12 @@
 .add-to-collection-modal .load-more-button {
   align-items: center;
   background: none;
-  border: 1px solid #ed0000;
+  border: 1px solid var(--primary-color);
   border-radius: 50px;
-  color: #ed0000;
+  color: var(--primary-color);
   cursor: pointer;
   display: inline-flex;
-  font-family: "TCCC UnityHeadline", "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-family: var(--heading-font-family), "Helvetica Neue", Arial, Helvetica, sans-serif;
   font-size: 14px;
   font-weight: 400;
   gap: 10px;
@@ -382,7 +382,7 @@
 
 .add-to-collection-modal .load-more-button:hover {
   background-color: transparent;
-  color: #ed0000;
+  color: var(--primary-color);
   transition: all 0.3s ease;
 }
 

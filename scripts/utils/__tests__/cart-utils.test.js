@@ -442,7 +442,7 @@ describe('Cart Utils', () => {
         if (key === 'cartAssetItems') {
           return JSON.stringify(cartItems);
         }
-        if (key === 'koassets-cart-background-jobs') {
+        if (key === 'spark-cart-background-jobs') {
           return null; // No existing jobs
         }
         return null;
@@ -464,7 +464,7 @@ describe('Cart Utils', () => {
 
       // Verify job was saved to localStorage
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        'koassets-cart-background-jobs',
+        'spark-cart-background-jobs',
         expect.stringContaining(result.jobId),
       );
     });

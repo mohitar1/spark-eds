@@ -1,8 +1,8 @@
 {
-  "name": "koassets",
+  "name": "spark-eds",
   "private": true,
   "version": "1.0.0",
-  "description": "KO Assets Portal",
+  "description": "Spark Assets Portal",
   "scripts": {
     "postinstall": "cd cloudflare && npm install",
     "install-all": "echo 'Deprecated: use npm install instead' && npm install",

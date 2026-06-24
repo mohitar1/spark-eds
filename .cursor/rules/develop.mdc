@@ -8,8 +8,7 @@ The full stack inside this monorepo includes:
 
 - Cloudflare worker inside the `cloudflare` folder
 - Adobe Experience Manager EDS / Helix (https://aem.live) in the root folder, notably folders `scripts`, `styles`, `blocks`.
-- React components for the search UI inside the `koassets-react` folder.
-- The EDS content is not in this git repositoriy, but authored in DA: <https://da.live/#/the-coca-cola-company/koassets>
+- The EDS content is not in this git repositoriy, but authored in DA.
 
 To run and debug the full stack locally:
 

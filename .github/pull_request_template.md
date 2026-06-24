@@ -3,5 +3,5 @@ Please always provide the [GitHub issue(s)](../issues) your PR is for, as well a
 Fix #<gh-issue-id>
 
 Test URLs:
-- Before: https://main--koassets--the-coca-cola-company.aem.live/
-- After: https://<branch>--koassets--the-coca-cola-company.aem.live/
+- Before: https://main--spark-eds--adobe.aem.live/
+- After: https://<branch>--spark-eds--adobe.aem.live/

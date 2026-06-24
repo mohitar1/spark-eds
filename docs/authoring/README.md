@@ -39,13 +39,8 @@ Blocks are reusable content components. Each block has specific authoring syntax
 | [Fragment](blocks/fragment.md) | Include reusable content from other pages |
 | [Team Cards](blocks/team-cards.md) | Team member display grid |
 | [Buttons](blocks/buttons.md) | Call-to-action link styling |
-| [Content Stores](blocks/content-stores.md) | Browsable asset libraries with tabs and search |
 
 See the [Blocks Overview](blocks/README.md) for general information on how blocks work.
-
-### Content Stores
-
-- [Content Stores](content-stores.md) - Creating and managing browsable asset libraries
 
 ### Additional Topics
 

@@ -22,7 +22,7 @@ export const CollectionCreatedByMeVisibility = Object.freeze({
   PUBLIC: 'public', // anyone can edit (accessLevel=public)
 });
 
-/** Legacy `?rel=` when inferring list scope without `?view=` (my-collections URL parsing). */
+/** Backward-compatible `?rel=` value when inferring list scope without `?view=`. */
 export const CollectionListUrlRel = Object.freeze({
   ALL: 'all',
 });

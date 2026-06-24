@@ -2,7 +2,7 @@
 /**
  * Create Collections and Items Script
  *
- * This script reads collections.json and creates collections in KOAssets,
+ * This script reads collections.json and creates collections in Spark Assets,
  * then adds items to each collection.
  *
  * Usage:
@@ -21,8 +21,8 @@
  *
  * Configuration:
  *   Create a 'source.config' file with:
- *     KOASSETS_HOST=https://your-koassets-host.com
- *     KOASSETS_COOKIE=your-session-cookie
+ *     SPARK_HOST=https://your-spark-host.com
+ *     SPARK_COOKIE=your-session-cookie
  */
 
 /* eslint-disable no-console */
@@ -79,21 +79,21 @@ function parseConfig(configPath) {
 }
 
 /**
- * Load KOAssets config
+ * Load Spark Assets config
  */
 function loadConfig() {
   if (!fs.existsSync(CONFIG_FILE)) {
     console.error(`Error: Config file not found: ${CONFIG_FILE}`);
     console.error('Create a source.config file with:');
-    console.error('  KOASSETS_HOST=https://your-koassets-host.com');
-    console.error('  KOASSETS_COOKIE=your-session-cookie');
+    console.error('  SPARK_HOST=https://your-spark-host.com');
+    console.error('  SPARK_COOKIE=your-session-cookie');
     process.exit(1);
   }
 
   const config = parseConfig(CONFIG_FILE);
 
-  if (!config.KOASSETS_HOST || !config.KOASSETS_COOKIE) {
-    console.error('Error: KOASSETS_HOST and KOASSETS_COOKIE must be set in source.config');
+  if (!config.SPARK_HOST || !config.SPARK_COOKIE) {
+    console.error('Error: SPARK_HOST and SPARK_COOKIE must be set in source.config');
     process.exit(1);
   }
 
@@ -167,22 +167,22 @@ async function createCollection(item, host, cookie) {
   const assetIds = items.map((i) => i.id);
 
   // Filter out empty strings from viewer/editor arrays
-  const viewers = (item['tccc:assetCollectionViewer'] || []).filter((v) => v && v.trim());
-  const editors = (item['tccc:assetCollectionEditor'] || []).filter((e) => e && e.trim());
+  const viewers = (item['custom:assetCollectionViewer'] || []).filter((v) => v && v.trim());
+  const editors = (item['custom:assetCollectionEditor'] || []).filter((e) => e && e.trim());
 
   const payload = {
     title: item['jcr:title'] || 'Untitled',
     accessLevel: 'private',
     items,
-    'tccc:metadata': {
-      'tccc:acl': {
-        'tccc:assetCollectionOwner': item['tccc:assetCollectionOwner'] || '',
-        'tccc:assetCollectionViewer': viewers,
-        'tccc:assetCollectionEditor': editors,
+    'custom:metadata': {
+      'custom:acl': {
+        'custom:assetCollectionOwner': item['custom:assetCollectionOwner'] || '',
+        'custom:assetCollectionViewer': viewers,
+        'custom:assetCollectionEditor': editors,
       },
     },
     description: item['jcr:description'] || '',
-    createdBy: 'ko-migration-tool',
+    createdBy: 'spark-migration-tool',
     lastModifiedDate: item['jcr:lastModified'] || '', // To be displayed in the UI until the collection is updated, then it will be removed
   };
 
@@ -282,7 +282,7 @@ async function processCollection(item, index, total, host, cookie) {
  */
 async function processCollections(inputFile) {
   // Load config
-  const { KOASSETS_HOST, KOASSETS_COOKIE } = loadConfig();
+  const { SPARK_HOST, SPARK_COOKIE } = loadConfig();
 
   // Load collections
   const resolvedInput = path.isAbsolute(inputFile)
@@ -298,7 +298,7 @@ async function processCollections(inputFile) {
   console.log('Create Collections and Items');
   console.log('='.repeat(60));
   console.log(`Input file: ${resolvedInput}`);
-  console.log(`Host: ${KOASSETS_HOST}`);
+  console.log(`Host: ${SPARK_HOST}`);
   console.log(`Concurrency: ${globalConcurrency}`);
   console.log(`Dry run: ${dryRun}`);
   console.log('='.repeat(60));
@@ -308,9 +308,9 @@ async function processCollections(inputFile) {
 
   // Filter collections: only process those with non-empty owner/editor/viewer
   const collections = allCollections.filter((col) => {
-    const owner = col['tccc:assetCollectionOwner'];
-    const editors = col['tccc:assetCollectionEditor'] || [];
-    const viewers = col['tccc:assetCollectionViewer'] || [];
+    const owner = col['custom:assetCollectionOwner'];
+    const editors = col['custom:assetCollectionEditor'] || [];
+    const viewers = col['custom:assetCollectionViewer'] || [];
 
     // Check if owner is non-empty string
     const hasOwner = owner && typeof owner === 'string' && owner.trim() !== '';
@@ -340,8 +340,8 @@ async function processCollections(inputFile) {
         item,
         i + batchIndex,
         collections.length,
-        KOASSETS_HOST,
-        KOASSETS_COOKIE,
+        SPARK_HOST,
+        SPARK_COOKIE,
       )),
     );
 
@@ -370,7 +370,7 @@ async function processCollections(inputFile) {
  * @param {object} failedRecord - The failed record from created-collections.json
  * @param {number} index - Current index for logging
  * @param {number} total - Total count for logging
- * @param {string} host - KOAssets host
+ * @param {string} host - Spark Assets host
  * @param {string} cookie - Session cookie
  * @returns {Promise<object>} Updated result object
  */
@@ -456,7 +456,7 @@ async function retryFailedCollection(failedRecord, index, total, host, cookie) {
  */
 async function retryFailedCollections() {
   // Load config
-  const { KOASSETS_HOST, KOASSETS_COOKIE } = loadConfig();
+  const { SPARK_HOST, SPARK_COOKIE } = loadConfig();
 
   // Check if output file exists
   if (!fs.existsSync(OUTPUT_FILE)) {
@@ -469,7 +469,7 @@ async function retryFailedCollections() {
   console.log('Retry Failed Collections');
   console.log('='.repeat(60));
   console.log(`Input file: ${OUTPUT_FILE}`);
-  console.log(`Host: ${KOASSETS_HOST}`);
+  console.log(`Host: ${SPARK_HOST}`);
   console.log(`Concurrency: ${globalConcurrency}`);
   console.log(`Dry run: ${dryRun}`);
   console.log('='.repeat(60));
@@ -510,8 +510,8 @@ async function retryFailedCollections() {
         record,
         i + batchIndex,
         failedWithIndices.length,
-        KOASSETS_HOST,
-        KOASSETS_COOKIE,
+        SPARK_HOST,
+        SPARK_COOKIE,
       )),
     );
 
@@ -566,9 +566,9 @@ Options:
 
 Filtering:
   By default, only collections with non-empty ACL are processed:
-    - tccc:assetCollectionOwner (non-empty string)
-    - tccc:assetCollectionEditor (array with non-empty values)
-    - tccc:assetCollectionViewer (array with non-empty values)
+    - custom:assetCollectionOwner (non-empty string)
+    - custom:assetCollectionEditor (array with non-empty values)
+    - custom:assetCollectionViewer (array with non-empty values)
   Collections without any of these are skipped.
 
 Retry Mode:
@@ -578,8 +578,8 @@ Retry Mode:
 
 Configuration:
   Create a 'source.config' file in the same directory with:
-    KOASSETS_HOST=https://your-koassets-host.com
-    KOASSETS_COOKIE=your-session-cookie
+    SPARK_HOST=https://your-spark-host.com
+    SPARK_COOKIE=your-session-cookie
 
 Examples:
   node create-collections-and-items.js

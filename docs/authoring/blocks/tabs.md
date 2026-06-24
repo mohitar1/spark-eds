@@ -69,7 +69,7 @@ Tab content can include other blocks. Create the tab content with cards:
 
 ## Live Examples
 
-- Content Stores page: [da.live/edit#/.../all-content-stores](https://da.live/edit#/the-coca-cola-company/koassets/all-content-stores)
+- Content Stores page: [da.live/edit#/.../all-content-stores](https://da.live/edit#/adobe/spark-eds/all-content-stores)
 
 ## Tips
 

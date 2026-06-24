@@ -47,7 +47,7 @@ Each row becomes one accordion item. Add as many rows as needed.
 
 | accordion |  |
 |-----------|--|
-| What is KO Assets? | KO Assets is the digital asset management platform for Coca-Cola, providing access to brand-approved marketing materials. |
+| What is Spark? | Spark is the digital asset management platform for Coca-Cola, providing access to brand-approved marketing materials. |
 | How do I download assets? | Use the search to find assets, add them to your cart, then proceed to download. You may need to specify intended use for certain assets. |
 | Who do I contact for help? | Email assetmanagers@coca-cola.com or submit a Support Portal ticket. |
 
@@ -55,7 +55,7 @@ Each row becomes one accordion item. Add as many rows as needed.
 
 | accordion |  |
 |-----------|--|
-| Getting Started | Welcome to KO Assets! Start by using the search bar to find the content you need. Use filters to narrow down results by brand, campaign, or asset type. |
+| Getting Started | Welcome to Spark! Start by using the search bar to find the content you need. Use filters to narrow down results by brand, campaign, or asset type. |
 | Account Settings | Access your account settings by clicking on "My Account" in the header. Here you can update your preferences and view your download history. |
 | Troubleshooting | If you're having issues, try clearing your browser cache and logging in again. For persistent problems, contact support. |
 
@@ -69,8 +69,8 @@ Each row becomes one accordion item. Add as many rows as needed.
 
 ## Live Examples
 
-- Welcome page accordion: [da.live/edit#/.../public/welcome](https://da.live/edit#/the-coca-cola-company/koassets/public/welcome)
-- FAQ page: [da.live/edit#/.../help/faq](https://da.live/edit#/the-coca-cola-company/koassets/help/faq)
+- Welcome page accordion: [da.live/edit#/.../public/welcome](https://da.live/edit#/adobe/spark-eds/public/welcome)
+- FAQ page: [da.live/edit#/.../help/faq](https://da.live/edit#/adobe/spark-eds/help/faq)
 
 ## Tips
 

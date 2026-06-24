@@ -2,7 +2,7 @@
  * User Logins API
  * Manages user login data captured at authentication for reporting purposes
  *
- * Uses D1 database (koassets-user-logins) with USER_LOGINS binding.
+ * Uses D1 database (spark-user-logins) with USER_LOGINS binding.
  * Data is upserted on every login from auth.js.
  */
 
@@ -10,7 +10,7 @@ import { error } from 'itty-router';
 
 // Constants
 const DELIMITER = '|';
-const CSV_FILENAME_PREFIX = 'koassets-user-logins';
+const CSV_FILENAME_PREFIX = 'spark-user-logins';
 const REQUIRED_PERMISSION = 'admin-reports';
 
 /**
@@ -53,7 +53,7 @@ export async function upsertUserLogin(env, loginData) {
   }
 
   try {
-    const { email, koid, fullName, title, country, employeeType, company, roles, permissions } = loginData;
+    const { email, userId, fullName, title, country, employeeType, company, roles, permissions } = loginData;
 
     // Parse name
     const { firstName, lastName } = parseName(fullName);
@@ -68,14 +68,14 @@ export async function upsertUserLogin(env, loginData) {
     // If email exists, updates all fields EXCEPT first_login_date
     const result = await env.USER_LOGINS.prepare(`
       INSERT INTO user_logins (
-        email, koid,
+        email, user_id,
         full_name, first_name, last_name, title,
         country, employee_type, company,
         roles, permissions,
         first_login_date, last_login_date, last_updated
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(email) DO UPDATE SET
-        koid = excluded.koid,
+        user_id = excluded.user_id,
         full_name = excluded.full_name,
         first_name = excluded.first_name,
         last_name = excluded.last_name,
@@ -90,7 +90,7 @@ export async function upsertUserLogin(env, loginData) {
     `)
       .bind(
         email,
-        koid || '',
+        userId || '',
         fullName || '',
         firstName,
         lastName,
@@ -108,7 +108,7 @@ export async function upsertUserLogin(env, loginData) {
 
     console.info('[User Logins] Upserted login:', {
       email,
-      koid,
+      userId: userId || '',
       success: result.success,
     });
   } catch (err) {
@@ -181,7 +181,7 @@ export async function exportUserLoginsCSV(request, env) {
     // For datasets larger than 100K, consider implementing pagination
     const result = await env.USER_LOGINS.prepare(`
       SELECT
-        koid, full_name, first_name, last_name, email,
+        user_id, full_name, first_name, last_name, email,
         first_login_date, last_login_date,
         country, employee_type, title,
         roles, permissions
@@ -199,7 +199,7 @@ export async function exportUserLoginsCSV(request, env) {
     // Header row (comma-delimited)
     lines.push(
       [
-        'KO ID',
+        'User ID',
         'Full Name',
         'First Name',
         'Last Name',
@@ -218,7 +218,7 @@ export async function exportUserLoginsCSV(request, env) {
     for (const user of users) {
       lines.push(
         [
-          escapeCSVField(user.koid),
+          escapeCSVField(user.user_id),
           escapeCSVField(user.full_name),
           escapeCSVField(user.first_name),
           escapeCSVField(user.last_name),

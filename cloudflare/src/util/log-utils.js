@@ -9,10 +9,10 @@
  * Prevents full email addresses from appearing in plain text in log streams.
  *
  * @param {string} email
- * @returns {string} e.g. "john.smith@coca-cola.com" → "j***@coca-cola.com"
+ * @returns {string} e.g. "john.smith@example.com" → "j***@example.com"
  *
  * @example
- * maskEmail('john.smith@coca-cola.com') // 'j***@coca-cola.com'
+ * maskEmail('john.smith@example.com') // 'j***@example.com'
  * maskEmail('a@b.com')                  // 'a***@b.com'
  * maskEmail('@nodomain')                // '***'
  * maskEmail('')                         // '(none)'

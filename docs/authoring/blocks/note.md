@@ -82,7 +82,7 @@ Creates styled callout boxes with icons for highlighting important information, 
 
 ## Live Examples
 
-- Content Stores page: [da.live/edit#/.../all-content-stores](https://da.live/edit#/the-coca-cola-company/koassets/en/help/meet-the-team)
+- Content Stores page: [da.live/edit#/.../all-content-stores](https://da.live/edit#/adobe/spark-eds/en/help/meet-the-team)
 
 ## Tips
 

@@ -37,7 +37,7 @@ Creates a tabbed interface with accordion items inside each tab. Designed specif
 | faq |  |
 |-----|--|
 | Search |  |
-| Q1: I was expecting to see more assets than I am. Is it possible to see all assets? | A: Not all assets are visible to all KO Assets users due to legal, brand, or trademark restrictions. Your user profile may only grant access to assets you are permitted to view. |
+| Q1: I was expecting to see more assets than I am. Is it possible to see all assets? | A: Not all assets are visible to all Spark users due to legal, brand, or trademark restrictions. Your user profile may only grant access to assets you are permitted to view. |
 | Q2: What do I do if the asset I want to download or order is not on the site? | A: Please contact assetmanagers@coca-cola.com and we'll help you locate the asset. |
 | Q3: Where can I find older or historical assets? | A: Historical assets may be archived. Contact support for assistance locating older content. |
 | Download |  |
@@ -46,7 +46,7 @@ Creates a tabbed interface with accordion items inside each tab. Designed specif
 
 ## Live Examples
 
-- FAQ page: [da.live/edit#/.../help/faq](https://da.live/edit#/the-coca-cola-company/koassets/en/help/faq)
+- FAQ page: [da.live/edit#/.../help/faq](https://da.live/edit#/adobe/spark-eds/en/help/faq)
 
 ## Related
 

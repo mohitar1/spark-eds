@@ -28,7 +28,10 @@ export function parsePageExclusions(html) {
   const match = html.match(/<meta\s+name="exclude-roles"\s+content="([^"]*)"[^>]*>/i);
   if (!match) return exclusions;
 
-  const entries = match[1].split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
+  const entries = match[1]
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
   for (const entry of entries) {
     if (entry.startsWith('bottler:')) {
       const country = entry.split(':')[1];
@@ -53,9 +56,7 @@ export function parsePageExclusions(html) {
 export function isUserExcluded(user, exclusions) {
   if (user.roles?.includes('admin')) return false;
 
-  const hasExclusions = exclusions.roles.length > 0
-    || exclusions.bottlerCountries.length > 0
-    || exclusions.allBottlers;
+  const hasExclusions = exclusions.roles.length > 0 || exclusions.bottlerCountries.length > 0 || exclusions.allBottlers;
   if (!hasExclusions) return false;
 
   const userRoles = user.roles || [];

@@ -3,10 +3,10 @@
 AEM_AUTHOR=https://author-p64403-e609778.adobeaemcloud.com
 AUTHOR_AUTH_COOKIE=your-aem-author-cookie-here
 
-# KOAssets Configuration
-# Get the cookie from your browser after logging into KOAssets
-KOASSETS_HOST=https://koassets.adobecocacola.workers.dev
-KOASSETS_COOKIE=your-koassets-cookie-here
+# Spark Configuration
+# Get the cookie from your browser after logging into Spark
+SPARK_HOST=https://spark-eds.workers.dev
+SPARK_COOKIE=your-spark-cookie-here
 
 # AEM Delivery Configuration (for collection search API)
 # Bearer token for delivery API authentication

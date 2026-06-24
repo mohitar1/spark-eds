@@ -21,16 +21,18 @@
  */
 
 import { decodeJwt } from 'jose';
-import { ROLE, getRestrictedBrands } from '../user';
+import {
+  CollectionCreatedByMeVisibility,
+  CollectionListSegment,
+} from '../../../scripts/collections/collection-search-constants.js';
+import { ROLE } from '../user.js';
+import { enforceAssetMetadataAuthorization } from './asset-access.js';
 import {
   extractSearchContext,
   handleArchiveAnalytics,
   handleDownloadAnalytics,
   handleSearchAnalytics,
 } from './dm-analytics.js';
-import {
-  enforceAssetMetadataAuthorization,
-} from './asset-access.js';
 
 // ==========================================
 // IMS Authentication Constants
@@ -96,35 +98,34 @@ const PATH_COLLECTIONS = '/adobe/assets/collections';
 /** ACL field name for collection owner
  * @constant {string}
  */
-const ACL_OWNER = 'tccc:assetCollectionOwner';
+const ACL_OWNER = 'custom:assetCollectionOwner';
 
 /** ACL field name for collection editors
  * @constant {string}
  */
-const ACL_EDITOR = 'tccc:assetCollectionEditor';
+const ACL_EDITOR = 'custom:assetCollectionEditor';
 
 /** ACL field name for collection viewers
  * @constant {string}
  */
-const ACL_VIEWER = 'tccc:assetCollectionViewer';
+const ACL_VIEWER = 'custom:assetCollectionViewer';
+
+/** ContentAI term paths for collection ACL in search queries */
+const CONTENTAI_COLLECTION_SEARCH_ACL = {
+  owner: `collectionMetadata.custom:metadata.custom:acl.${ACL_OWNER}`,
+  editor: `collectionMetadata.custom:metadata.custom:acl.${ACL_EDITOR}`,
+  viewer: `collectionMetadata.custom:metadata.custom:acl.${ACL_VIEWER}`,
+};
+
+/** ContentAI term path for collection access level in search queries */
+const CONTENTAI_COLLECTION_ACCESS_LEVEL = 'collectionMetadata.accessLevel';
 
 // ==========================================
 // Collection Roles
 // ==========================================
 
-/** Collection owner role (full access)
- * @constant {string}
- */
 const COLLECTION_ROLE_OWNER = 'owner';
-
-/** Collection editor role (read/write access)
- * @constant {string}
- */
 const COLLECTION_ROLE_EDITOR = 'editor';
-
-/** Collection viewer role (read-only access)
- * @constant {string}
- */
 const COLLECTION_ROLE_VIEWER = 'viewer';
 
 // ==========================================
@@ -253,12 +254,11 @@ async function getIMSToken(request, env) {
     const clientId = await env.DM_CLIENT_ID.get();
     const cachedTokenName = `dm-token-${clientId}`;
 
-
     // get cached token
     const { value: token, metadata } = await env.AUTH_TOKENS.getWithMetadata(cachedTokenName);
 
     // use token until 5 minutes before expiry
-    if (token && metadata?.expiration > (Math.floor(Date.now() / 1000) + IMS_TOKEN_EXPIRY_BUFFER)) {
+    if (token && metadata?.expiration > Math.floor(Date.now() / 1000) + IMS_TOKEN_EXPIRY_BUFFER) {
       return token;
     } else {
       const clientSecret = await env.DM_CLIENT_SECRET.get();
@@ -272,8 +272,8 @@ async function getIMSToken(request, env) {
       await env.AUTH_TOKENS.put(cachedTokenName, tokenData.access_token, {
         expiration,
         metadata: {
-          expiration
-        }
+          expiration,
+        },
       });
 
       return tokenData.access_token;
@@ -288,12 +288,13 @@ async function getIMSToken(request, env) {
  * Validate user access to a specific collection
  *
  * Fetches collection metadata from Adobe DM and checks ACL to determine if user
- * has required access level (owner/editor/viewer).
+ * has required access level (owner/editor/viewer/public).
  *
  * Role hierarchy:
  * - Owner: Full access (read + write)
  * - Editor: Read + write access
  * - Viewer: Read-only access
+ * - Public: Read-only access for any authenticated user
  *
  * @param {string} collectionId - Collection ID to check
  * @param {string} userEmail - User email (lowercase)
@@ -322,32 +323,46 @@ async function validateCollectionAccess(collectionId, userEmail, requiredRole, i
   });
 
   if (!response.ok) {
-    return { allowed: false, reason: `Failed to fetch collection metadata: ${metadataUrl} => ${response.status} ${response.statusText}` };
+    return {
+      allowed: false,
+      reason: `Failed to fetch collection metadata: ${metadataUrl} => ${response.status} ${response.statusText}`,
+    };
   }
 
   const collection = await response.json();
-  const acl = collection?.collectionMetadata?.['tccc:metadata']?.['tccc:acl'];
+  const metadata = collection?.collectionMetadata || {};
+  const acl = metadata?.['custom:metadata']?.['custom:acl'] || null;
+  const accessLevel = String(metadata.accessLevel || 'private').toLowerCase();
 
-  if (!acl) {
-    return { allowed: false, reason: 'no ACL' };
-  }
-
-  // Check owner (has all permissions)
-  if (acl[ACL_OWNER]?.toLowerCase() === userEmail) {
+  // Owner: full access (read + write)
+  const ownerValue = acl?.[ACL_OWNER];
+  if (ownerValue && String(ownerValue).toLowerCase() === userEmail) {
     return { allowed: true, role: COLLECTION_ROLE_OWNER };
   }
 
-  // Check editor (write permission, also grants read)
-  if (Array.isArray(acl[ACL_EDITOR]) &&
-      acl[ACL_EDITOR].some((e) => e.toLowerCase() === userEmail)) {
+  // Editor: write access
+  const editors = acl?.[ACL_EDITOR];
+  if (Array.isArray(editors) && editors.some((e) => e.toLowerCase() === userEmail)) {
     return { allowed: true, role: COLLECTION_ROLE_EDITOR };
   }
 
-  // Check viewer (read permission only)
-  if (requiredRole === PERMISSION_READ &&
-      Array.isArray(acl[ACL_VIEWER]) &&
-      acl[ACL_VIEWER].some((e) => e.toLowerCase() === userEmail)) {
+  if (requiredRole === PERMISSION_WRITE) {
+    return { allowed: false, reason: 'no write permission' };
+  }
+
+  // Viewer: read-only
+  const viewers = acl?.[ACL_VIEWER];
+  if (Array.isArray(viewers) && viewers.some((e) => e.toLowerCase() === userEmail)) {
     return { allowed: true, role: COLLECTION_ROLE_VIEWER };
+  }
+
+  // Public collections are readable by any authenticated user.
+  if (accessLevel === 'public') {
+    return { allowed: true, role: COLLECTION_ROLE_VIEWER };
+  }
+
+  if (!acl) {
+    return { allowed: false, reason: 'no ACL' };
   }
 
   return { allowed: false, reason: 'not in ACL' };
@@ -362,8 +377,14 @@ async function validateCollectionAccess(collectionId, userEmail, requiredRole, i
  * @param {string} resourceDescription - Description for logging (e.g., "collection", "collection items")
  * @returns {Response|null} Returns Response with 403 if denied, null if allowed
  */
-async function checkCollectionAuthorization(collectionId, request, imsToken, origin, resourceDescription = 'collection') {
-  const requiredRole = (request.method === 'GET') ? PERMISSION_READ : PERMISSION_WRITE;
+async function checkCollectionAuthorization(
+  collectionId,
+  request,
+  imsToken,
+  origin,
+  resourceDescription = 'collection',
+) {
+  const requiredRole = request.method === 'GET' ? PERMISSION_READ : PERMISSION_WRITE;
 
   const access = await validateCollectionAccess(
     collectionId,
@@ -374,11 +395,15 @@ async function checkCollectionAuthorization(collectionId, request, imsToken, ori
   );
 
   if (!access.allowed) {
-    console.warn(`[${request.user.email}] denied ${request.method} on ${resourceDescription} ${collectionId}: ${access.reason}`);
+    console.warn(
+      `[${request.user.email}] denied ${request.method} on ${resourceDescription} ${collectionId}: ${access.reason}`,
+    );
     return new Response('Forbidden', { status: 403 });
   }
 
-  console.log(`[${request.user.email}] allowed ${request.method} on ${resourceDescription} ${collectionId} as ${access.role}`);
+  console.warn(
+    `[${request.user.email}] allowed ${request.method} on ${resourceDescription} ${collectionId} as ${access.role}`,
+  );
   return null; // null means authorized
 }
 
@@ -498,115 +523,60 @@ function forceContentAISearchFilter(search, authClauses) {
 }
 
 /**
- * Build authorization clauses for asset access control based on user permissions.
- * This generates the same clauses used for search filtering, for metadata access checks.
+ * Build ContentAI authorization clauses for asset search and metadata access.
+ *
+ * Asset visibility is controlled by two metadata fields tagged on Content Hub assets:
+ *   - `custom:userType`  — who can see the asset: 'internal', 'external', or 'all'
+ *   - `allowedCountries`   — which countries can see the asset: ISO-3166-1 alpha-2 codes
+ *                          or the special sentinel 'global' (visible to all countries)
+ *
+ * User attributes that drive filtering (resolved at login, stored in session):
+ *   - `user.userType`   — 'internal' or 'external', derived from email domain + sheet overrides
+ *   - `user.country`    — ISO-3166-1 alpha-2 country code from Entra ID `ctry` claim
+ *   - `user.countries`  — optional additional country codes from /config/access/users sheet
+ *                         (used to grant multi-country access to specific users/domains)
  *
  * Returns:
- * - Empty array `[]` for admins (no constraints needed)
- * - Block filter for users with no roles
- * - Auth clauses array for normal users
+ *   - `[]`           → admin bypass: no search constraints applied
+ *   - `[denyAll]`    → user has no resolvable attributes: deny everything (safe default)
+ *   - `[...clauses]` → AND-ed constraints injected into the ContentAI search query
  *
- * @param {Request} request - Cloudflare request object
- * @param {Object} env - Cloudflare environment bindings
- * @returns {Promise<Object[]>} Auth clauses array
+ * @param {Request} request - Cloudflare request with `request.user` populated by auth middleware
+ * @param {Object} _env - Cloudflare environment bindings (unused, reserved for future sheet lookups)
+ * @returns {Promise<Object[]>} ContentAI query clause array
  */
-async function buildAssetAuthClauses(request, env) {
+async function buildAssetAuthClauses(request, _env) {
   const user = request.user;
 
-  // if user has zero roles, make the search return nothing
-  if (user.roles.length === 0) {
-    // Return a filter that will match nothing
-    const noResultsFilter = {
-      term: {
-        'assetMetadata.tccc:brand': ['___does_not_exist___'],
-      },
-    };
-    console.log(`[${user.email}] authz filter: no roles => block search results`);
-    return [noResultsFilter];
-  }
-
-  if (user.roles.includes(ROLE.ADMIN)) {
-    // admins can see everything, no search constraint
-    console.log(`[${user.email}] authz filter: admin => show all search results`);
+  // Admins bypass all asset filters — they see everything in Content Hub.
+  if (user.roles?.includes(ROLE.ADMIN)) {
+    console.warn(`[${user.email}] admin bypass: no asset auth clauses applied`);
     return [];
   }
 
-  const authClauses = [];
-
-  // RESTRICTED BRAND CHECK
-  // get list of all restricted brands from index
-  const restrictedBrands = Object.keys(await getRestrictedBrands(request, env));
-  // determine all restricted brands that the user has no access to
-  const deniedBrands = restrictedBrands.filter((b) => !user.brands.includes(b)) || [];
-  if (deniedBrands.length > 0) {
-    // NOT clause wraps a single term filter with all denied brands
-    authClauses.push({
-      not: [
-        {
-          term: {
-            'assetMetadata.tccc:brand': deniedBrands.map((brand) => `tccc:brand/${brand}`),
-          },
-        },
-      ],
+  // --- Country filter ---
+  // Collect all country codes the user is authorised for:
+  //   1. The user's own country from the Entra ID JWT claim (ctry).
+  //   2. Any additional countries granted via the /config/access/users sheet.
+  //   3. The 'global' sentinel always included so globally-tagged assets are never blocked.
+  const authorisedCountries = [];
+  if (user.country) authorisedCountries.push(user.country);
+  if (Array.isArray(user.countries)) {
+    user.countries.forEach((c) => {
+      if (c && !authorisedCountries.includes(c)) authorisedCountries.push(c);
     });
   }
+  if (!authorisedCountries.includes('global')) authorisedCountries.push('global');
 
-  // INTENDED BOTTLER COUNTRY CHECK
-  if (![ROLE.EMPLOYEE, ROLE.CONTINGENT_WORKER, ROLE.AGENCY].some((r) => user.roles.includes(r))) {
-    // These roles require bottler country filtering
-    const countries = [...(user.countries || [])];
-    if (user.roles.includes(ROLE.BOTTLER)) {
-      // bottlers can see content intended for all countries
-      countries.push('all-countries');
-    }
-    if (countries.length > 0) {
-      // only allow countries the user has access to
-      authClauses.push({
-        term: {
-          'assetMetadata.tccc:intendedBottlerCountry': countries,
-        },
-      });
-    } else {
-      // should normally not happen, but safety net to ensure no hits
-      authClauses.push({
-        term: {
-          'assetMetadata.tccc:intendedBottlerCountry': ['___does_not_exist___'],
-        },
-      });
-    }
+  // If only 'global' is present (no country from JWT or sheet), skip the filter —
+  // no point injecting a clause that only allows 'global' tagged assets.
+  if (authorisedCountries.length === 1 && authorisedCountries[0] === 'global') {
+    console.warn(`[${user.email}] no country resolved — skipping country filter`);
+    return [];
   }
 
-  // INTENDED CUSTOMER CHECK
-  // Logic: Show assets where:
-  // - tccc-contentType is NOT 'customers' OR
-  // - tccc-intendedCustomers matches one of user's customers
-  const customerClauses = [];
-  // Add NOT customers content type
-  customerClauses.push({
-    not: [
-      {
-        term: {
-          'assetMetadata.tccc:contentType': ['customers'],
-        },
-      },
-    ],
-  });
-  // Add user's allowed customers
-  if (user.customers && user.customers.length > 0) {
-    customerClauses.push({
-      term: {
-        'assetMetadata.tccc:intendedCustomers': user.customers,
-      },
-    });
-  }
-  // Add customer check - wrap in OR only if there are multiple clauses
-  if (customerClauses.length === 1) {
-    authClauses.push(customerClauses[0]);
-  } else if (customerClauses.length > 1) {
-    authClauses.push(chunkIntoOr(customerClauses));
-  }
-
-  return authClauses;
+  console.warn(`[${user.email}] asset auth clauses: countries=[${authorisedCountries.join(',')}]`);
+  return [{ term: { 'assetMetadata.allowedCountries': authorisedCountries } }];
 }
 
 /**
@@ -625,67 +595,128 @@ async function searchContentAIAuthorization(request, env, search) {
     return;
   }
 
-  console.log(`[${request.user.email}] authz filter: ContentAI clauses (${authClauses.length} constraints)`);
+  console.warn(`[${request.user.email}] authz filter: ContentAI clauses (${authClauses.length} constraints)`);
 
   forceContentAISearchFilter(search, authClauses);
 }
 
 /**
- * ContentAI Search: search authorization for collections
- * Mimics collectionsSearchAuthorization logic but generates ContentAI query clauses
- * @param {Object} request - Request object with user info
- * @param {string} imsUserId - IMS user ID for system user filter
- * @param {Object} search - ContentAI search object to modify
- * @param {{ writeOnly?: boolean }} [options] - When writeOnly true, only owner/editor (exclude viewer)
+ * Coerce `relationship` to {@link CollectionListSegment}.
+ * Omitted or unrecognized values become {@link CollectionListSegment.PUBLIC}.
+ * @param {string|undefined} rel
+ * @returns {typeof CollectionListSegment[keyof typeof CollectionListSegment]}
  */
-function collectionsSearchContentAIAuthorization(request, imsUserId, search, options = {}) {
+function normalizeCollectionsSearchRelationship(rel) {
+  if (rel === CollectionListSegment.ALL) return CollectionListSegment.ALL;
+  if (rel === CollectionListSegment.CREATED_BY_ME) return CollectionListSegment.CREATED_BY_ME;
+  if (rel === CollectionListSegment.SHARED_WITH_ME) return CollectionListSegment.SHARED_WITH_ME;
+  if (rel === CollectionListSegment.PUBLIC_VIEW) return CollectionListSegment.PUBLIC_VIEW;
+  if (rel === CollectionListSegment.PUBLIC) return CollectionListSegment.PUBLIC;
+  return CollectionListSegment.PUBLIC;
+}
+
+/**
+ * ContentAI Search: search authorization for collections
+ * @param {Object} request - Request object with user info
+ * @param {Object} search - ContentAI search object to modify
+ * @param {{
+ *   relationship?: 'createdByMe' | 'sharedWithMe' | 'public',
+ *   visibility?: 'all' | 'private' | 'public',
+ * }} [options]
+ * - relationship: createdByMe = owner ACL + optional accessLevel; sharedWithMe = viewer ACL only;
+ *   public = accessLevel public only; omitted → legacy owner/editor/viewer filter.
+ *   visibility: only for `createdByMe` (`all` | `private` | `public`); ignored otherwise → `all`.
+ */
+function collectionsSearchContentAIAuthorization(request, search, options = {}) {
   const user = request.user;
-  const userEmailLower = user.email?.toLowerCase();
-  const writeOnly = options.writeOnly === true;
+  const userEmailLower = user?.email?.toLowerCase();
 
   if (!userEmailLower) {
-    // No email, block all results by adding impossible filter
-    forceContentAISearchFilter(search, [{
-      term: {
-        'collectionMetadata.tccc:metadata.tccc:acl.tccc:assetCollectionOwner': ['___does_not_exist___'],
+    forceContentAISearchFilter(search, [
+      {
+        term: { [CONTENTAI_COLLECTION_SEARCH_ACL.owner]: ['___does_not_exist___'] },
       },
-    }]);
+    ]);
     return;
   }
 
-  // System user filter: collections created by the technical account
-  const systemUserFilter = {
+  const emailVariants = [userEmailLower, userEmailLower.toUpperCase()];
+  const searchOwnerClause = {
+    term: { [CONTENTAI_COLLECTION_SEARCH_ACL.owner]: emailVariants },
+  };
+  const searchEditorClause = {
+    term: { [CONTENTAI_COLLECTION_SEARCH_ACL.editor]: emailVariants },
+  };
+  const searchViewerClause = {
+    term: { [CONTENTAI_COLLECTION_SEARCH_ACL.viewer]: emailVariants },
+  };
+
+  // Backward-compatible mode when no relationship is specified.
+  if (options.relationship === undefined) {
+    const aclFilter = chunkIntoOr([searchOwnerClause, searchEditorClause, searchViewerClause]);
+    forceContentAISearchFilter(search, [aclFilter]);
+    console.warn(`[${userEmailLower}] collections search filter applied (legacy ACL)`);
+    return;
+  }
+
+  const relationship = normalizeCollectionsSearchRelationship(options.relationship);
+  let visibility = CollectionCreatedByMeVisibility.ALL;
+  if (relationship === CollectionListSegment.CREATED_BY_ME) {
+    visibility =
+      options.visibility === CollectionCreatedByMeVisibility.PRIVATE ||
+      options.visibility === CollectionCreatedByMeVisibility.READ_ONLY ||
+      options.visibility === CollectionCreatedByMeVisibility.PUBLIC ||
+      options.visibility === CollectionCreatedByMeVisibility.ALL
+        ? options.visibility
+        : CollectionCreatedByMeVisibility.ALL;
+  }
+
+  const accessPrivate = {
+    term: { [CONTENTAI_COLLECTION_ACCESS_LEVEL]: [CollectionCreatedByMeVisibility.PRIVATE] },
+  };
+  const accessReadOnly = {
+    term: { [CONTENTAI_COLLECTION_ACCESS_LEVEL]: [CollectionCreatedByMeVisibility.READ_ONLY] },
+  };
+  const accessPublic = {
+    term: { [CONTENTAI_COLLECTION_ACCESS_LEVEL]: [CollectionCreatedByMeVisibility.PUBLIC] },
+  };
+  const accessAnyPublic = {
     term: {
-      'repositoryMetadata.repo:createdBy': [imsUserId],
+      [CONTENTAI_COLLECTION_ACCESS_LEVEL]: [
+        CollectionCreatedByMeVisibility.PUBLIC,
+        CollectionCreatedByMeVisibility.READ_ONLY,
+      ],
     },
   };
 
-  // Build ACL filter: owner and editor always; include viewer only when not writeOnly
-  const userEmailUpper = userEmailLower.toUpperCase();
-  const emailVariants = [userEmailLower, userEmailUpper];
-  const aclClauses = [
-    {
-      term: {
-        'collectionMetadata.tccc:metadata.tccc:acl.tccc:assetCollectionOwner': emailVariants,
-      },
-    },
-    {
-      term: {
-        'collectionMetadata.tccc:metadata.tccc:acl.tccc:assetCollectionEditor': emailVariants,
-      },
-    },
-  ];
-  if (!writeOnly) {
-    aclClauses.push({
-      term: {
-        'collectionMetadata.tccc:metadata.tccc:acl.tccc:assetCollectionViewer': emailVariants,
-      },
-    });
-  }
-  const aclFilter = chunkIntoOr(aclClauses);
+  /** @type {Object[]} */
+  let authClauses;
 
-  forceContentAISearchFilter(search, [systemUserFilter, aclFilter]);
-  console.log(`[${userEmailLower}] collections search filter applied (ContentAI)${writeOnly ? ' [writeOnly]' : ''}`);
+  if (relationship === CollectionListSegment.ALL) {
+    authClauses = [{ or: [searchOwnerClause, accessAnyPublic, searchViewerClause] }];
+  } else if (relationship === CollectionListSegment.CREATED_BY_ME) {
+    authClauses = [searchOwnerClause];
+    if (visibility === CollectionCreatedByMeVisibility.PRIVATE) {
+      authClauses.push(accessPrivate);
+    } else if (visibility === CollectionCreatedByMeVisibility.READ_ONLY) {
+      authClauses.push(accessReadOnly);
+    } else if (visibility === CollectionCreatedByMeVisibility.PUBLIC) {
+      authClauses.push(accessPublic);
+    }
+  } else if (relationship === CollectionListSegment.SHARED_WITH_ME) {
+    authClauses = [searchViewerClause];
+  } else if (relationship === CollectionListSegment.PUBLIC_VIEW) {
+    authClauses = [accessReadOnly];
+  } else {
+    authClauses = [accessPublic];
+  }
+
+  forceContentAISearchFilter(search, authClauses);
+  console.warn(
+    `[${userEmailLower}] collections search filter applied (ContentAI)` +
+      `${relationship !== CollectionListSegment.PUBLIC ? ` [relationship=${relationship}]` : ''}` +
+      `${relationship === CollectionListSegment.CREATED_BY_ME && visibility !== CollectionCreatedByMeVisibility.ALL ? ` [visibility=${visibility}]` : ''}`,
+  );
 }
 
 /**
@@ -707,7 +738,7 @@ function collectionsSearchContentAIAuthorization(request, imsUserId, search, opt
  * @param {Object} env - Cloudflare environment bindings
  * @param {string} env.AEM_ENV_ID - AEM environment ID (format: pXXXXX-eYYYYY)
  * @param {KVNamespace} env.AUTH_TOKENS - KV store for IMS token caching
- * @param {AnalyticsEngine} env.KO_ANALYTICS_ENGINE_TEST - Analytics Engine binding
+ * @param {AnalyticsEngine} env.SPARK_ANALYTICS_ENGINE - Analytics Engine binding
  * @param {ExecutionContext} ctx - Cloudflare execution context (for waitUntil)
  * @returns {Promise<Response>} Proxied response from Adobe Dynamic Media
  *
@@ -775,10 +806,6 @@ export async function originDynamicMedia(request, env, ctx) {
     const search = JSON.parse(body);
     extractSearchContext(request, search);
     await searchContentAIAuthorization(request, env, search);
-    forceContentAISearchFilter(search, [
-      { term: { 'assetMetadata.tccc:includeInSearch': ['true'] } },
-      { term: { 'assetMetadata.tccc:assetStatus': ['approved'] } },
-    ]);
     url.pathname = '/adobe/assets/search';
     body = JSON.stringify(search);
   } else if (url.pathname === '/adobe/assets/contentai/collections/search') {
@@ -790,10 +817,24 @@ export async function originDynamicMedia(request, env, ctx) {
     body = body.replaceAll(TEMPLATE_SYSTEM_USER_ID, imsUserId);
 
     const search = JSON.parse(body);
-    const writeOnly = search.writeOnly === true;
-    if (writeOnly) delete search.writeOnly; // do not forward to upstream
     extractSearchContext(request, search);
-    collectionsSearchContentAIAuthorization(request, imsUserId, search, { writeOnly });
+    const relationship = search.relationship;
+    const normalizedRelationship = normalizeCollectionsSearchRelationship(relationship);
+    const visibility =
+      normalizedRelationship === CollectionListSegment.CREATED_BY_ME &&
+      (search.visibility === CollectionCreatedByMeVisibility.PRIVATE ||
+        search.visibility === CollectionCreatedByMeVisibility.READ_ONLY ||
+        search.visibility === CollectionCreatedByMeVisibility.PUBLIC ||
+        search.visibility === CollectionCreatedByMeVisibility.ALL)
+        ? search.visibility
+        : CollectionCreatedByMeVisibility.ALL;
+    if (search.relationship !== undefined) delete search.relationship;
+    if (search.visibility !== undefined) delete search.visibility;
+    if (search.writeOnly !== undefined) delete search.writeOnly;
+    collectionsSearchContentAIAuthorization(request, search, {
+      relationship,
+      visibility,
+    });
     url.pathname = '/adobe/experimental/collectionsearch-expires-20260915/assets/collections/search';
     body = JSON.stringify(search);
   } else if (collectionAssetMatch) {
@@ -836,22 +877,34 @@ export async function originDynamicMedia(request, env, ctx) {
   // This applied for BOTH Algolia search and ContentAI search
   if (url.pathname.match(/^\/adobe\/assets\/collections\/[^/]+\/items$/)) {
     const collectionId = url.pathname.split('/')[4];
-    const authResponse = await checkCollectionAuthorization(collectionId, request, imsToken, url.origin, 'collection items');
+    const authResponse = await checkCollectionAuthorization(
+      collectionId,
+      request,
+      imsToken,
+      url.origin,
+      'collection items',
+    );
     if (authResponse) return authResponse;
   }
 
-  // console.log('>>>', request.method, url, headers);
-
-  // TPTODO: Keep this curl command for debugging, comment out when committing
-  // const debugHeaders = [
-  //   'x-api-key', 'authorization', 'x-ch-request', 'x-polaris-search-provider', 'x-adobe-accept-experimental', 'if-match',
-  // ];
-  // const curlHeaders = [...headers.entries()]
-  //   .filter(([k]) => debugHeaders.includes(k.toLowerCase()))
-  //   .map(([k, v]) => `-H '${k}: ${v}'`)
-  //   .join(' \\\n  ');
-  // const curlBody = body ? `-d '${body.replace(/'/g, "\\'")}'` : '';
-  // console.warn(`[DEBUG CURL]\ncurl -X ${request.method} '${url}' \\\n  ${curlHeaders}${curlBody ? ` \\\n  ${curlBody}` : ''}`);
+  const isSearchOrCollections = url.pathname.includes('/search') || url.pathname.includes('/collections');
+  if (isSearchOrCollections) {
+    const debugHeaders = [
+      'authorization',
+      'x-api-key',
+      'x-ch-request',
+      'x-polaris-search-provider',
+      'x-adobe-accept-experimental',
+    ];
+    const curlHeaders = [...headers.entries()]
+      .filter(([k]) => debugHeaders.includes(k.toLowerCase()))
+      .map(([k, v]) => `-H '${k}: ${v}'`)
+      .join(' \\\n  ');
+    const curlBody = body ? `-d '${body.replace(/'/g, "\\'")}'` : '';
+    console.warn(
+      `[DM CURL] curl -X ${request.method} '${url}' \\\n  ${curlHeaders}${curlBody ? ` \\\n  ${curlBody}` : ''}`,
+    );
+  }
 
   // The browser's Referer can be enormous (search URLs with many facet filters
   // easily reach 3KB+) and push total headers past the upstream's 8KB limit → 400.
@@ -886,8 +939,8 @@ export async function originDynamicMedia(request, env, ctx) {
   // forever because the first 200 was cached with cacheEverything:true on custom
   // zone domains — workers.dev bypasses edge cache automatically, custom zones do not).
   const noCachePaths = [
-    /^\/adobe\/assets\/archives(\/|$)/,  // archive creation + status polling
-    /^\/adobe\/assets\/[^/]+\/token$/,   // download tokens (short-lived, user-specific)
+    /^\/adobe\/assets\/archives(\/|$)/, // archive creation + status polling
+    /^\/adobe\/assets\/[^/]+\/token$/, // download tokens (short-lived, user-specific)
   ];
   const bypassEdgeCache = noCachePaths.some((pattern) => pattern.test(url.pathname));
 
@@ -903,22 +956,25 @@ export async function originDynamicMedia(request, env, ctx) {
   return response;
 }
 
-// Export authorization functions for testing
-export {
-  forceContentAISearchFilter,
-  searchContentAIAuthorization,
-  collectionsSearchContentAIAuthorization,
-  // Asset metadata authorization
-  buildAssetAuthClauses,
-  // Query chunking utilities
-  chunkIntoAnd,
-  chunkIntoOr,
-};
-
 // Re-export from asset-access.js for convenience
 export {
   ancestorsToTaxonomyPath,
-  extractTaxonomyPaths,
   checkAssetMetadataAuthorization,
   enforceAssetMetadataAuthorization,
+  extractTaxonomyPaths,
 } from './asset-access.js';
+// Export authorization functions for testing
+export {
+  // Asset metadata authorization
+  buildAssetAuthClauses,
+  COLLECTION_ROLE_EDITOR,
+  // Collection roles
+  COLLECTION_ROLE_OWNER,
+  COLLECTION_ROLE_VIEWER,
+  // Query chunking utilities
+  chunkIntoAnd,
+  chunkIntoOr,
+  collectionsSearchContentAIAuthorization,
+  forceContentAISearchFilter,
+  searchContentAIAuthorization,
+};

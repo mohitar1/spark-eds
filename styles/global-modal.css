@@ -67,7 +67,7 @@
 
 .global-modal .global-modal-close:hover,
 .global-modal .global-modal-close:focus-visible {
-  color: #1e1e1e;
+  color: var(--text-color);
   background-color: #f5f5f5;
 }
 
@@ -166,7 +166,7 @@
 .global-modal .global-modal-button-secondary {
   border: 1.5px solid #9a9a9a;
   background-color: var(--button-secondary-color);
-  color: var(--color-secondary, #1e1e1e);
+  color: var(--color-secondary, var(--text-color));
 }
 
 .global-modal .global-modal-button-secondary:hover,

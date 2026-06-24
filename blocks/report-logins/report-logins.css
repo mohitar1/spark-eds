@@ -21,7 +21,7 @@
   align-items: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 3px solid #f40009;
+  border-bottom: 3px solid var(--report-primary-color, var(--primary-color));
   gap: 20px;
 }
 
@@ -74,12 +74,12 @@
 }
 
 .logins-filters .filter-select:hover {
-  border-color: #f40009;
+  border-color: var(--report-primary-color, var(--primary-color));
 }
 
 .logins-filters .filter-select:focus {
   outline: none;
-  border-color: #f40009;
+  border-color: var(--report-primary-color, var(--primary-color));
   box-shadow: 0 0 0 3px rgb(244 0 9 / 10%);
 }
 
@@ -210,7 +210,7 @@
 }
 
 .logins-geo-table thead {
-  background: linear-gradient(to right, #f40009, #e00008);
+  background: linear-gradient(to right, var(--report-primary-color, var(--primary-color)), var(--primary-color-hover));
 }
 
 .logins-geo-table thead th {
@@ -235,7 +235,7 @@
 }
 
 .logins-geo-table thead th.total-column {
-  background: #c8102e;
+  background: var(--primary-color-hover);
   font-weight: 800;
 }
 
@@ -267,7 +267,7 @@
 .logins-geo-table tbody td.total-cell {
   background: #fff0f0;
   font-weight: 700;
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
 }
 
 /* User Activity Table */
@@ -286,7 +286,7 @@
   color: #333;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid var(--light-color);
   cursor: pointer;
   user-select: none;
   display: flex;
@@ -301,7 +301,7 @@
 }
 
 .report-logins .user-activity-table-container .collapsible-title:hover .title-text {
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
 }
 
 /* User Activity Title with Download Button */
@@ -340,7 +340,7 @@
 
 .report-logins .user-activity-table-container .collapse-icon {
   font-size: 1rem;
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
   transition: transform 0.3s ease;
   font-weight: bold;
 }
@@ -371,7 +371,7 @@
 }
 
 .report-logins .user-activity-table thead {
-  background: linear-gradient(to right, #f40009, #e00008);
+  background: linear-gradient(to right, var(--report-primary-color, var(--primary-color)), var(--primary-color-hover));
 }
 
 .report-logins .user-activity-table thead th {

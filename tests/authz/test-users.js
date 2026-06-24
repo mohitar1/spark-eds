@@ -8,7 +8,6 @@
  * The SUDO cookies sent during tests are: SUDO_EMAIL, SUDO_COUNTRY, SUDO_EMPLOYEE_TYPE.
  * The domain is derived from the email, so the email domain must match the companies sheet.
  *
- * Source: https://wiki.corp.adobe.com/display/WEM/KOAssets+-+Demo+and+Validation+Script#KOAssetsDemoandValidationScript-AccessControl
  */
 
 // employeeType values that match the companies sheet
@@ -40,7 +39,7 @@ export const testUsers = [
 
   {
     name: 'Wrong EmployeeType - Denied Role',
-    email: 'test@coca-cola.com',
+    email: 'test@example.com',
     country: 'US',
     employeeType: EMPLOYEE_TYPE.EXTERNAL,
     targetRules: ['no-roles', 'employeeType-gate'],
@@ -60,7 +59,7 @@ export const testUsers = [
   // =========================================================================
   {
     name: 'Admin - Full Access',
-    email: 'admin@coca-cola.com',
+    email: 'admin@example.com',
     country: 'US',
     employeeType: EMPLOYEE_TYPE.EMPLOYEE,
     targetRules: ['admin-bypass'],
@@ -80,7 +79,7 @@ export const testUsers = [
   // =========================================================================
   {
     name: 'Employee - Has Burn Brand Access',
-    email: 'burn@coca-cola.com',
+    email: 'burn@example.com',
     country: 'US',
     employeeType: EMPLOYEE_TYPE.EMPLOYEE,
     targetRules: ['restricted-brands'],
@@ -96,7 +95,7 @@ export const testUsers = [
   },
   {
     name: 'Employee - No Restricted Brand Access',
-    email: 'test@coca-cola.com',
+    email: 'test@example.com',
     country: 'US',
     employeeType: EMPLOYEE_TYPE.EMPLOYEE,
     targetRules: ['restricted-brands', 'bottler-country-skip'],
@@ -167,7 +166,7 @@ export const testUsers = [
   // =========================================================================
   {
     name: 'Contingent Worker - Skips Country Filter',
-    email: 'test@coca-cola.com',
+    email: 'test@example.com',
     country: 'US',
     employeeType: EMPLOYEE_TYPE.CONTINGENT_WORKER,
     targetRules: ['bottler-country-skip'],
@@ -196,11 +195,11 @@ export const testUsers = [
   },
 
   // =========================================================================
-  // Rule 5: Customer content — mcdonalds@coca-cola.com sees McDonald's content
+  // Rule 5: Customer content — mcdonalds@example.com sees McDonald's content
   // =========================================================================
   {
     name: 'Employee - Sees McDonald\'s Customer Content',
-    email: 'mcdonalds@coca-cola.com',
+    email: 'mcdonalds@example.com',
     country: 'US',
     employeeType: EMPLOYEE_TYPE.EMPLOYEE,
     targetRules: ['customer-content'],
@@ -215,7 +214,7 @@ export const testUsers = [
       // search for "McDonald's" with this user should return customer content
     },
   },
-  // Compare against: 'Employee - No Restricted Brand Access' (test@coca-cola.com)
+  // Compare against: 'Employee - No Restricted Brand Access' (test@example.com)
   // who has customers: [] and should NOT see McDonald's customer content
 ];
 
@@ -233,8 +232,8 @@ export function getUsersByRule(rule) {
 export const restrictedBrandPairs = [
   {
     brand: 'burn',
-    withAccess: testUsers.find((u) => u.email === 'burn@coca-cola.com'),
-    withoutAccess: testUsers.find((u) => u.email === 'test@coca-cola.com' && u.employeeType === EMPLOYEE_TYPE.EMPLOYEE),
+    withAccess: testUsers.find((u) => u.email === 'burn@example.com'),
+    withoutAccess: testUsers.find((u) => u.email === 'test@example.com' && u.employeeType === EMPLOYEE_TYPE.EMPLOYEE),
   },
 ];
 
@@ -270,7 +269,7 @@ export const customerContentPairs = [
   {
     customer: 'mcdonald-s',
     searchTerm: "McDonald's",
-    withAccess: testUsers.find((u) => u.email === 'mcdonalds@coca-cola.com'),
-    withoutAccess: testUsers.find((u) => u.email === 'test@coca-cola.com' && u.employeeType === EMPLOYEE_TYPE.EMPLOYEE),
+    withAccess: testUsers.find((u) => u.email === 'mcdonalds@example.com'),
+    withoutAccess: testUsers.find((u) => u.email === 'test@example.com' && u.employeeType === EMPLOYEE_TYPE.EMPLOYEE),
   },
 ];

@@ -54,7 +54,7 @@ export const testConfig = {
         name: 'Search by keyword',
         method: 'POST',
         path: '/api/adobe/assets/contentai/search',
-        body: { query: [{ match: { text: 'coca cola' } }], limit: 10 },
+        body: { query: [{ match: { text: 'sample asset' } }], limit: 10 },
         expect: {
           status: 200,
           hasFields: ['hits'],
@@ -82,7 +82,7 @@ export const testConfig = {
         expect: {
           status: 200,
           contentType: 'text/html',
-          contains: ['<header', '<main', 'koassets-search'],
+          contains: ['<header', '<main', 'search-results'],
         },
       },
     ],
@@ -155,9 +155,14 @@ export const testConfig = {
   collections: {
     pages: [
       {
-        name: 'My collections page',
-        path: '/en/my-dam/my-collections',
-        expect: { status: 200, contentType: 'text/html', contains: ['<header', '<main', 'my-collections'] },
+        name: 'Search collections page',
+        path: '/en/search-collections',
+        expect: { status: 200, contentType: 'text/html', contains: ['<header', '<main', 'search-collection-results'] },
+      },
+      {
+        name: 'Collection details page',
+        path: '/en/collection-details',
+        expect: { status: 200, contentType: 'text/html', contains: ['<header', '<main', 'collection-details'] },
       },
     ],
   },
@@ -252,69 +257,6 @@ export const testConfig = {
   },
 
   /* ================================================================ */
-  /*  Saved Searches (user-facing)                                    */
-  /* ================================================================ */
-  savedSearches: {
-    api: [
-      {
-        name: 'List saved searches',
-        method: 'GET',
-        path: '/api/savedsearches/list',
-        expect: { status: 200 },
-      },
-      {
-        name: 'Get saved searches',
-        method: 'GET',
-        path: '/api/savedsearches/get',
-        expect: { status: [200, 404] }, // 404 if user has no saved searches
-      },
-    ],
-    pages: [
-      {
-        name: 'My saved searches page',
-        path: '/en/my-dam/my-saved-search',
-        expect: { status: 200, contentType: 'text/html', contains: ['<header', '<main', 'my-saved-search'] },
-      },
-    ],
-  },
-
-  /* ================================================================ */
-  /*  Saved Search Report (admin)                                     */
-  /* ================================================================ */
-  savedSearchReport: {
-    api: [
-      {
-        name: 'Saved search report metrics',
-        method: 'GET',
-        path: '/api/savedsearches/report-metrics',
-        timeout: 60_000, // this endpoint scans all KV keys, can be slow
-        expect: {
-          status: [200, 403], // 403 if user lacks admin-reports permission
-        },
-        expectByEnv: {
-          production: {
-            status: 200,
-            hasFields: ['success', 'metrics', 'charts', 'timestamp'],
-            nested: {
-              'metrics.totalUsers': 'number',
-              'metrics.usersWithSavedSearches': 'number',
-              'metrics.totalSavedSearches': 'number',
-              'metrics.avgPerUser': 'number',
-            },
-          },
-        },
-      },
-    ],
-    pages: [
-      {
-        name: 'Saved search report page',
-        path: '/en/reports/saved-searches',
-        expect: { status: 200, contentType: 'text/html', contains: ['<header', '<main', 'report-saved-searches'] },
-      },
-    ],
-  },
-
-  /* ================================================================ */
   /*  Notifications                                                    */
   /* ================================================================ */
   notifications: {
@@ -334,19 +276,6 @@ export const testConfig = {
         name: 'My notifications page',
         path: '/en/my-dam/my-notifications',
         expect: { status: 200, contentType: 'text/html', contains: ['<header', '<main', 'my-notifications'] },
-      },
-    ],
-  },
-
-  /* ================================================================ */
-  /*  Content Stores                                                   */
-  /* ================================================================ */
-  contentStores: {
-    pages: [
-      {
-        name: 'All content stores page',
-        path: '/en/drafts/all-content-stores',
-        expect: { status: 200, contentType: 'text/html', contains: ['<header', '<main', 'content-stores'] },
       },
     ],
   },

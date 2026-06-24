@@ -61,7 +61,7 @@ export function createDeleteModal(onConfirm, onCancel, translate) {
 
   const subjectText = document.createElement('p');
   subjectText.style.fontWeight = 'bold';
-  subjectText.style.color = '#e60012';
+  subjectText.style.color = 'var(--primary-color)';
   subjectText.id = 'delete-notification-subject';
 
   const cautionText = document.createElement('p');

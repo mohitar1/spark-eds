@@ -4,9 +4,9 @@
  * @param {string[]} arrays - Array field names to process
  */
 export function handleArrays(obj, arrays) {
-  arrays?.forEach(array => {
+  arrays?.forEach((array) => {
     if (obj[array]) {
-      obj[array] = obj[array].split(',').map(item => item.trim());
+      obj[array] = obj[array].split(',').map((item) => item.trim());
     } else {
       obj[array] = [];
     }
@@ -114,9 +114,7 @@ export async function fetchHelixSheet(request, env, path, options) {
   if (options?.mergeSheets) {
     const opts = options.mergeSheets;
     const names = json[':names'];
-    const sheets = names
-      ? names.map((n) => json[n]?.data).filter(Boolean)
-      : [json.data].filter(Boolean);
+    const sheets = names ? names.map((n) => json[n]?.data).filter(Boolean) : [json.data].filter(Boolean);
 
     if (opts.key) {
       const merged = {};
@@ -134,18 +132,20 @@ export async function fetchHelixSheet(request, env, path, options) {
     }
     return sheets.reduce((all, data) => all.concat(convertRows(data, opts)), []);
   } else if (options?.sheets) {
-    return Object.fromEntries(Object.entries(options.sheets).map(([name, opt]) => {
-      const sheet = json[name];
-      if (sheet) {
-        if (opt?.key) {
-          return [name, convertToMap(sheet.data, opt)];
+    return Object.fromEntries(
+      Object.entries(options.sheets).map(([name, opt]) => {
+        const sheet = json[name];
+        if (sheet) {
+          if (opt?.key) {
+            return [name, convertToMap(sheet.data, opt)];
+          } else {
+            return [name, convertRows(sheet.data, opt)];
+          }
         } else {
-          return [name, convertRows(sheet.data, opt)];
+          return [name, []];
         }
-      } else {
-        return [name, []];
-      }
-    }));
+      }),
+    );
   } else if (options?.sheet) {
     if (options.sheet.key) {
       return convertToMap(json.data, options.sheet);
@@ -157,4 +157,3 @@ export async function fetchHelixSheet(request, env, path, options) {
   // without options return the raw json
   return json;
 }
-

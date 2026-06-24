@@ -5,7 +5,7 @@
  *
  * Tests asset search and asset details access for each user defined in
  * test-inputs/test-matrix.json, against old (assets.coke.com) and/or new
- * (koassets.adobecocacola.workers.dev) systems.
+ * (spark-eds.workers.dev) systems.
  *
  * Usage:
  *   node bin/compare.js [--config config.json] [--test-matrix test-matrix.json]
@@ -214,7 +214,7 @@ function friendlyRunTime() {
 const OLD_COMMON_PARAMS = {};
 
 const OLD_ASSETS_FACET_PARAMS = {
-  '13_group.propertyvalues.property': './jcr:content/metadata/tccc:agencyName',
+  '13_group.propertyvalues.property': './jcr:content/metadata/custom:agencyName',
 };
 
 const SEARCH_TYPES = {
@@ -226,7 +226,7 @@ const SEARCH_TYPES = {
   templates: {
     oldPath: '/content/share/us/en/local-customization/template-search.html',
     oldParams: {
-      '11_group.propertyvalues.property': './jcr:content/metadata/tccc:intendedBottlerCountry',
+      '11_group.propertyvalues.property': './jcr:content/metadata/custom:intendedBottlerCountry',
       '11_group.propertyvalues.extractFacet': 'true',
     },
     contentTypeFilter: ['templates'],
@@ -255,14 +255,14 @@ const CONTENTAI_SEARCH_FIELDS = [
   'assetMetadata.autogen:subject',
   'assetMetadata.autogen:description',
   'assetMetadata.autogen:title',
-  'assetMetadata.tccc:keywords',
+  'assetMetadata.custom:keywords',
 ];
 
 async function searchOldSystem(config, user, searchTerm, searchType, { brand, assetId } = {}) {
   const { baseUrl, publishApiUser } = config.oldSystem;
-  const creds = publishApiUser || process.env.KOASSETS_PUBLISH_API_USER_PROD;
+  const creds = publishApiUser || process.env.SPARK_PUBLISH_API_USER_PROD;
   if (!creds) {
-    return { error: 'Missing publishApiUser / KOASSETS_PUBLISH_API_USER_PROD', items: [] };
+    return { error: 'Missing publishApiUser / SPARK_PUBLISH_API_USER_PROD', items: [] };
   }
 
   const typeDef = SEARCH_TYPES[searchType];
@@ -277,9 +277,9 @@ async function searchOldSystem(config, user, searchTerm, searchType, { brand, as
     }
   }
   if (brand) {
-    url.searchParams.set('1_group.propertyvalues.property', './jcr:content/metadata/tccc:brand');
+    url.searchParams.set('1_group.propertyvalues.property', './jcr:content/metadata/custom:brand');
     url.searchParams.set('1_group.propertyvalues.operation', 'equals');
-    url.searchParams.set('1_group.propertyvalues.123_values', `tccc:brand/${brand}`);
+    url.searchParams.set('1_group.propertyvalues.123_values', `custom:brand/${brand}`);
   }
   url.searchParams.set('p.offset', '0');
 
@@ -441,15 +441,15 @@ async function searchNewSystem(config, user, searchTerm, searchType, { brand, as
   const typeFilters = [];
   if (typeDef?.contentTypeFilter) {
     const contentTypeClause = typeDef.contentTypeFilter.length === 1
-      ? { term: { 'assetMetadata.tccc:contentType': typeDef.contentTypeFilter } }
-      : { or: typeDef.contentTypeFilter.map((ct) => ({ term: { 'assetMetadata.tccc:contentType': [ct] } })) };
+      ? { term: { 'assetMetadata.custom:contentType': typeDef.contentTypeFilter } }
+      : { or: typeDef.contentTypeFilter.map((ct) => ({ term: { 'assetMetadata.custom:contentType': [ct] } })) };
     typeFilters.push(contentTypeClause);
   }
   if (typeDef?.extraFilters) {
     typeFilters.push(...typeDef.extraFilters);
   }
   if (brand) {
-    typeFilters.push({ term: { 'assetMetadata.tccc:brand': [`tccc:brand/${brand}`] } });
+    typeFilters.push({ term: { 'assetMetadata.custom:brand': [`custom:brand/${brand}`] } });
   }
 
   const andParts = [searchContext];

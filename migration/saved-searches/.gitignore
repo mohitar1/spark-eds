@@ -1,8 +1,0 @@
-# Configuration with secrets (legacy)
-config
-
-# Node modules
-node_modules/
-
-# Actual mapping file (may contain PII)
-user-mapping.csv

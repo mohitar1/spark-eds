@@ -25,11 +25,11 @@ const INPUT_FILE = path.join(__dirname, 'created-collections.json');
  * Extract ACL info from a collection record
  */
 function extractAcl(record) {
-  const acl = record.request?.payload?.['tccc:metadata']?.['tccc:acl'] || {};
+  const acl = record.request?.payload?.['custom:metadata']?.['custom:acl'] || {};
   return {
-    owner: acl['tccc:assetCollectionOwner'] || '',
-    viewers: (acl['tccc:assetCollectionViewer'] || []).filter((v) => v && v.trim()),
-    editors: (acl['tccc:assetCollectionEditor'] || []).filter((e) => e && e.trim()),
+    owner: acl['custom:assetCollectionOwner'] || '',
+    viewers: (acl['custom:assetCollectionViewer'] || []).filter((v) => v && v.trim()),
+    editors: (acl['custom:assetCollectionEditor'] || []).filter((e) => e && e.trim()),
   };
 }
 
@@ -472,9 +472,9 @@ Options:
   --help, -h          Show this help message
 
 The report generates an HTML file with tables grouped by:
-  1. Owner (tccc:assetCollectionOwner)
-  2. Editor (tccc:assetCollectionEditor)
-  3. Viewer (tccc:assetCollectionViewer)
+  1. Owner (custom:assetCollectionOwner)
+  2. Editor (custom:assetCollectionEditor)
+  3. Viewer (custom:assetCollectionViewer)
 
 Examples:
   node generate-report.js

@@ -3,6 +3,8 @@
  * Shared utilities for collection data transformation and management
  */
 
+import { CollectionAccessLevel, CollectionAclField } from './collection-search-constants.js';
+
 /**
  * Transform API collection format to internal format
  * Converts the Dynamic Media API collection structure to the format used by the UI
@@ -16,7 +18,6 @@ export function transformApiCollectionToInternal(apiCollection) {
 
   const metadata = apiCollection.collectionMetadata || {};
   const repoMetadata = apiCollection.repositoryMetadata || {};
-  const tcccMetadata = metadata['tccc:metadata'] || {};
 
   // Support both colon and hyphen formats for repo metadata (Algolia uses hyphens)
   // Prioritize lastModifiedDate injected from collections migration
@@ -24,6 +25,10 @@ export function transformApiCollectionToInternal(apiCollection) {
   const createDate = repoMetadata['repo:createDate'] || repoMetadata['repo-createDate'] || metadata['jcr:created'];
   const createdBy = repoMetadata['repo:createdBy'] || repoMetadata['repo-createdBy'];
   const modifiedBy = repoMetadata['repo:modifiedBy'] || repoMetadata['repo-modifiedBy'];
+  const acl = metadata['custom:metadata']?.['custom:acl'] || null;
+  const ownerEmail = acl?.[CollectionAclField.OWNER] || '';
+  const currentUserEmail = typeof window !== 'undefined' ? window.user?.email || '' : '';
+  const isOwner = !!ownerEmail && ownerEmail.toLowerCase() === currentUserEmail.toLowerCase();
 
   return {
     id: apiCollection.collectionId || apiCollection.id,
@@ -36,10 +41,11 @@ export function transformApiCollectionToInternal(apiCollection) {
     dateCreated: createDate,
     createdBy,
     modifiedBy,
-    accessLevel: metadata.accessLevel || 'private',
+    accessLevel: metadata.accessLevel || CollectionAccessLevel.PRIVATE,
     itemCount: apiCollection.itemCount || 0,
     thumbnailUrl: metadata['dam:thumbnailUrl'] || '',
-    acl: tcccMetadata['tccc:acl'] || null,
+    acl,
+    isOwner,
     contents: [],
     favorite: false,
     // Keep original API data for reference

@@ -69,7 +69,7 @@ Renders a dropdown with "All Assets" and "Templates" options next to the search 
 
 ## Live Examples
 
-- Home page: [da.live/edit#/.../index](https://da.live/edit#/the-coca-cola-company/koassets/en/index)
+- Home page: [da.live/edit#/.../index](https://da.live/edit#/adobe/spark-eds/en/index)
 
 ## Tips
 
@@ -78,7 +78,3 @@ Renders a dropdown with "All Assets" and "Templates" options next to the search 
 - The search bar auto-focuses when the page loads, so users can start typing immediately
 - On mobile (under 600px), the layout stacks vertically with the dropdown on top and a full-width search button
 - URL parameters are preserved when navigating — existing filters won't be lost
-
-## Related
-
-- [KOAssets Search](koassets-search.md) - Full asset search interface with results, facets, and cart

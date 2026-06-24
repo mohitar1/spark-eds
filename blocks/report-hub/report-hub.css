@@ -42,7 +42,7 @@
 .reports-hub-header {
   margin-bottom: 48px;
   padding-bottom: 24px;
-  border-bottom: 3px solid #f40009;
+  border-bottom: 3px solid var(--report-primary-color, var(--primary-color));
 }
 
 .reports-hub-header h1 {
@@ -114,7 +114,7 @@
 }
 
 .report-card:hover {
-  border-color: #f40009;
+  border-color: var(--report-primary-color, var(--primary-color));
   box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
   transform: translateY(-2px);
 }
@@ -206,7 +206,7 @@
 }
 
 .report-card:hover .report-card-arrow {
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
   transform: translateX(4px);
 }
 

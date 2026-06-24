@@ -4,7 +4,6 @@
  * Only accessible to users with admin-reports permission
  */
 
-// Report categories and their reports
 const REPORT_CATEGORIES = [
   {
     id: 'activity',
@@ -20,14 +19,6 @@ const REPORT_CATEGORIES = [
         status: 'available',
       },
       {
-        id: 'downloads',
-        title: 'Downloads',
-        description: 'Asset and template download activity report',
-        url: '/en/reports/downloads',
-        icon: 'download',
-        status: 'available',
-      },
-      {
         id: 'searches',
         title: 'Search Analytics',
         description: 'Search activity report',
@@ -35,43 +26,12 @@ const REPORT_CATEGORIES = [
         icon: 'search',
         status: 'available',
       },
-    ],
-  },
-  {
-    id: 'data',
-    title: 'Data Reports',
-    description: 'Report on system data',
-    reports: [
       {
-        id: 'assets',
-        title: 'Assets Overview',
-        description: 'Assets overview report',
-        url: '/en/reports/assets',
+        id: 'asset-activity',
+        title: 'Asset Activity',
+        description: 'Asset views, downloads, and usage audit',
+        url: '/en/reports/asset-activity',
         icon: 'asset',
-        status: 'available',
-      },
-      {
-        id: 'collections',
-        title: 'User Collections',
-        description: 'User collections overview report',
-        url: '/en/reports/collections',
-        icon: 'collections',
-        status: 'coming-soon',
-      },
-      {
-        id: 'saved-searches',
-        title: 'Saved Searches',
-        description: 'Saved searches overview report',
-        url: '/en/reports/saved-searches',
-        icon: 'search',
-        status: 'available',
-      },
-      {
-        id: 'rights-requests',
-        title: 'Rights Requests',
-        description: 'Rights request submission and review report',
-        url: '/en/reports/rights-requests',
-        icon: 'rights',
         status: 'available',
       },
     ],
@@ -201,8 +161,10 @@ export default function decorate(block) {
   // Clear any existing content
   block.innerHTML = '';
 
-  // Check if user has admin-reports permission
-  if (!window.user?.permissions?.includes('admin-reports')) {
+  // Check if user has admin role or admin-reports permission
+  const hasReportAccess = window.user?.roles?.includes('admin')
+    || window.user?.permissions?.includes('admin-reports');
+  if (!hasReportAccess) {
     block.appendChild(createAccessDenied());
     return;
   }

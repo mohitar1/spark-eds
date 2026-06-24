@@ -24,7 +24,7 @@
   align-items: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 3px solid #f40009;
+  border-bottom: 3px solid var(--report-primary-color, var(--primary-color));
 }
 
 .searches-title {
@@ -66,13 +66,13 @@
 .filters-toggle-label {
   font-size: 14px;
   font-weight: 600;
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
   white-space: nowrap;
 }
 
 .filters-toggle {
   font-size: 1rem;
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
   background: none;
   border: none;
   cursor: pointer;
@@ -192,22 +192,22 @@
 }
 
 .filter-select:hover {
-  border-color: #f40009;
+  border-color: var(--report-primary-color, var(--primary-color));
 }
 
 .filter-select:focus {
   outline: none;
-  border-color: #f40009;
+  border-color: var(--report-primary-color, var(--primary-color));
   box-shadow: 0 0 0 3px rgb(244 0 9 / 10%);
 }
 
 /* Reset button */
 .reset-button {
   padding: 8px 20px;
-  border: 2px solid #f40009;
+  border: 2px solid var(--report-primary-color, var(--primary-color));
   border-radius: 6px;
   background: white;
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -218,7 +218,7 @@
 }
 
 .reset-button:hover {
-  background: #f40009;
+  background: var(--report-primary-color, var(--primary-color));
   color: white;
 }
 
@@ -251,7 +251,7 @@
   display: inline-block;
   margin-top: 16px;
   padding: 10px 20px;
-  background-color: #f40009;
+  background-color: var(--report-primary-color, var(--primary-color));
   color: white;
   text-decoration: none;
   border-radius: 4px;
@@ -260,7 +260,7 @@
 }
 
 .searches-report-container .error-reset-link:hover {
-  background-color: #c8102e;
+  background-color: var(--primary-color-hover);
   text-decoration: none;
 }
 
@@ -336,7 +336,7 @@
   margin-bottom: 12px;
   text-align: center;
   padding-bottom: 8px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid var(--light-color);
 }
 
 .searches-charts .chart-container {
@@ -364,7 +364,7 @@
   color: #333;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid var(--light-color);
 }
 
 .top-searches-table-wrapper {
@@ -380,7 +380,7 @@
 }
 
 .top-searches-table thead {
-  background: linear-gradient(to right, #f40009, #e00008);
+  background: linear-gradient(to right, var(--report-primary-color, var(--primary-color)), var(--primary-color-hover));
 }
 
 .top-searches-table thead th {
@@ -432,7 +432,7 @@
 .top-searches-table .rank-cell {
   text-align: center;
   font-weight: 600;
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
   width: 60px;
   padding: 12px 8px;
 }
@@ -472,7 +472,7 @@
   color: #333;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid var(--light-color);
 }
 
 /* Distribution Charts Section */
@@ -514,7 +514,7 @@
   color: #333;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid var(--light-color);
 }
 
 .searches-geo-table {
@@ -525,7 +525,7 @@
 }
 
 .searches-geo-table thead {
-  background: linear-gradient(to right, #f40009, #e00008);
+  background: linear-gradient(to right, var(--report-primary-color, var(--primary-color)), var(--primary-color-hover));
 }
 
 .searches-geo-table thead th {
@@ -550,7 +550,7 @@
 }
 
 .searches-geo-table thead th.total-column {
-  background: #c8102e;
+  background: var(--primary-color-hover);
   font-weight: 800;
 }
 
@@ -583,7 +583,7 @@
 .searches-geo-table tbody td.metric-label.total-row {
   font-weight: 700;
   background: #fff0f0;
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
 }
 
 .searches-geo-table tbody td.numeric-cell {
@@ -594,13 +594,13 @@
 .searches-geo-table tbody td.total-row-cell {
   background: #fff0f0;
   font-weight: 700;
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
 }
 
 .searches-geo-table tbody td.total-cell {
   background: #fff0f0;
   font-weight: 700;
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
 }
 
 /* Collapsible Sections */
@@ -617,11 +617,11 @@
   transition: color 0.2s;
   padding: 0 0 12px;
   margin: 0 0 20px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid var(--light-color);
 }
 
 .report-searches .collapsible-section .collapsible-title:hover .title-text {
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
 }
 
 .report-searches .collapsible-section .title-text {
@@ -632,7 +632,7 @@
 
 .report-searches .collapsible-section .collapse-icon {
   font-size: 1rem;
-  color: #f40009;
+  color: var(--report-primary-color, var(--primary-color));
   transition: transform 0.3s ease;
   font-weight: bold;
 }

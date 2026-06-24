@@ -21,11 +21,11 @@
 
 # Configuration
 # Helix github
-REPO=koassets
-ORG=the-coca-cola-company
+REPO=spark-eds
+ORG=mohitar1
 # cloudflare worker
-WORKER=koassets
-WORKER_DOMAIN=${WORKER_DOMAIN:-adobecocacola}
+WORKER=spark-eds
+WORKER_DOMAIN=${WORKER_DOMAIN:-sparkedsmedia}
 
 # Usage: upload_version <tag> <message>
 # Returns version id in version.id file
@@ -135,7 +135,7 @@ fi
 if [ "$ci" = "true" ] && [ "$branch" = "main" ]; then
   # production deployment
   # Note: preview routing is handled in code for production version
-  url="https://pilot.assets.coke.com"
+  url="https://$WORKER.$WORKER_DOMAIN.workers.dev"
 
   HELIX_ORIGIN="https://$branch--$REPO--$ORG.aem.live"
   upload_version "$tag" "$message"
@@ -180,8 +180,7 @@ if [ "$ci" = "true" ] && [ "$branch" = "main" ]; then
   echo "   Live URL: $url"
   echo "   Internal: https://$WORKER.$WORKER_DOMAIN.workers.dev"
   echo
-  echo "Preview URL: https://preview.assets.coke.com"
-  echo "   Internal: https://preview-$WORKER.$WORKER_DOMAIN.workers.dev"
+  echo "Preview URL: https://preview-$WORKER.$WORKER_DOMAIN.workers.dev"
 fi
 echo "======================================================================================================================"
 

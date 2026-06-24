@@ -4,8 +4,7 @@
  * Shared constants for analytics tracking and reporting across the application.
  *
  * **Used by:**
- * - `blocks/koassets-search-new/` - Vanilla JavaScript search blocks
- * - `koassets-react/` - React TypeScript application
+ * - `blocks/search-results/` - Vanilla JavaScript search blocks
  * - `cloudflare/src/api/analytics.js` - Server-side API
  * - `blocks/report-downloads/` - Reporting UI
  *
@@ -105,10 +104,10 @@ export const KNOWN_ROLES = ['Associate', 'Agency', 'Bottler'];
  * Color scheme for roles in charts
  */
 export const ROLE_COLORS = {
-  Associate: '#f40009', // Coca-Cola red
-  Agency: '#6ac9ce', // Teal
-  Bottler: '#333333', // Dark grey
-  Other: '#95a5a6', // Light grey for unmapped roles
+  Associate: '#00647D',
+  Agency: '#EBA439',
+  Bottler: '#58181D',
+  Other: '#b8b8b8',
 };
 
 /**
@@ -231,15 +230,15 @@ export const CHART_INIT_DELAY = 100;
  * Geography colors for charts (used across all reports)
  */
 export const GEO_COLORS = [
-  '#f40009', // Coca-Cola red
-  '#c8102e', // Darker red
-  '#6ac9ce', // Teal
-  '#4a9da5', // Darker teal
-  '#333333', // Dark grey
-  '#555555', // Medium dark grey
-  '#777777', // Medium grey
-  '#999999', // Light grey
-  '#bbbbbb', // Lighter grey
+  '#00647D',
+  '#004d61',
+  '#EBA439',
+  '#DC6E52',
+  '#58181D',
+  '#666',
+  '#8f8f8f',
+  '#b8b8b8',
+  '#d6d6d6',
 ];
 
 /**
@@ -270,26 +269,26 @@ export const ANALYTICS_MAX_YEAR = 2030; // Max year for validation (prevent inva
  * Search type colors for stacked charts
  */
 export const SEARCH_TYPE_COLORS = {
-  all: '#f40009', // Coke red
-  assets: '#6ac9ce', // Teal
-  products: '#333333', // Dark grey
-  templates: '#999999', // Light grey
+  all: '#00647D',
+  assets: '#EBA439',
+  products: '#58181D',
+  templates: '#b8b8b8',
 };
 
 /**
  * Resource type colors (for downloads)
  */
 export const RESOURCE_TYPE_COLORS = {
-  Asset: '#f40009', // Coca-Cola red
-  Template: '#6ac9ce', // Teal
+  Asset: '#00647D',
+  Template: '#EBA439',
 };
 
 /**
  * User type colors (matches role colors for consistency)
  */
 export const USER_TYPE_COLORS = {
-  Associate: '#f40009', // Coca-Cola red
-  Agency: '#6ac9ce', // Teal
-  Bottler: '#333333', // Dark grey
-  Other: '#95a5a6', // Light grey
+  Associate: '#00647D',
+  Agency: '#EBA439',
+  Bottler: '#58181D',
+  Other: '#b8b8b8',
 };

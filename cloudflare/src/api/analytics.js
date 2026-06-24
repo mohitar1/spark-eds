@@ -3,8 +3,8 @@
  * Tracks user events using CloudFlare Analytics Engine
  */
 
-import { json, error } from 'itty-router';
-import { TOP_CAMPAIGNS_LIMIT, TOP_ASSETS_LIMIT, stripAssetUrn } from '../util/constants.js';
+import { error, json } from 'itty-router';
+import { stripAssetUrn, TOP_ASSETS_LIMIT, TOP_CAMPAIGNS_LIMIT } from '../util/constants.js';
 
 // Analytics constants
 const UNKNOWN_VALUE = 'unknown';
@@ -37,11 +37,52 @@ const REGION_TO_COUNTRIES = {
   AFR: ['ZA', 'NG', 'KE', 'EG', 'MA', 'GH', 'TZ', 'UG', 'ET', 'DZ'],
   ASP: ['AU', 'NZ', 'SG', 'MY', 'TH', 'VN', 'PH', 'ID', 'HK', 'TW'],
   EME: ['RU', 'TR', 'SA', 'AE', 'PK', 'UA', 'KZ', 'QA', 'KW', 'BH'],
-  EU: ['GB', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'CH', 'AT', 'SE', 'NO', 'DK', 'FI', 'PL', 'PT', 'IE', 'GR', 'CZ', 'RO', 'HU'],
+  EU: [
+    'GB',
+    'DE',
+    'FR',
+    'IT',
+    'ES',
+    'NL',
+    'BE',
+    'CH',
+    'AT',
+    'SE',
+    'NO',
+    'DK',
+    'FI',
+    'PL',
+    'PT',
+    'IE',
+    'GR',
+    'CZ',
+    'RO',
+    'HU',
+  ],
   GCM: ['CN', 'MN'],
   INSWA: ['IN', 'BD', 'LK', 'NP', 'AF'],
   JSK: ['JP', 'KR'],
-  LA: ['MX', 'BR', 'AR', 'CO', 'CL', 'PE', 'EC', 'VE', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'NI', 'CR', 'PA', 'UY'],
+  LA: [
+    'MX',
+    'BR',
+    'AR',
+    'CO',
+    'CL',
+    'PE',
+    'EC',
+    'VE',
+    'GT',
+    'CU',
+    'BO',
+    'DO',
+    'HN',
+    'PY',
+    'SV',
+    'NI',
+    'CR',
+    'PA',
+    'UY',
+  ],
   NA: ['US', 'CA'],
 };
 
@@ -169,9 +210,9 @@ export async function analyticsApi(request, env) {
   console.info('[Analytics API] Path:', path);
   console.info('[Analytics API] URL:', url.toString());
   console.info('[Analytics API] Analytics Engine Configured:');
-  console.info('[Analytics API]   - Dataset: koassets_analyticstest (from wrangler.toml)');
-  console.info('[Analytics API]   - Binding: KO_ANALYTICS_ENGINE_TEST');
-  console.info('[Analytics API]   - Available:', !!env.KO_ANALYTICS_ENGINE_TEST);
+  console.info('[Analytics API]   - Dataset: spark_analytics (from wrangler.toml)');
+  console.info('[Analytics API]   - Binding: SPARK_ANALYTICS_ENGINE');
+  console.info('[Analytics API]   - Available:', !!env.SPARK_ANALYTICS_ENGINE);
   console.info('==========================================');
 
   if (path.endsWith('/report-metrics')) {
@@ -289,13 +330,13 @@ async function getReportMetrics(request, env) {
         // Execute all bucket queries in parallel
         const results = await Promise.all(
           bucketQueries.map(async ({ bucket, condition }) => {
-            const query = `SELECT COUNT() as searches FROM koassets_analyticstest WHERE index1 = 'search' AND ${timestampFilter} AND ${condition}${filterConditions}`;
+            const query = `SELECT COUNT() as searches FROM spark_analytics WHERE index1 = 'search' AND ${timestampFilter} AND ${condition}${filterConditions}`;
             const result = await executeReportQuery(accountId, apiToken, query);
             return {
               bucket,
               searches: result.data?.[0]?.searches || 0,
             };
-          })
+          }),
         );
 
         return json({
@@ -321,8 +362,10 @@ async function getReportMetrics(request, env) {
     // Otherwise, return full downloads report metrics
 
     console.info('[Analytics API] Date range:', { startDate, endDate });
-    console.info('[Analytics API] Timestamp filter will be:',
-      `timestamp >= toDateTime('${startDate} 00:00:00') AND timestamp <= toDateTime('${endDate} 23:59:59')`);
+    console.info(
+      '[Analytics API] Timestamp filter will be:',
+      `timestamp >= toDateTime('${startDate} 00:00:00') AND timestamp <= toDateTime('${endDate} 23:59:59')`,
+    );
 
     // Execute all queries in parallel for efficiency
     const [
@@ -342,21 +385,13 @@ async function getReportMetrics(request, env) {
       userActivityByMonthResult,
       firstTimeUsersByMonthResult,
     ] = await Promise.all([
-      executeReportQuery(
-        accountId,
-        apiToken,
-        buildReportMetricQuery('uniqueUsers', startDate, endDate),
-      ),
+      executeReportQuery(accountId, apiToken, buildReportMetricQuery('uniqueUsers', startDate, endDate)),
       executeReportQuery(
         accountId,
         apiToken,
         buildReportMetricQuery('uniqueDownloaders', startDate, endDate, downloadFilters),
       ),
-      executeReportQuery(
-        accountId,
-        apiToken,
-        buildReportMetricQuery('firstTimeUsers', startDate, endDate),
-      ),
+      executeReportQuery(accountId, apiToken, buildReportMetricQuery('firstTimeUsers', startDate, endDate)),
       executeReportQuery(
         accountId,
         apiToken,
@@ -402,21 +437,9 @@ async function getReportMetrics(request, env) {
         apiToken,
         buildReportMetricQuery('topCampaigns', startDate, endDate, downloadFilters),
       ),
-      executeReportQuery(
-        accountId,
-        apiToken,
-        buildReportMetricQuery('topAssets', startDate, endDate, downloadFilters),
-      ),
-      executeReportQuery(
-        accountId,
-        apiToken,
-        buildReportMetricQuery('userActivityByMonth', startDate, endDate),
-      ),
-      executeReportQuery(
-        accountId,
-        apiToken,
-        buildReportMetricQuery('firstTimeUsersByMonth', startDate, endDate),
-      ),
+      executeReportQuery(accountId, apiToken, buildReportMetricQuery('topAssets', startDate, endDate, downloadFilters)),
+      executeReportQuery(accountId, apiToken, buildReportMetricQuery('userActivityByMonth', startDate, endDate)),
+      executeReportQuery(accountId, apiToken, buildReportMetricQuery('firstTimeUsersByMonth', startDate, endDate)),
     ]);
 
     // Extract values from results (parse as integers since SQL may return strings)
@@ -426,10 +449,11 @@ async function getReportMetrics(request, env) {
     const firstTimeDownloaders = parseInt(firstTimeDownloadersResult.data?.[0]?.first_time_count, 10) || 0;
 
     // Log raw query results for debugging
-    console.info('[Analytics API] Raw downloadsByMonth query result:',
-      JSON.stringify(downloadsByMonthResult.data || []));
-    console.info('[Analytics API] Raw uniqueDownloaders result:',
-      JSON.stringify(uniqueDownloadersResult.data || []));
+    console.info(
+      '[Analytics API] Raw downloadsByMonth query result:',
+      JSON.stringify(downloadsByMonthResult.data || []),
+    );
+    console.info('[Analytics API] Raw uniqueDownloaders result:', JSON.stringify(uniqueDownloadersResult.data || []));
 
     // Process chart data
     const downloadsByMonth = processDownloadsByMonth(downloadsByMonthResult.data || [], year);
@@ -444,10 +468,7 @@ async function getReportMetrics(request, env) {
     );
 
     // Process first-time downloaders by OU
-    const firstTimeDownloadersByOU = processFirstTimeDownloadersByOU(
-      firstTimeByOUResult.data || [],
-      year,
-    );
+    const firstTimeDownloadersByOU = processFirstTimeDownloadersByOU(firstTimeByOUResult.data || [], year);
 
     // Process top campaigns
     const topCampaigns = processTopCampaigns(topCampaignsResult.data || []);
@@ -514,7 +535,7 @@ async function getReportMetrics(request, env) {
  * Build SQL query for specific report metrics
  *
  * New blob structure (no custom timestamp):
- *   blob1: koid (WHO - user ID like "S700855")
+ *   blob1: userId (WHO - user ID)
  *   blob2: country
  *   blob3: employeeType
  *   blob4: company
@@ -539,108 +560,108 @@ function buildReportMetricQuery(metricType, startDate, endDate, filters = {}) {
 
   switch (metricType) {
     case 'uniqueUsers':
-      // Unique users = distinct koid from any user events (login, search, download) in date range
+      // Unique users = distinct userId from any user events (login, search, download) in date range
       // Counts across all event types for more accurate and resilient user counting
-      return `SELECT COUNT(DISTINCT blob1) as unique_count FROM koassets_analyticstest WHERE index1 IN ('login', 'search', 'download') AND blob1 IS NOT NULL AND blob1 != '' AND ${timestampFilter}`;
+      return `SELECT COUNT(DISTINCT blob1) as unique_count FROM spark_analytics WHERE index1 IN ('login', 'search', 'download') AND blob1 IS NOT NULL AND blob1 != '' AND ${timestampFilter}`;
 
     case 'uniqueDownloaders': {
-      // Unique downloaders = distinct koid from download events in date range
+      // Unique downloaders = distinct userId from download events in date range
       const downloadFilterConditions = buildDownloadFilterConditions(filters);
-      return `SELECT COUNT(DISTINCT blob1) as unique_count FROM koassets_analyticstest WHERE index1 = 'download' AND ${timestampFilter}${downloadFilterConditions}`;
+      return `SELECT COUNT(DISTINCT blob1) as unique_count FROM spark_analytics WHERE index1 = 'download' AND ${timestampFilter}${downloadFilterConditions}`;
     }
 
     case 'firstTimeUsers':
       // First time users = users whose FIRST EVER login falls within the date range
-      return `SELECT COUNT() as first_time_count FROM (SELECT blob1, MIN(timestamp) as first_login FROM koassets_analyticstest WHERE index1 = 'login' GROUP BY blob1 HAVING MIN(timestamp) >= ${startDateTime} AND MIN(timestamp) <= ${endDateTime})`;
+      return `SELECT COUNT() as first_time_count FROM (SELECT blob1, MIN(timestamp) as first_login FROM spark_analytics WHERE index1 = 'login' GROUP BY blob1 HAVING MIN(timestamp) >= ${startDateTime} AND MIN(timestamp) <= ${endDateTime})`;
 
     case 'firstTimeDownloaders': {
       // First time downloaders = users whose FIRST EVER download falls within the date range
       const downloadFilterConditions = buildDownloadFilterConditions(filters);
-      return `SELECT COUNT() as first_time_count FROM (SELECT blob1, MIN(timestamp) as first_download FROM koassets_analyticstest WHERE index1 = 'download'${downloadFilterConditions} GROUP BY blob1 HAVING MIN(timestamp) >= ${startDateTime} AND MIN(timestamp) <= ${endDateTime})`;
+      return `SELECT COUNT() as first_time_count FROM (SELECT blob1, MIN(timestamp) as first_download FROM spark_analytics WHERE index1 = 'download'${downloadFilterConditions} GROUP BY blob1 HAVING MIN(timestamp) >= ${startDateTime} AND MIN(timestamp) <= ${endDateTime})`;
     }
 
     case 'uniqueUsersByMonth':
       // Unique users grouped by month (counts across all event types)
-      return `SELECT formatDateTime(timestamp, '%Y-%m') as month, COUNT(DISTINCT blob1) as users FROM koassets_analyticstest WHERE index1 IN ('login', 'search', 'download') AND blob1 IS NOT NULL AND blob1 != '' AND ${timestampFilter} GROUP BY month ORDER BY month`;
+      return `SELECT formatDateTime(timestamp, '%Y-%m') as month, COUNT(DISTINCT blob1) as users FROM spark_analytics WHERE index1 IN ('login', 'search', 'download') AND blob1 IS NOT NULL AND blob1 != '' AND ${timestampFilter} GROUP BY month ORDER BY month`;
 
     case 'loginsByMonth':
       // Count login events grouped by month
-      return `SELECT formatDateTime(timestamp, '%Y-%m') as month, COUNT() as logins FROM koassets_analyticstest WHERE index1 = 'login' AND ${timestampFilter} GROUP BY month ORDER BY month`;
+      return `SELECT formatDateTime(timestamp, '%Y-%m') as month, COUNT() as logins FROM spark_analytics WHERE index1 = 'login' AND ${timestampFilter} GROUP BY month ORDER BY month`;
 
     case 'uniqueUsersByRole':
       // Unique users grouped by role (blob5 = roles, counts across all event types)
-      return `SELECT blob5 as role, COUNT(DISTINCT blob1) as users FROM koassets_analyticstest WHERE index1 IN ('login', 'search', 'download') AND blob1 IS NOT NULL AND blob1 != '' AND ${timestampFilter} GROUP BY role ORDER BY users DESC`;
+      return `SELECT blob5 as role, COUNT(DISTINCT blob1) as users FROM spark_analytics WHERE index1 IN ('login', 'search', 'download') AND blob1 IS NOT NULL AND blob1 != '' AND ${timestampFilter} GROUP BY role ORDER BY users DESC`;
 
     case 'loginsByRole':
       // Count logins grouped by role (blob5 = roles)
-      return `SELECT blob5 as role, COUNT() as logins FROM koassets_analyticstest WHERE index1 = 'login' AND ${timestampFilter} GROUP BY role ORDER BY logins DESC`;
+      return `SELECT blob5 as role, COUNT() as logins FROM spark_analytics WHERE index1 = 'login' AND ${timestampFilter} GROUP BY role ORDER BY logins DESC`;
 
     case 'uniqueUsersByGeo':
       // Unique users grouped by country/geography (blob2 = country, counts across all event types)
-      return `SELECT blob2 as geo, COUNT(DISTINCT blob1) as users FROM koassets_analyticstest WHERE index1 IN ('login', 'search', 'download') AND blob1 IS NOT NULL AND blob1 != '' AND ${timestampFilter} GROUP BY geo ORDER BY users DESC`;
+      return `SELECT blob2 as geo, COUNT(DISTINCT blob1) as users FROM spark_analytics WHERE index1 IN ('login', 'search', 'download') AND blob1 IS NOT NULL AND blob1 != '' AND ${timestampFilter} GROUP BY geo ORDER BY users DESC`;
 
     case 'loginsByGeo':
       // Count logins grouped by country/geography (blob2 = country)
-      return `SELECT blob2 as geo, COUNT() as logins FROM koassets_analyticstest WHERE index1 = 'login' AND ${timestampFilter} GROUP BY geo ORDER BY logins DESC`;
+      return `SELECT blob2 as geo, COUNT() as logins FROM spark_analytics WHERE index1 = 'login' AND ${timestampFilter} GROUP BY geo ORDER BY logins DESC`;
 
     case 'uniqueSearchers':
       // Unique users who performed searches
-      return `SELECT COUNT(DISTINCT blob1) as unique_count FROM koassets_analyticstest WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions}`;
+      return `SELECT COUNT(DISTINCT blob1) as unique_count FROM spark_analytics WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions}`;
 
     case 'firstTimeSearchers':
       // First-time searchers (users whose first search is within date range)
       // Note: filters applied to inner query for consistency
-      return `SELECT COUNT() as first_time_count FROM (SELECT blob1, MIN(timestamp) as first_search FROM koassets_analyticstest WHERE index1 = 'search'${searchFilterConditions} GROUP BY blob1 HAVING MIN(timestamp) >= ${startDateTime} AND MIN(timestamp) <= ${endDateTime})`;
+      return `SELECT COUNT() as first_time_count FROM (SELECT blob1, MIN(timestamp) as first_search FROM spark_analytics WHERE index1 = 'search'${searchFilterConditions} GROUP BY blob1 HAVING MIN(timestamp) >= ${startDateTime} AND MIN(timestamp) <= ${endDateTime})`;
 
     case 'uniqueSearchersByMonth':
       // Unique searchers grouped by month
-      return `SELECT formatDateTime(timestamp, '%Y-%m') as month, COUNT(DISTINCT blob1) as users FROM koassets_analyticstest WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY month ORDER BY month`;
+      return `SELECT formatDateTime(timestamp, '%Y-%m') as month, COUNT(DISTINCT blob1) as users FROM spark_analytics WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY month ORDER BY month`;
 
     case 'searchesByMonth':
       // Count search events grouped by month and search type (blob7 = searchType)
-      return `SELECT formatDateTime(timestamp, '%Y-%m') as month, blob7 as searchType, COUNT() as searches FROM koassets_analyticstest WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY month, searchType ORDER BY month`;
+      return `SELECT formatDateTime(timestamp, '%Y-%m') as month, blob7 as searchType, COUNT() as searches FROM spark_analytics WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY month, searchType ORDER BY month`;
 
     case 'uniqueSearchersByRole':
       // Unique searchers grouped by role (blob5 = roles)
-      return `SELECT blob5 as role, COUNT(DISTINCT blob1) as users FROM koassets_analyticstest WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY role ORDER BY users DESC`;
+      return `SELECT blob5 as role, COUNT(DISTINCT blob1) as users FROM spark_analytics WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY role ORDER BY users DESC`;
 
     case 'searchesByRole':
       // Count searches grouped by role (blob5 = roles)
-      return `SELECT blob5 as role, COUNT() as searches FROM koassets_analyticstest WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY role ORDER BY searches DESC`;
+      return `SELECT blob5 as role, COUNT() as searches FROM spark_analytics WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY role ORDER BY searches DESC`;
 
     case 'uniqueSearchersByGeo':
       // Unique searchers grouped by country/geography (blob2 = country)
-      return `SELECT blob2 as geo, COUNT(DISTINCT blob1) as users FROM koassets_analyticstest WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY geo ORDER BY users DESC`;
+      return `SELECT blob2 as geo, COUNT(DISTINCT blob1) as users FROM spark_analytics WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY geo ORDER BY users DESC`;
 
     case 'searchesByGeo':
       // Count searches grouped by country/geography (blob2 = country)
-      return `SELECT blob2 as geo, COUNT() as searches FROM koassets_analyticstest WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY geo ORDER BY searches DESC`;
+      return `SELECT blob2 as geo, COUNT() as searches FROM spark_analytics WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY geo ORDER BY searches DESC`;
 
     case 'searchesByGeoAndType':
       // Count searches grouped by country/geography and search type (blob2 = country, blob7 = searchType)
-      return `SELECT blob2 as geo, blob7 as searchType, COUNT() as searches FROM koassets_analyticstest WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY geo, searchType ORDER BY searches DESC`;
+      return `SELECT blob2 as geo, blob7 as searchType, COUNT() as searches FROM spark_analytics WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY geo, searchType ORDER BY searches DESC`;
 
     case 'searchDistributionByType':
       // Distribution of searches by search type (blob7 = searchType)
-      return `SELECT blob7 as searchType, COUNT() as searches FROM koassets_analyticstest WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY searchType ORDER BY searches DESC`;
+      return `SELECT blob7 as searchType, COUNT() as searches FROM spark_analytics WHERE index1 = 'search' AND ${timestampFilter}${searchFilterConditions} GROUP BY searchType ORDER BY searches DESC`;
 
     case 'searchDistributionByResultSize':
       // This metric is handled specially with multiple queries (see getReportMetrics)
       // Returning a placeholder query here to satisfy the function signature
-      return `SELECT 'placeholder' as bucket, 0 as searches FROM koassets_analyticstest LIMIT 0`;
+      return `SELECT 'placeholder' as bucket, 0 as searches FROM spark_analytics LIMIT 0`;
 
     case 'topSearches':
       /**
        * Query top searches by search term and type
        * blob6 = searchTerm, blob7 = searchType for search events
-       * blob1 = koid (for unique searchers)
+       * blob1 = userId (for unique searchers)
        */
       return `SELECT 
         blob6 as searchTerm,
         blob7 as searchType,
         COUNT(DISTINCT blob1) as uniqueSearchers,
         COUNT() as totalSearches
-      FROM koassets_analyticstest 
+      FROM spark_analytics 
       WHERE index1 = 'search' 
         AND blob6 != '' 
         AND ${timestampFilter}${searchFilterConditions}
@@ -653,14 +674,14 @@ function buildReportMetricQuery(metricType, startDate, endDate, filters = {}) {
        * Query top searches that returned 0 results, grouped by term and type
        * blob6 = searchTerm, blob7 = searchType for search events
        * double1 = resultCount (NULL or 0 means no results)
-       * blob1 = koid (for unique searchers)
+       * blob1 = userId (for unique searchers)
        */
       return `SELECT 
         blob6 as searchTerm,
         blob7 as searchType,
         COUNT(DISTINCT blob1) as uniqueSearchers,
         COUNT() as totalSearches
-      FROM koassets_analyticstest 
+      FROM spark_analytics 
       WHERE index1 = 'search' 
         AND blob6 != '' 
         AND (double1 = 0 OR double1 IS NULL)
@@ -673,48 +694,48 @@ function buildReportMetricQuery(metricType, startDate, endDate, filters = {}) {
       // Downloads by month and resource type (blob6 = resourceType for downloads)
       // COUNT() - each event = 1 download (new schema)
       const downloadFilterConditions = buildDownloadFilterConditions(filters);
-      return `SELECT formatDateTime(timestamp, '%Y-%m') as month, blob6 as resource_type, COUNT() as downloads FROM koassets_analyticstest WHERE index1 = 'download' AND ${timestampFilter}${downloadFilterConditions} GROUP BY month, resource_type ORDER BY month`;
+      return `SELECT formatDateTime(timestamp, '%Y-%m') as month, blob6 as resource_type, COUNT() as downloads FROM spark_analytics WHERE index1 = 'download' AND ${timestampFilter}${downloadFilterConditions} GROUP BY month, resource_type ORDER BY month`;
     }
 
     case 'downloadersByRole': {
-      // Unique downloaders by role (blob5 = roles, blob1 = koid)
+      // Unique downloaders by role (blob5 = roles, blob1 = userId)
       const downloadFilterConditions = buildDownloadFilterConditions(filters);
-      return `SELECT blob5 as role, COUNT(DISTINCT blob1) as downloaders FROM koassets_analyticstest WHERE index1 = 'download' AND ${timestampFilter}${downloadFilterConditions} GROUP BY role ORDER BY downloaders DESC`;
+      return `SELECT blob5 as role, COUNT(DISTINCT blob1) as downloaders FROM spark_analytics WHERE index1 = 'download' AND ${timestampFilter}${downloadFilterConditions} GROUP BY role ORDER BY downloaders DESC`;
     }
 
     case 'downloadsByRole': {
       // Total downloads by role (blob5 = roles)
       // COUNT() - each event = 1 download (new schema)
       const downloadFilterConditions = buildDownloadFilterConditions(filters);
-      return `SELECT blob5 as role, COUNT() as downloads FROM koassets_analyticstest WHERE index1 = 'download' AND ${timestampFilter}${downloadFilterConditions} GROUP BY role ORDER BY downloads DESC`;
+      return `SELECT blob5 as role, COUNT() as downloads FROM spark_analytics WHERE index1 = 'download' AND ${timestampFilter}${downloadFilterConditions} GROUP BY role ORDER BY downloads DESC`;
     }
 
     case 'downloadersByGeo': {
-      // Unique downloaders by country/geo (blob2 = country, blob1 = koid)
+      // Unique downloaders by country/geo (blob2 = country, blob1 = userId)
       const downloadFilterConditions = buildDownloadFilterConditions(filters);
-      return `SELECT blob2 as geo, COUNT(DISTINCT blob1) as downloaders FROM koassets_analyticstest WHERE index1 = 'download' AND ${timestampFilter}${downloadFilterConditions} GROUP BY geo ORDER BY downloaders DESC`;
+      return `SELECT blob2 as geo, COUNT(DISTINCT blob1) as downloaders FROM spark_analytics WHERE index1 = 'download' AND ${timestampFilter}${downloadFilterConditions} GROUP BY geo ORDER BY downloaders DESC`;
     }
 
     case 'assetDownloadsByGeo': {
       // Asset downloads by geo (blob6 = resourceType, blob2 = country)
       // COUNT() - each event = 1 download (new schema)
       const downloadFilterConditions = buildDownloadFilterConditions(filters);
-      return `SELECT blob2 as geo, COUNT() as downloads FROM koassets_analyticstest WHERE index1 = 'download' AND blob6 = 'asset' AND ${timestampFilter}${downloadFilterConditions} GROUP BY geo ORDER BY downloads DESC`;
+      return `SELECT blob2 as geo, COUNT() as downloads FROM spark_analytics WHERE index1 = 'download' AND blob6 = 'asset' AND ${timestampFilter}${downloadFilterConditions} GROUP BY geo ORDER BY downloads DESC`;
     }
 
     case 'templateDownloadsByGeo': {
       // Template downloads by geo (blob6 = resourceType, blob2 = country)
       // COUNT() - each event = 1 download (new schema)
       const downloadFilterConditions = buildDownloadFilterConditions(filters);
-      return `SELECT blob2 as geo, COUNT() as downloads FROM koassets_analyticstest WHERE index1 = 'download' AND blob6 = 'template' AND ${timestampFilter}${downloadFilterConditions} GROUP BY geo ORDER BY downloads DESC`;
+      return `SELECT blob2 as geo, COUNT() as downloads FROM spark_analytics WHERE index1 = 'download' AND blob6 = 'template' AND ${timestampFilter}${downloadFilterConditions} GROUP BY geo ORDER BY downloads DESC`;
     }
 
     case 'firstTimeDownloadersByOU': {
       // First-time downloaders grouped by month and country
-      // blob1 = koid, blob2 = country
+      // blob1 = userId, blob2 = country
       // argMin(blob2, timestamp) gets the country from the row with minimum timestamp
       const downloadFilterConditions = buildDownloadFilterConditions(filters);
-      return `SELECT formatDateTime(first_ts, '%Y-%m') as month, country, COUNT() as count FROM (SELECT blob1, MIN(timestamp) as first_ts, argMin(blob2, timestamp) as country FROM koassets_analyticstest WHERE index1 = 'download'${downloadFilterConditions} GROUP BY blob1 HAVING MIN(timestamp) >= ${startDateTime} AND MIN(timestamp) <= ${endDateTime}) GROUP BY month, country ORDER BY month`;
+      return `SELECT formatDateTime(first_ts, '%Y-%m') as month, country, COUNT() as count FROM (SELECT blob1, MIN(timestamp) as first_ts, argMin(blob2, timestamp) as country FROM spark_analytics WHERE index1 = 'download'${downloadFilterConditions} GROUP BY blob1 HAVING MIN(timestamp) >= ${startDateTime} AND MIN(timestamp) <= ${endDateTime}) GROUP BY month, country ORDER BY month`;
     }
 
     case 'topCampaigns': {
@@ -732,7 +753,7 @@ function buildReportMetricQuery(metricType, startDate, endDate, filters = {}) {
        * has limited support for complex aggregations (no ANY(), limited CASE WHEN).
        *
        * Schema:
-       * - blob1: user koid
+       * - blob1: user userId
        * - blob2: user country (OU)
        * - blob6: resourceType ('asset' or 'template')
        * - blob7: campaign name
@@ -743,11 +764,11 @@ function buildReportMetricQuery(metricType, startDate, endDate, filters = {}) {
       return `SELECT 
         blob7 as campaign, 
         blob8 as brand,
-        blob1 as koid,
+        blob1 as userId,
         blob2 as country,
         blob6 as resourceType,
         double1 as downloadCount
-      FROM koassets_analyticstest 
+      FROM spark_analytics 
       WHERE index1 = 'download' AND blob7 != '' AND ${timestampFilter}${downloadFilterConditions}`;
     }
 
@@ -765,7 +786,7 @@ function buildReportMetricQuery(metricType, startDate, endDate, filters = {}) {
        * has limited support for complex aggregations.
        *
        * Schema:
-       * - blob1: user koid (for unique downloader count)
+       * - blob1: user userId (for unique downloader count)
        * - blob2: user country (OU)
        * - blob7: campaign name
        * - blob8: brand name
@@ -777,10 +798,10 @@ function buildReportMetricQuery(metricType, startDate, endDate, filters = {}) {
         blob10 as assetId, 
         blob7 as campaign,
         blob8 as brand,
-        blob1 as koid,
+        blob1 as userId,
         blob2 as country,
         double1 as downloadCount
-      FROM koassets_analyticstest 
+      FROM spark_analytics 
       WHERE index1 = 'download' AND blob10 != '' AND ${timestampFilter}${downloadFilterConditions}`;
     }
 
@@ -797,7 +818,7 @@ function buildReportMetricQuery(metricType, startDate, endDate, filters = {}) {
        * of engagement percentages (searchers/visitors, downloaders/visitors).
        *
        * Schema:
-       * - blob1: user koid (for distinct count)
+       * - blob1: user userId (for distinct count)
        * - index1: event type ('login', 'search', 'download')
        * - timestamp: event timestamp
        */
@@ -805,7 +826,7 @@ function buildReportMetricQuery(metricType, startDate, endDate, filters = {}) {
         formatDateTime(timestamp, '%Y-%m') as month,
         index1 as eventType,
         COUNT(DISTINCT blob1) as uniqueUsers
-      FROM koassets_analyticstest 
+      FROM spark_analytics 
       WHERE index1 IN ('login', 'search', 'download') AND ${timestampFilter}
       GROUP BY month, eventType 
       ORDER BY month`;
@@ -820,14 +841,14 @@ function buildReportMetricQuery(metricType, startDate, endDate, filters = {}) {
        * Used for the "Unique Visitors" column in User Activity table.
        *
        * Schema:
-       * - blob1: user koid (for distinct count)
+       * - blob1: user userId (for distinct count)
        * - index1: event type ('login', 'search', 'download')
        * - timestamp: event timestamp
        */
       return `SELECT 
         formatDateTime(timestamp, '%Y-%m') as month,
         COUNT(DISTINCT blob1) as uniqueVisitors
-      FROM koassets_analyticstest 
+      FROM spark_analytics 
       WHERE index1 IN ('login', 'search', 'download') AND blob1 IS NOT NULL AND blob1 != '' AND ${timestampFilter}
       GROUP BY month 
       ORDER BY month`;
@@ -847,7 +868,7 @@ function buildReportMetricQuery(metricType, startDate, endDate, filters = {}) {
        * This represents true "registered new users" for User Activity report.
        *
        * Schema:
-       * - blob1: user koid (unique identifier)
+       * - blob1: user userId (unique identifier)
        * - index1: event type ('login')
        * - timestamp: event timestamp
        */
@@ -856,7 +877,7 @@ function buildReportMetricQuery(metricType, startDate, endDate, filters = {}) {
         COUNT() as count
       FROM (
         SELECT blob1, MIN(timestamp) as first_ts 
-        FROM koassets_analyticstest 
+        FROM spark_analytics 
         WHERE index1 = 'login' 
         GROUP BY blob1 
         HAVING MIN(timestamp) >= ${startDateTime} AND MIN(timestamp) <= ${endDateTime}
@@ -966,32 +987,157 @@ function processDownloadsByMonth(data, year) {
  */
 const COUNTRY_TO_REGION = {
   // Africa (AFR) - codes and names
-  ZA: 'AFR', NG: 'AFR', KE: 'AFR', EG: 'AFR', MA: 'AFR', GH: 'AFR', TZ: 'AFR', UG: 'AFR', ET: 'AFR', DZ: 'AFR',
-  'SOUTH AFRICA': 'AFR', NIGERIA: 'AFR', KENYA: 'AFR', EGYPT: 'AFR', MOROCCO: 'AFR', GHANA: 'AFR',
+  ZA: 'AFR',
+  NG: 'AFR',
+  KE: 'AFR',
+  EG: 'AFR',
+  MA: 'AFR',
+  GH: 'AFR',
+  TZ: 'AFR',
+  UG: 'AFR',
+  ET: 'AFR',
+  DZ: 'AFR',
+  'SOUTH AFRICA': 'AFR',
+  NIGERIA: 'AFR',
+  KENYA: 'AFR',
+  EGYPT: 'AFR',
+  MOROCCO: 'AFR',
+  GHANA: 'AFR',
   // Asia Pacific (ASP)
-  AU: 'ASP', NZ: 'ASP', SG: 'ASP', MY: 'ASP', TH: 'ASP', VN: 'ASP', PH: 'ASP', ID: 'ASP', HK: 'ASP', TW: 'ASP',
-  AUSTRALIA: 'ASP', 'NEW ZEALAND': 'ASP', SINGAPORE: 'ASP', MALAYSIA: 'ASP', THAILAND: 'ASP', VIETNAM: 'ASP', PHILIPPINES: 'ASP', INDONESIA: 'ASP', 'HONG KONG': 'ASP', TAIWAN: 'ASP',
+  AU: 'ASP',
+  NZ: 'ASP',
+  SG: 'ASP',
+  MY: 'ASP',
+  TH: 'ASP',
+  VN: 'ASP',
+  PH: 'ASP',
+  ID: 'ASP',
+  HK: 'ASP',
+  TW: 'ASP',
+  AUSTRALIA: 'ASP',
+  'NEW ZEALAND': 'ASP',
+  SINGAPORE: 'ASP',
+  MALAYSIA: 'ASP',
+  THAILAND: 'ASP',
+  VIETNAM: 'ASP',
+  PHILIPPINES: 'ASP',
+  INDONESIA: 'ASP',
+  'HONG KONG': 'ASP',
+  TAIWAN: 'ASP',
   // Eurasia & Middle East (EME)
-  RU: 'EME', TR: 'EME', SA: 'EME', AE: 'EME', PK: 'EME', UA: 'EME', KZ: 'EME', QA: 'EME', KW: 'EME', BH: 'EME',
-  RUSSIA: 'EME', TURKEY: 'EME', 'SAUDI ARABIA': 'EME', UAE: 'EME', 'UNITED ARAB EMIRATES': 'EME', PAKISTAN: 'EME', UKRAINE: 'EME',
+  RU: 'EME',
+  TR: 'EME',
+  SA: 'EME',
+  AE: 'EME',
+  PK: 'EME',
+  UA: 'EME',
+  KZ: 'EME',
+  QA: 'EME',
+  KW: 'EME',
+  BH: 'EME',
+  RUSSIA: 'EME',
+  TURKEY: 'EME',
+  'SAUDI ARABIA': 'EME',
+  UAE: 'EME',
+  'UNITED ARAB EMIRATES': 'EME',
+  PAKISTAN: 'EME',
+  UKRAINE: 'EME',
   // Europe (EU)
-  GB: 'EU', DE: 'EU', FR: 'EU', IT: 'EU', ES: 'EU', NL: 'EU', BE: 'EU', CH: 'EU', AT: 'EU', SE: 'EU', NO: 'EU', DK: 'EU', FI: 'EU', PL: 'EU', PT: 'EU', IE: 'EU', GR: 'EU', CZ: 'EU', RO: 'EU', HU: 'EU',
-  'UNITED KINGDOM': 'EU', UK: 'EU', GERMANY: 'EU', FRANCE: 'EU', ITALY: 'EU', SPAIN: 'EU', NETHERLANDS: 'EU', BELGIUM: 'EU', SWITZERLAND: 'EU', AUSTRIA: 'EU', SWEDEN: 'EU', NORWAY: 'EU', DENMARK: 'EU', FINLAND: 'EU', POLAND: 'EU', PORTUGAL: 'EU', IRELAND: 'EU', GREECE: 'EU',
+  GB: 'EU',
+  DE: 'EU',
+  FR: 'EU',
+  IT: 'EU',
+  ES: 'EU',
+  NL: 'EU',
+  BE: 'EU',
+  CH: 'EU',
+  AT: 'EU',
+  SE: 'EU',
+  NO: 'EU',
+  DK: 'EU',
+  FI: 'EU',
+  PL: 'EU',
+  PT: 'EU',
+  IE: 'EU',
+  GR: 'EU',
+  CZ: 'EU',
+  RO: 'EU',
+  HU: 'EU',
+  'UNITED KINGDOM': 'EU',
+  UK: 'EU',
+  GERMANY: 'EU',
+  FRANCE: 'EU',
+  ITALY: 'EU',
+  SPAIN: 'EU',
+  NETHERLANDS: 'EU',
+  BELGIUM: 'EU',
+  SWITZERLAND: 'EU',
+  AUSTRIA: 'EU',
+  SWEDEN: 'EU',
+  NORWAY: 'EU',
+  DENMARK: 'EU',
+  FINLAND: 'EU',
+  POLAND: 'EU',
+  PORTUGAL: 'EU',
+  IRELAND: 'EU',
+  GREECE: 'EU',
   // Greater China & Mongolia (GCM)
-  CN: 'GCM', MN: 'GCM',
-  CHINA: 'GCM', MONGOLIA: 'GCM',
+  CN: 'GCM',
+  MN: 'GCM',
+  CHINA: 'GCM',
+  MONGOLIA: 'GCM',
   // India, South West Asia (INSWA)
-  IN: 'INSWA', BD: 'INSWA', LK: 'INSWA', NP: 'INSWA', AF: 'INSWA',
-  INDIA: 'INSWA', BANGLADESH: 'INSWA', 'SRI LANKA': 'INSWA', NEPAL: 'INSWA', AFGHANISTAN: 'INSWA',
+  IN: 'INSWA',
+  BD: 'INSWA',
+  LK: 'INSWA',
+  NP: 'INSWA',
+  AF: 'INSWA',
+  INDIA: 'INSWA',
+  BANGLADESH: 'INSWA',
+  'SRI LANKA': 'INSWA',
+  NEPAL: 'INSWA',
+  AFGHANISTAN: 'INSWA',
   // Japan & South Korea (JSK)
-  JP: 'JSK', KR: 'JSK',
-  JAPAN: 'JSK', 'SOUTH KOREA': 'JSK', KOREA: 'JSK',
+  JP: 'JSK',
+  KR: 'JSK',
+  JAPAN: 'JSK',
+  'SOUTH KOREA': 'JSK',
+  KOREA: 'JSK',
   // Latin America (LA)
-  BR: 'LA', MX: 'LA', AR: 'LA', CO: 'LA', CL: 'LA', PE: 'LA', VE: 'LA', EC: 'LA', GT: 'LA', CU: 'LA', DO: 'LA', HN: 'LA', PA: 'LA', CR: 'LA', PR: 'LA', UY: 'LA', PY: 'LA', BO: 'LA', SV: 'LA', NI: 'LA',
-  BRAZIL: 'LA', MEXICO: 'LA', ARGENTINA: 'LA', COLOMBIA: 'LA', CHILE: 'LA', PERU: 'LA', VENEZUELA: 'LA', ECUADOR: 'LA',
+  BR: 'LA',
+  MX: 'LA',
+  AR: 'LA',
+  CO: 'LA',
+  CL: 'LA',
+  PE: 'LA',
+  VE: 'LA',
+  EC: 'LA',
+  GT: 'LA',
+  CU: 'LA',
+  DO: 'LA',
+  HN: 'LA',
+  PA: 'LA',
+  CR: 'LA',
+  PR: 'LA',
+  UY: 'LA',
+  PY: 'LA',
+  BO: 'LA',
+  SV: 'LA',
+  NI: 'LA',
+  BRAZIL: 'LA',
+  MEXICO: 'LA',
+  ARGENTINA: 'LA',
+  COLOMBIA: 'LA',
+  CHILE: 'LA',
+  PERU: 'LA',
+  VENEZUELA: 'LA',
+  ECUADOR: 'LA',
   // North America (NA)
-  US: 'NA', CA: 'NA',
-  USA: 'NA', 'UNITED STATES': 'NA', CANADA: 'NA',
+  US: 'NA',
+  CA: 'NA',
+  USA: 'NA',
+  'UNITED STATES': 'NA',
+  CANADA: 'NA',
 };
 
 const GEO_CODES = ['AFR', 'ASP', 'EME', 'EU', 'GCM', 'INSWA', 'JSK', 'LA', 'NA'];
@@ -1111,7 +1257,9 @@ function processFirstTimeDownloadersByOU(data, year) {
   monthNames.forEach((name, index) => {
     const monthKey = `${year}-${String(index + 1).padStart(2, '0')}`;
     monthlyData[monthKey] = { month: name };
-    OU_CODES.forEach((ou) => { monthlyData[monthKey][ou] = 0; });
+    OU_CODES.forEach((ou) => {
+      monthlyData[monthKey][ou] = 0;
+    });
   });
 
   // Helper to get OU from country
@@ -1303,9 +1451,7 @@ function processTopCampaigns(data) {
   }));
 
   // Sort by totalDownloads DESC and return top 10
-  return campaigns
-    .sort((a, b) => b.totalDownloads - a.totalDownloads)
-    .slice(0, TOP_CAMPAIGNS_LIMIT);
+  return campaigns.sort((a, b) => b.totalDownloads - a.totalDownloads).slice(0, TOP_CAMPAIGNS_LIMIT);
 }
 
 /**
@@ -1363,9 +1509,7 @@ function processTopAssets(data) {
   }));
 
   // Sort by totalDownloads DESC and return top 10
-  return assets
-    .sort((a, b) => b.totalDownloads - a.totalDownloads)
-    .slice(0, TOP_ASSETS_LIMIT);
+  return assets.sort((a, b) => b.totalDownloads - a.totalDownloads).slice(0, TOP_ASSETS_LIMIT);
 }
 
 /**
@@ -1423,12 +1567,14 @@ function processUserActivityByMonth(data, firstTimeUsersData, year) {
     const activity = monthlyActivity[monthKey];
 
     // Calculate percentages
-    const searchersPct = activity.uniqueVisitors > 0
-      ? Math.round((activity.uniqueSearchers / activity.uniqueVisitors) * PERCENTAGE_MULTIPLIER)
-      : 0;
-    const downloadersPct = activity.uniqueVisitors > 0
-      ? Math.round((activity.uniqueDownloaders / activity.uniqueVisitors) * PERCENTAGE_MULTIPLIER)
-      : 0;
+    const searchersPct =
+      activity.uniqueVisitors > 0
+        ? Math.round((activity.uniqueSearchers / activity.uniqueVisitors) * PERCENTAGE_MULTIPLIER)
+        : 0;
+    const downloadersPct =
+      activity.uniqueVisitors > 0
+        ? Math.round((activity.uniqueDownloaders / activity.uniqueVisitors) * PERCENTAGE_MULTIPLIER)
+        : 0;
 
     return {
       month: activity.month,
@@ -1575,18 +1721,18 @@ async function getRawDownloads(request, env) {
       month: month || 'full year',
       startDate,
       endDate,
-      user: request.user?.koid,
+      user: request.user?.userId,
     });
 
     // Build and execute query for raw download events
-    // Note: blob1 is now koid (was email), blob9-12 are new enhanced tracking fields
+    // Note: blob1 is now userId (was email), blob9-12 are new enhanced tracking fields
     const startDateTime = `toDateTime('${startDate} 00:00:00')`;
     const endDateTime = `toDateTime('${endDate} 23:59:59')`;
 
     const sql = `
       SELECT 
         timestamp,
-        blob1 as koid,
+        blob1 as userId,
         blob2 as country,
         blob3 as employeeType,
         blob4 as company,
@@ -1599,7 +1745,7 @@ async function getRawDownloads(request, env) {
         blob11 as downloadType,
         blob12 as rendition,
         blob13 as publicationId
-      FROM koassets_analyticstest 
+      FROM spark_analytics 
       WHERE index1 = 'download' 
         AND timestamp >= ${startDateTime} 
         AND timestamp <= ${endDateTime}
@@ -1616,7 +1762,7 @@ async function getRawDownloads(request, env) {
     });
 
     // Build CSV content
-    // Note: koid replaces email (not PII, no masking needed)
+    // Note: userId replaces email (not PII, no masking needed)
     const headers = [
       'Date/Time',
       'User ID',
@@ -1639,7 +1785,7 @@ async function getRawDownloads(request, env) {
       const isTemplate = row.resourceType === 'template';
       return [
         escapeCSV(row.timestamp),
-        escapeCSV(row.koid),
+        escapeCSV(row.userId),
         escapeCSV(row.country),
         escapeCSV(row.employeeType),
         escapeCSV(row.company),
@@ -1689,13 +1835,13 @@ async function getRawDownloads(request, env) {
 /**
  * Write event to Analytics Engine
  *
- * @param {Object} analyticsEngine - Analytics Engine binding (env.KO_ANALYTICS_ENGINE_TEST)
+ * @param {Object} analyticsEngine - Analytics Engine binding (env.SPARK_ANALYTICS_ENGINE)
  * @param {string} eventType - 'login', 'search', or 'download'
  * @param {Object} data - Event data to write
  * @param {Object} [env] - Optional Cloudflare env (for DEBUG_ANALYTICS flag)
  *
  * Consistent blob structure across all events:
- *   blob1: koid (WHO - user ID like "S700855")
+ *   blob1: userId (WHO - user ID)
  *   blob2: country
  *   blob3: employeeType
  *   blob4: company
@@ -1722,13 +1868,13 @@ export async function writeAnalyticsEvent(analyticsEngine, eventType, data, env)
   }
 
   // Common blobs for all events (WHO + context)
-  // Note: koid replaces email as user identifier for privacy
+  // Note: userId replaces email as user identifier for privacy
   const commonBlobs = [
-    data.koid,              // blob1 - WHO (user ID like "S700855")
-    data.country,           // blob2
-    data.employeeType,      // blob3
-    data.company,           // blob4
-    data.roles.join(','),   // blob5
+    data.userId, // blob1 - WHO (user ID)
+    data.country, // blob2
+    data.employeeType, // blob3
+    data.company, // blob4
+    data.roles.join(','), // blob5
   ];
 
   let dataPoint;
@@ -1747,11 +1893,18 @@ export async function writeAnalyticsEvent(analyticsEngine, eventType, data, env)
     case 'search':
       dataPoint = {
         blobs: [...commonBlobs, data.searchTerm, data.searchType || 'unknown'], // blob6 = searchTerm, blob7 = searchType
-        doubles: [data.resultCount],               // double1 = resultCount
+        doubles: [data.resultCount], // double1 = resultCount
         indexes: [eventType],
       };
       if (debug) {
-        console.info('[Analytics Engine] 🔍 SEARCH EVENT - searchTerm:', data.searchTerm, 'searchType:', data.searchType, 'resultCount:', data.resultCount);
+        console.info(
+          '[Analytics Engine] 🔍 SEARCH EVENT - searchTerm:',
+          data.searchTerm,
+          'searchType:',
+          data.searchType,
+          'resultCount:',
+          data.resultCount,
+        );
       }
       break;
 
@@ -1760,20 +1913,37 @@ export async function writeAnalyticsEvent(analyticsEngine, eventType, data, env)
       // Each event = 1 download (no count/double1 needed)
       dataPoint = {
         blobs: [
-          ...commonBlobs,                           // blob1-5
-          data.resourceType,                        // blob6 - asset/template
-          data.campaigns,                           // blob7 - campaign name
-          data.brand,                               // blob8 - brand name
-          data.downloadId || '',                    // blob9 - session grouping UUID
-          data.downloadItemId || '',                // blob10 - asset ID (base template for customized)
-          data.downloadType || '',                  // blob11 - ready-to-use/restricted
-          data.rendition || '',                     // blob12 - rendition name
-          data.publicationId || '',                 // blob13 - customized/derived template ID
+          ...commonBlobs, // blob1-5
+          data.resourceType, // blob6 - asset/template
+          data.campaigns, // blob7 - campaign name
+          data.brand, // blob8 - brand name
+          data.downloadId || '', // blob9 - session grouping UUID
+          data.downloadItemId || '', // blob10 - asset ID (base template for customized)
+          data.downloadType || '', // blob11 - ready-to-use/restricted
+          data.rendition || '', // blob12 - rendition name
+          data.publicationId || '', // blob13 - customized/derived template ID
         ],
         indexes: [eventType],
       };
       if (debug) {
-        console.info('[Analytics Engine] 📥 DOWNLOAD EVENT - resourceType:', data.resourceType, 'campaigns:', data.campaigns, 'brand:', data.brand, 'downloadId:', data.downloadId, 'itemId:', data.downloadItemId, 'pubId:', data.publicationId, 'type:', data.downloadType, 'rendition:', data.rendition);
+        console.info(
+          '[Analytics Engine] 📥 DOWNLOAD EVENT - resourceType:',
+          data.resourceType,
+          'campaigns:',
+          data.campaigns,
+          'brand:',
+          data.brand,
+          'downloadId:',
+          data.downloadId,
+          'itemId:',
+          data.downloadItemId,
+          'pubId:',
+          data.publicationId,
+          'type:',
+          data.downloadType,
+          'rendition:',
+          data.rendition,
+        );
       }
       break;
 
@@ -1797,3 +1967,337 @@ export async function writeAnalyticsEvent(analyticsEngine, eventType, data, env)
   }
 }
 
+// =============================================================================
+// SEARCH METRICS API — D1-backed (replaces Analytics Engine for searches)
+// =============================================================================
+
+const SEARCH_TOP_LIMIT = 20;
+
+/**
+ * Build D1 WHERE clause params for search_events queries.
+ * Returns { whereClause, bindings } where bindings are positional (? placeholders).
+ */
+function buildSearchD1Conditions(startDate, endDate, filters = {}) {
+  const conditions = [`occurred_at >= ?`, `occurred_at <= ?`];
+  const bindings = [`${startDate}T00:00:00.000Z`, `${endDate}T23:59:59.999Z`];
+
+  if (filters.role && filters.role !== FILTER_DEFAULT_VALUE) {
+    if (!VALID_ROLES.includes(filters.role)) throw new Error(`Invalid role filter: ${filters.role}`);
+    const roleValues = ROLE_MAPPINGS[filters.role] || [filters.role];
+    const roleClauses = roleValues.map(() => `user_role = ?`).join(' OR ');
+    conditions.push(`(${roleClauses})`);
+    bindings.push(...roleValues);
+  }
+
+  if (filters.searchType && filters.searchType !== FILTER_DEFAULT_VALUE) {
+    if (!VALID_SEARCH_TYPES.includes(filters.searchType))
+      throw new Error(`Invalid searchType filter: ${filters.searchType}`);
+    conditions.push(`search_type = ?`);
+    bindings.push(filters.searchType);
+  }
+
+  if (filters.searchTerm && filters.searchTerm !== FILTER_DEFAULT_VALUE) {
+    if (!VALID_SEARCH_TERMS.includes(filters.searchTerm))
+      throw new Error(`Invalid searchTerm filter: ${filters.searchTerm}`);
+    if (filters.searchTerm === 'empty') {
+      conditions.push(`(search_term = '' OR search_term IS NULL)`);
+    } else {
+      conditions.push(`search_term != ''`);
+    }
+  }
+
+  if (filters.region && filters.region !== FILTER_DEFAULT_VALUE) {
+    if (!VALID_REGIONS.includes(filters.region)) throw new Error(`Invalid region filter: ${filters.region}`);
+    const codes = REGION_TO_COUNTRIES[filters.region];
+    if (codes?.length) {
+      conditions.push(`user_country IN (${codes.map(() => '?').join(', ')})`);
+      bindings.push(...codes);
+    }
+  }
+
+  return { whereClause: conditions.join(' AND '), bindings };
+}
+
+/**
+ * GET /api/analytics/search-metrics
+ * All search report metrics served from SEARCH_EVENTS D1 table.
+ */
+export async function searchMetricsApi(request, env) {
+  if (request.method !== 'GET') return error(405, { success: false, error: 'Method not allowed' });
+
+  const db = env.SEARCH_EVENTS;
+  if (!db) return error(500, { success: false, error: 'SEARCH_EVENTS D1 binding not configured' });
+
+  try {
+    const url = new URL(request.url);
+    const metricType = url.searchParams.get('type');
+
+    const currentYear = new Date().getFullYear();
+    const year = parseInt(url.searchParams.get('year'), 10) || currentYear;
+    const month = url.searchParams.get('month') ? parseInt(url.searchParams.get('month'), 10) : null;
+    const customStart = url.searchParams.get('startDate');
+    const customEnd = url.searchParams.get('endDate');
+
+    let startDate;
+    let endDate;
+    if (customStart && customEnd) {
+      startDate = customStart;
+      endDate = customEnd;
+    } else if (month) {
+      startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+      const lastDay = new Date(year, month, 0).getDate();
+      endDate = `${year}-${String(month).padStart(2, '0')}-${lastDay}`;
+    } else {
+      startDate = `${year}-01-01`;
+      endDate = `${year}-12-31`;
+    }
+
+    const filters = {
+      role: url.searchParams.get('role') || FILTER_DEFAULT_VALUE,
+      searchType: url.searchParams.get('searchType') || FILTER_DEFAULT_VALUE,
+      searchTerm: url.searchParams.get('searchTerm') || FILTER_DEFAULT_VALUE,
+      region: url.searchParams.get('region') || FILTER_DEFAULT_VALUE,
+    };
+
+    if (!metricType) {
+      return error(400, { success: false, error: 'Missing required parameter: type' });
+    }
+
+    const data = await executeSearchMetric(db, env, metricType, startDate, endDate, filters, year);
+    return json({ success: true, type: metricType, data });
+  } catch (err) {
+    console.error('[Search Metrics] Error:', err.message);
+    return error(500, { success: false, error: err.message || 'Failed to get search metrics' });
+  }
+}
+
+async function executeSearchMetric(db, env, metricType, startDate, endDate, filters, year) {
+  const { whereClause, bindings } = buildSearchD1Conditions(startDate, endDate, filters);
+
+  switch (metricType) {
+    case 'uniqueUsers': {
+      const logins = env.USER_LOGINS;
+      if (!logins) return [{ unique_count: 0 }];
+      const row = await logins
+        .prepare(
+          `SELECT COUNT(DISTINCT email) as unique_count FROM user_logins
+         WHERE last_login_date >= ? AND first_login_date <= ?`,
+        )
+        .bind(`${startDate}T00:00:00.000Z`, `${endDate}T23:59:59.999Z`)
+        .first();
+      return [{ unique_count: row?.unique_count ?? 0 }];
+    }
+
+    case 'firstTimeUsers': {
+      const logins = env.USER_LOGINS;
+      if (!logins) return [{ first_time_count: 0 }];
+      const row = await logins
+        .prepare(
+          `SELECT COUNT(*) as first_time_count FROM user_logins
+         WHERE first_login_date >= ? AND first_login_date <= ?`,
+        )
+        .bind(`${startDate}T00:00:00.000Z`, `${endDate}T23:59:59.999Z`)
+        .first();
+      return [{ first_time_count: row?.first_time_count ?? 0 }];
+    }
+
+    case 'uniqueSearchers': {
+      const row = await db
+        .prepare(`SELECT COUNT(DISTINCT user_id) as unique_count FROM search_events WHERE ${whereClause}`)
+        .bind(...bindings)
+        .first();
+      return [{ unique_count: row?.unique_count ?? 0 }];
+    }
+
+    case 'firstTimeSearchers': {
+      const { whereClause: wc, bindings: bs } = buildSearchD1Conditions(startDate, endDate, filters);
+      const row = await db
+        .prepare(
+          `SELECT COUNT(*) as first_time_count FROM (
+          SELECT user_id, MIN(occurred_at) as first_search
+          FROM search_events
+          WHERE ${wc}
+          GROUP BY user_id
+        )`,
+        )
+        .bind(...bs)
+        .first();
+      return [{ first_time_count: row?.first_time_count ?? 0 }];
+    }
+
+    case 'uniqueSearchersByMonth': {
+      const rows = await db
+        .prepare(
+          `SELECT strftime('%Y-%m', occurred_at) as month, COUNT(DISTINCT user_id) as users
+         FROM search_events WHERE ${whereClause}
+         GROUP BY month ORDER BY month`,
+        )
+        .bind(...bindings)
+        .all();
+      return rows.results || [];
+    }
+
+    case 'searchesByMonth': {
+      const rows = await db
+        .prepare(
+          `SELECT strftime('%Y-%m', occurred_at) as month, search_type as searchType, COUNT(*) as searches
+         FROM search_events WHERE ${whereClause}
+         GROUP BY month, searchType ORDER BY month`,
+        )
+        .bind(...bindings)
+        .all();
+      return rows.results || [];
+    }
+
+    case 'uniqueSearchersByRole': {
+      const rows = await db
+        .prepare(
+          `SELECT user_role as role, COUNT(DISTINCT user_id) as users
+         FROM search_events WHERE ${whereClause}
+         GROUP BY role ORDER BY users DESC`,
+        )
+        .bind(...bindings)
+        .all();
+      return rows.results || [];
+    }
+
+    case 'searchesByRole': {
+      const rows = await db
+        .prepare(
+          `SELECT user_role as role, COUNT(*) as searches
+         FROM search_events WHERE ${whereClause}
+         GROUP BY role ORDER BY searches DESC`,
+        )
+        .bind(...bindings)
+        .all();
+      return rows.results || [];
+    }
+
+    case 'uniqueSearchersByGeo': {
+      const rows = await db
+        .prepare(
+          `SELECT user_country as geo, COUNT(DISTINCT user_id) as users
+         FROM search_events WHERE ${whereClause}
+         GROUP BY geo ORDER BY users DESC`,
+        )
+        .bind(...bindings)
+        .all();
+      return rows.results || [];
+    }
+
+    case 'searchesByGeo': {
+      const rows = await db
+        .prepare(
+          `SELECT user_country as geo, COUNT(*) as searches
+         FROM search_events WHERE ${whereClause}
+         GROUP BY geo ORDER BY searches DESC`,
+        )
+        .bind(...bindings)
+        .all();
+      return rows.results || [];
+    }
+
+    case 'searchesByGeoAndType': {
+      const rows = await db
+        .prepare(
+          `SELECT user_country as geo, search_type as searchType, COUNT(*) as searches
+         FROM search_events WHERE ${whereClause}
+         GROUP BY geo, searchType ORDER BY searches DESC`,
+        )
+        .bind(...bindings)
+        .all();
+      return rows.results || [];
+    }
+
+    case 'searchDistributionByType': {
+      const rows = await db
+        .prepare(
+          `SELECT search_type as searchType, COUNT(*) as searches
+         FROM search_events WHERE ${whereClause}
+         GROUP BY searchType ORDER BY searches DESC`,
+        )
+        .bind(...bindings)
+        .all();
+      return rows.results || [];
+    }
+
+    case 'searchDistributionByResultSize': {
+      const buckets = [
+        { bucket: '0 results', condition: '(result_count = 0 OR result_count IS NULL)' },
+        { bucket: '1-10 results', condition: 'result_count > 0 AND result_count <= 10' },
+        { bucket: '11-50 results', condition: 'result_count > 10 AND result_count <= 50' },
+        { bucket: '51-100 results', condition: 'result_count > 50 AND result_count <= 100' },
+        { bucket: '101-500 results', condition: 'result_count > 100 AND result_count <= 500' },
+        { bucket: '501-1000 results', condition: 'result_count > 500 AND result_count <= 1000' },
+        { bucket: '1001-10000 results', condition: 'result_count > 1000 AND result_count <= 10000' },
+        { bucket: '10001-100000 results', condition: 'result_count > 10000 AND result_count <= 100000' },
+        { bucket: '100000+ results', condition: 'result_count > 100000' },
+      ];
+      const results = await Promise.all(
+        buckets.map(async ({ bucket, condition }) => {
+          const row = await db
+            .prepare(`SELECT COUNT(*) as searches FROM search_events WHERE ${whereClause} AND ${condition}`)
+            .bind(...bindings)
+            .first();
+          return { bucket, searches: row?.searches ?? 0 };
+        }),
+      );
+      return results;
+    }
+
+    case 'topSearches': {
+      const rows = await db
+        .prepare(
+          `SELECT search_term as searchTerm, search_type as searchType,
+                COUNT(DISTINCT user_id) as uniqueSearchers, COUNT(*) as totalSearches
+         FROM search_events WHERE ${whereClause} AND search_term != ''
+         GROUP BY searchTerm, searchType
+         ORDER BY totalSearches DESC LIMIT ${SEARCH_TOP_LIMIT}`,
+        )
+        .bind(...bindings)
+        .all();
+      return rows.results || [];
+    }
+
+    case 'topZeroResultSearches': {
+      const rows = await db
+        .prepare(
+          `SELECT search_term as searchTerm, search_type as searchType,
+                COUNT(DISTINCT user_id) as uniqueSearchers, COUNT(*) as totalSearches
+         FROM search_events WHERE ${whereClause} AND search_term != ''
+                              AND (result_count = 0 OR result_count IS NULL)
+         GROUP BY searchTerm, searchType
+         ORDER BY totalSearches DESC LIMIT ${SEARCH_TOP_LIMIT}`,
+        )
+        .bind(...bindings)
+        .all();
+      return rows.results || [];
+    }
+
+    default:
+      throw new Error(`Unknown search metric type: ${metricType}`);
+  }
+}
+
+/**
+ * Write a search event to the SEARCH_EVENTS D1 table.
+ * Called fire-and-forget from analytics-helper.js.
+ */
+export async function writeSearchEvent(db, data) {
+  await db
+    .prepare(
+      `INSERT INTO search_events (user_id, user_email, user_country, user_role, search_term, search_type, result_count, occurred_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      data.userId || '',
+      data.userEmail || null,
+      data.country || null,
+      data.roles?.[0] || null,
+      (data.searchTerm || '').substring(0, 200),
+      data.searchType || 'all',
+      data.resultCount ?? null,
+      new Date().toISOString(),
+    )
+    .run();
+}

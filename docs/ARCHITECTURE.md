@@ -1,8 +1,8 @@
-# KOAssets Architecture
+# Spark Architecture
 
 ## System Overview
 
-KOAssets (`assets.coke.com`) is an authenticated digital asset portal for The Coca-Cola Company. Three layers work together:
+Spark (`assets.coke.com`) is an authenticated digital asset portal for The Coca-Cola Company. Three layers work together:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐

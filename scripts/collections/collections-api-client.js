@@ -5,11 +5,15 @@
  * Client-side auth helpers are in collections-auth.js for UI control
  */
 
-import { getContentAIClient } from '../../blocks/koassets-search/clients/dynamicmedia-client.js';
+import { getContentAIClient } from '../../blocks/search-results/clients/dynamicmedia-client.js';
 import {
   getHitsPerPage,
   DEFAULT_SORT_BY,
-} from '../../blocks/koassets-search/utils/config.js';
+} from '../../blocks/search-results/utils/config.js';
+import {
+  CollectionListSegment,
+  CollectionCreatedByMeVisibility,
+} from './collection-search-constants.js';
 
 // Default search fields for ContentAI text search
 const DEFAULT_SEARCH_CONTENTAI_COLLECTIONS_FIELDS = [
@@ -76,7 +80,9 @@ export class DynamicMediaCollectionsClient {
       if (allowUndefinedResponse && response.status !== 200) {
         return undefined;
       }
-      throw new Error(`Request failed: ${response.statusText}`);
+      const err = new Error(`Request failed: ${response.statusText}`);
+      err.status = response.status;
+      throw err;
     }
 
     const contentType = response.headers.get('content-type');
@@ -160,8 +166,10 @@ export class DynamicMediaCollectionsClient {
    * @param {string} [options.orderBy] - Sort order (default: CONTENTAI_SEARCH_DEFAULTS.ORDER_BY)
    * @param {boolean} [options.pin] - Filter to pinned collections only
    * @param {boolean} [options.favorite] - Filter to favorite collections only
-   * @param {boolean} [options.writeOnly] - If true, backend returns only collections where user has
-   *   write (owner/editor), not viewer
+   * @param {string} [options.relationship] - Relationship filter
+   *   (`CollectionListSegment`; see `collection-search-constants.js`)
+   * @param {string} [options.visibility] - `CollectionCreatedByMeVisibility`
+   *   (`all` | `private` | `public`). Sent only when `relationship` is `createdByMe`.
    * @returns {Promise<{items: Array, total: number, cursor: string}>} Promise with search results
    */
   async searchCollections(options = {}) {
@@ -176,7 +184,8 @@ export class DynamicMediaCollectionsClient {
         orderBy = DEFAULT_SORT_BY,
         pin,
         favorite,
-        writeOnly = false,
+        relationship,
+        visibility = CollectionCreatedByMeVisibility.ALL,
       } = options;
 
       // Build ContentAI search request
@@ -208,8 +217,25 @@ export class DynamicMediaCollectionsClient {
       if (favorite !== undefined) {
         searchBody.favorite = favorite;
       }
-      if (writeOnly) {
-        searchBody.writeOnly = true; // backend filters to owner/editor only, then strips this
+      if (
+        relationship === CollectionListSegment.ALL
+        || relationship === CollectionListSegment.CREATED_BY_ME
+        || relationship === CollectionListSegment.SHARED_WITH_ME
+        || relationship === CollectionListSegment.PUBLIC_VIEW
+        || relationship === CollectionListSegment.PUBLIC
+      ) {
+        searchBody.relationship = relationship;
+      }
+      if (
+        relationship === CollectionListSegment.CREATED_BY_ME
+        && (
+          visibility === CollectionCreatedByMeVisibility.PRIVATE
+          || visibility === CollectionCreatedByMeVisibility.READ_ONLY
+          || visibility === CollectionCreatedByMeVisibility.PUBLIC
+          || visibility === CollectionCreatedByMeVisibility.ALL
+        )
+      ) {
+        searchBody.visibility = visibility;
       }
 
       // eslint-disable-next-line no-console
@@ -298,7 +324,13 @@ export class DynamicMediaCollectionsClient {
       return collection;
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(`Failed to get collection metadata for "${collectionId}": ${error.message}`);
+        const wrapped = new Error(
+          `Failed to get collection metadata for "${collectionId}": ${error.message}`,
+        );
+        if (typeof error.status === 'number') {
+          wrapped.status = error.status;
+        }
+        throw wrapped;
       }
       throw error;
     }
@@ -307,20 +339,32 @@ export class DynamicMediaCollectionsClient {
   /**
    * Delete a collection
    * Note: Authorization is enforced server-side in Cloudflare worker
+   * Adobe requires a matching `If-Match` (collection entity tag), not `*`.
+   *
    * @param {string} collectionId - Collection ID
+   * @param {{ ifMatch?: string }} [options] - Optional known ETag.
    * @returns {Promise} Promise with deletion result
    */
-  async deleteCollection(collectionId) {
+  async deleteCollection(collectionId, options = {}) {
     try {
       // eslint-disable-next-line no-console
       console.trace('DynamicMediaCollectionsClient.deleteCollection() REQUEST');
 
-      // Use If-Match: * to delete regardless of ETag value
+      let { ifMatch } = options;
+      if (!ifMatch) {
+        const current = await this.getCollectionMetadata(collectionId);
+        // eslint-disable-next-line no-underscore-dangle
+        ifMatch = current._etag;
+      }
+      if (!ifMatch) {
+        throw new Error('Missing ETag: cannot delete collection without If-Match (metadata had no etag).');
+      }
+
       const { data } = await this.makeRequest({
         url: `/adobe/assets/collections/${collectionId}`,
         method: 'DELETE',
         headers: {
-          'If-Match': '*',
+          'If-Match': ifMatch,
         },
       });
 
@@ -338,19 +382,32 @@ export class DynamicMediaCollectionsClient {
    * Note: Authorization is enforced server-side in Cloudflare worker
    * @param {string} collectionId - Collection ID
    * @param {Object} updateData - Updated collection metadata (only changed fields)
+   * @param {{ currentCollection?: object }} [options] - Optional snapshot (metadata + `_etag`) from
+   *   `getCollectionMetadata`; when valid, skips the redundant GET before POST.
    * @returns {Promise} Promise with updated collection data
    */
-  async updateCollectionMetadata(collectionId, updateData) {
+  async updateCollectionMetadata(collectionId, updateData, options = {}) {
     try {
       // eslint-disable-next-line no-console
       console.trace('DynamicMediaCollectionsClient.updateCollectionMetadata() REQUEST');
 
-      // First get current collection metadata to preserve existing data and retrieve ETag
-      const currentCollection = await this.getCollectionMetadata(collectionId);
+      const { currentCollection: providedSnapshot } = options;
+      let currentCollection = providedSnapshot;
+      // eslint-disable-next-line no-underscore-dangle -- ETag attached by getCollectionMetadata
+      const snapshotEtag = currentCollection?._etag;
+      const snapshotUsable = Boolean(
+        snapshotEtag && currentCollection?.collectionMetadata,
+      );
+      if (!snapshotUsable) {
+        currentCollection = await this.getCollectionMetadata(collectionId);
+      }
 
-      // Use ETag from getCollectionMetadata response
+      // Use ETag from getCollectionMetadata response (or caller-provided snapshot)
       // eslint-disable-next-line no-underscore-dangle
       const etag = currentCollection._etag;
+      if (!etag) {
+        throw new Error('Missing ETag for collection metadata update');
+      }
 
       // Merge current metadata with updates (preserve all existing metadata)
       const mergedMetadata = {
@@ -424,7 +481,7 @@ export class DynamicMediaCollectionsClient {
       // If collectionMetadata.lastModifiedDate exists due to collections migration,
       // we need to remove it before updating the collection items
       if (currentCollection.collectionMetadata?.lastModifiedDate) {
-        await this.updateCollectionMetadata(collectionId, {});
+        await this.updateCollectionMetadata(collectionId, {}, { currentCollection });
         // Get fresh ETag after metadata update
         currentCollection = await this.getCollectionMetadata(collectionId);
       }
@@ -535,11 +592,6 @@ export class DynamicMediaCollectionsClient {
       repoName: repoMeta['repo:name'],
       // Metadata fields that are useful for search and display
       format: repoMeta['dc:format'],
-      contentType: assetMeta['tccc:contentType'],
-      brand: assetMeta['tccc:brand'],
-      campaign: assetMeta['tccc:campaignName'],
-      intendedChannel: assetMeta['tccc:intendedChannel'],
-      marketCovered: assetMeta['tccc:marketCovered'],
       // Keep original search hit data for reference
       _searchHit: hit, // Used in AssetDetails and CartPanel to populate asset
     };

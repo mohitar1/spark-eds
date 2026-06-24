@@ -1,6 +1,6 @@
-# KO Assets — Complete System Architecture
+# Spark — Complete System Architecture
 
-> **KO Assets** is a digital asset management (DAM) portal for The Coca-Cola Company, built on Adobe Experience Manager Edge Delivery Services (AEM EDS) with a Cloudflare Worker gateway, backed by Adobe Dynamic Media (Content Hub) and Fadel rights management.
+> **Spark** is a digital asset management (DAM) portal for The Coca-Cola Company, built on Adobe Experience Manager Edge Delivery Services (AEM EDS) with a Cloudflare Worker gateway, backed by Adobe Dynamic Media (Content Hub) and Fadel rights management.
 
 ---
 
@@ -31,7 +31,7 @@
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                           USER'S BROWSER                                 │
 │  ┌─────────────┐  ┌──────────────────┐  ┌─────────────────────────┐    │
-│  │   EDS Pages  │  │  koassets-search  │  │  Report / My-* Blocks   │    │
+│  │   EDS Pages  │  │  search-results  │  │  Report / My-* Blocks   │    │
 │  │  (HTML/CSS)  │  │  (Vanilla JS SPA) │  │  (Vanilla JS)           │    │
 │  └──────┬───────┘  └────────┬──────────┘  └───────────┬─────────────┘    │
 └─────────┼────────────────────┼──────────────────────────┼────────────────┘
@@ -175,17 +175,17 @@ AEM Edge Delivery Services (formerly Project Helix) is Adobe's document-based we
 #### Asset Management Blocks
 | Block | Purpose |
 |-------|---------|
-| **`koassets-search`** | Primary search UI (~121 files) — facets, results, cart, details, downloads |
+| **`search-results`** | Primary search UI (~121 files) — facets, results, cart, details, downloads |
 | `asset-details` | Standalone asset detail page |
 | `content-stores` | Browsable curated asset libraries |
 | `template-adapt` | Template customization editor (Chili iframe) |
 | `search` | Simple search bar → redirects to search pages |
+| `search-collection-results` | Search, create, manage, and share collections |
+| `collection-details` | Single collection detail view |
 
 #### User Workspace Blocks (`my-*`)
 | Block | Purpose |
 |-------|---------|
-| `my-collections` | User's asset collections |
-| `my-collections-details` | Single collection detail view |
 | `my-notifications` | In-app messages |
 | `my-print-jobs` | Print job tracking |
 | `my-rights-requests` | Rights clearance requests |
@@ -300,15 +300,14 @@ cloudflare/src/
 | 11 | `/api/messages/*` | notificationsApi | Yes |
 | 12 | `/api/analytics/*` | analyticsApi | Yes |
 | 13 | `/api/user-logins/csv` | exportUserLoginsCSV | Yes + admin-reports |
-| 14 | `/api/collections/*` | collectionsApi | Yes |
-| 15 | `/content/share/*` | publishShareRouter | Yes |
-| 16 | `/*` (catch-all) | originHelix + pageAccess | Yes |
+| 14 | `/content/share/*` | publishShareRouter | Yes |
+| 15 | `/*` (catch-all) | originHelix + pageAccess | Yes |
 
 ### Origin Handlers
 
 | Origin | Target | Auth Method | Purpose |
 |--------|--------|-------------|---------|
-| **Helix** | `main--koassets--the-coca-cola-company.aem.live` | Token header | EDS pages, CSS, JS |
+| **Helix** | `main--spark-eds--adobe.aem.live` | Token header | EDS pages, CSS, JS |
 | **Dynamic Media** | `delivery-p64403-e609778.adobeaemcloud.com` | IMS OAuth (cached in KV) | Asset search, metadata, downloads |
 | **AEM Publish** | `author-p64403-e609778.adobeaemcloud.com` | Basic Auth + sling.sudo | Templates, print jobs, legacy share |
 | **Fadel** | `global.fadelarc.net` | Fadel token (cached in KV) | Rights clearance API |
@@ -485,7 +484,7 @@ The search is **NOT** Algolia or Elasticsearch — it uses Adobe's ContentAI API
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│  koassets-search block (browser)                              │
+│  search-results block (browser)                              │
 │                                                               │
 │  ┌──────────┐    ┌──────────────┐    ┌────────────────────┐  │
 │  │  Facets   │    │  Results Grid │    │  Asset Details     │  │
@@ -535,7 +534,7 @@ The search is **NOT** Algolia or Elasticsearch — it uses Adobe's ContentAI API
 No React, Redux, or Zustand. Custom lightweight pub/sub:
 
 ```javascript
-// Central state in koassets-search.js
+// Central state in search-results.js
 const state = { query, searchResults, dmImages, facets, cart, ... };
 const listeners = new Set();
 
@@ -582,7 +581,7 @@ Navigation uses `history.replaceState` (no page reload).
 
 ### What is Fadel?
 
-Fadel ARC is a third-party rights clearance platform. KO Assets integrates with it to:
+Fadel ARC is a third-party rights clearance platform. Spark integrates with it to:
 - Check if assets are cleared for specific markets and media channels
 - Submit rights requests for unclearable assets
 - Track rights expiration and send reminders
@@ -700,7 +699,7 @@ Each `report-*` block:
 
 ### Document Authoring (DA)
 
-Content lives at: `https://da.live/#/the-coca-cola-company/koassets`
+Content lives at: `https://da.live/#/adobe/spark-eds`
 
 Authors use DA (a Google Docs-like interface) to:
 - Create pages (each doc = one web page)
@@ -784,8 +783,8 @@ Jobs:
 |------------|-----|---------|
 | Production | `pilot.assets.coke.com` | Live users |
 | Preview | `preview.assets.coke.com` | Content preview (requires `preview` permission) |
-| Helix Live | `main--koassets--the-coca-cola-company.aem.live` | Direct Helix access |
-| Helix Preview | `main--koassets--the-coca-cola-company.aem.page` | Content staging |
+| Helix Live | `main--spark-eds--adobe.aem.live` | Direct Helix access |
+| Helix Preview | `main--spark-eds--adobe.aem.page` | Content staging |
 | Local | `http://localhost:8787` | Developer machines |
 
 ---
@@ -846,13 +845,13 @@ FADEL_PASSWORD=...
 
 | Database | Table | Purpose |
 |----------|-------|---------|
-| `koassets-user-logins` | `USER_LOGINS` | Login tracking for admin reports |
+| `spark-user-logins` | `USER_LOGINS` | Login tracking for admin reports |
 
 ### Cloudflare Analytics Engine
 
 | Dataset | Events |
 |---------|--------|
-| `koassets_analyticstest` | login, search, download |
+| `spark_analyticstest` | login, search, download |
 
 ### Browser Storage (Client-Side)
 
@@ -985,8 +984,8 @@ EDS loads in tiers (Eager → Lazy → Delayed). Critical auth and content first
 | `cloudflare/src/auth.js` | OIDC implementation pattern |
 | `cloudflare/src/user.js` | Permission/role resolution from config sheets |
 | `cloudflare/src/origin/dm.js` | How DM proxy + auth filters work |
-| `blocks/koassets-search/koassets-search.js` | State management and search orchestration |
-| `blocks/koassets-search/clients/dynamicmedia-client.js` | ContentAI API integration |
+| `blocks/search-results/search-results.js` | State management and search orchestration |
+| `blocks/search-results/clients/dynamicmedia-client.js` | ContentAI API integration |
 | `blocks/header/header.js` | Navigation and profile integration |
 | `scripts/cart-state.js` | Cross-tab state sync pattern |
 

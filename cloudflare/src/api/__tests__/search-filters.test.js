@@ -3,7 +3,7 @@
  * Tests buildSearchFilterConditions function for security and correctness
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 // Mock the filter builder function (in actual implementation, we'd import from analytics.js)
 // For testing purposes, we're recreating it here to test the logic independently
@@ -18,11 +18,52 @@ const REGION_TO_COUNTRIES = {
   AFR: ['ZA', 'NG', 'KE', 'EG', 'MA', 'GH', 'TZ', 'UG', 'ET', 'DZ'],
   ASP: ['AU', 'NZ', 'SG', 'MY', 'TH', 'VN', 'PH', 'ID', 'HK', 'TW'],
   EME: ['RU', 'TR', 'SA', 'AE', 'PK', 'UA', 'KZ', 'QA', 'KW', 'BH'],
-  EU: ['GB', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'CH', 'AT', 'SE', 'NO', 'DK', 'FI', 'PL', 'PT', 'IE', 'GR', 'CZ', 'RO', 'HU'],
+  EU: [
+    'GB',
+    'DE',
+    'FR',
+    'IT',
+    'ES',
+    'NL',
+    'BE',
+    'CH',
+    'AT',
+    'SE',
+    'NO',
+    'DK',
+    'FI',
+    'PL',
+    'PT',
+    'IE',
+    'GR',
+    'CZ',
+    'RO',
+    'HU',
+  ],
   GCM: ['CN', 'MN'],
   INSWA: ['IN', 'BD', 'LK', 'NP', 'AF'],
   JSK: ['JP', 'KR'],
-  LA: ['MX', 'BR', 'AR', 'CO', 'CL', 'PE', 'EC', 'VE', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'NI', 'CR', 'PA', 'UY'],
+  LA: [
+    'MX',
+    'BR',
+    'AR',
+    'CO',
+    'CL',
+    'PE',
+    'EC',
+    'VE',
+    'GT',
+    'CU',
+    'BO',
+    'DO',
+    'HN',
+    'PY',
+    'SV',
+    'NI',
+    'CR',
+    'PA',
+    'UY',
+  ],
   NA: ['US', 'CA'],
 };
 
@@ -177,7 +218,7 @@ describe('buildSearchFilterConditions', () => {
     it('should throw error for SQL injection attempt in searchType', () => {
       expect(() => {
         buildSearchFilterConditions({
-          searchType: "'; DELETE FROM koassets_analyticstest; --",
+          searchType: "'; DELETE FROM spark_analyticstest; --",
         });
       }).toThrow('Invalid searchType filter');
     });
@@ -276,7 +317,9 @@ describe('buildSearchFilterConditions', () => {
         searchTerm: 'empty',
         region: 'NA',
       });
-      expect(result).toBe(` AND blob5 LIKE '%associate%' AND blob7 = 'products' AND (blob6 = '' OR blob6 IS NULL) AND blob2 IN ('US', 'CA')`);
+      expect(result).toBe(
+        ` AND blob5 LIKE '%associate%' AND blob7 = 'products' AND (blob6 = '' OR blob6 IS NULL) AND blob2 IN ('US', 'CA')`,
+      );
     });
 
     it('should ignore "all" values when combining filters', () => {
@@ -318,7 +361,7 @@ describe('buildSearchFilterConditions', () => {
     it('should prevent SQL injection with special characters', () => {
       expect(() => {
         buildSearchFilterConditions({
-          region: "NA'; DROP TABLE koassets_analyticstest; --",
+          region: "NA'; DROP TABLE spark_analyticstest; --",
         });
       }).toThrow('Invalid region filter');
     });

@@ -52,7 +52,7 @@
   font-size: 24px;
   font-weight: 600;
   margin: 0 0 16px;
-  color: #1e1e1e;
+  color: var(--text-color);
 }
 
 .profile-modal .sudo-edit-note {
@@ -196,14 +196,14 @@
 
 .profile-modal .profile-value {
   font-size: 16px;
-  color: #1e1e1e;
+  color: var(--text-color);
   font-weight: 400;
   padding: 8px 0;
 }
 
 .profile-modal .profile-input {
   font-size: 16px;
-  color: #1e1e1e;
+  color: var(--text-color);
   font-weight: 400;
   padding: 8px 12px;
   border: 1px solid #ddd;

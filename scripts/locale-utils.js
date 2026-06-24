@@ -1,12 +1,12 @@
 /**
- * Locale utilities for the KO Assets application.
+ * Locale utilities for the Spark EDS application.
  * Provides locale detection, path localization, and application label retrieval.
  */
 
 // Supported locales
 const SUPPORTED_LOCALES = ['en', 'ja'];
 const DEFAULT_LOCALE = 'en';
-const LOCALE_STORAGE_KEY = 'koassets-preferred-locale';
+const LOCALE_STORAGE_KEY = 'spark-preferred-locale';
 
 /** EDS locale to AEM content path segment (country/locale) */
 const LOCALE_TO_AEM_SEGMENT = { en: 'us/en', ja: 'jp/ja' };

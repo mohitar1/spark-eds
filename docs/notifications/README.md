@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This document explains how in-app notifications work in KOAssets for both:
+This document explains how in-app notifications work in Spark for both:
 
 - Business stakeholders (what users experience and why)
 - Technical stakeholders (how data flows across UI, APIs, and storage)
@@ -133,8 +133,8 @@ Responsibilities:
 
 System message localStorage keys:
 
-- `koassets-system-notifications-read`
-- `koassets-system-notifications-deleted`
+- `spark-system-notifications-read`
+- `spark-system-notifications-deleted`
 
 ### 5.3 Priority modal layer
 

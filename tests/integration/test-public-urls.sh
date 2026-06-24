@@ -10,7 +10,7 @@ URLS=(
   "/rendition/mycoke2/png/content/dam/tccc/products/ma/coca-cola-zero/coca-cola-zero-sugar/00000090375323/90375323_U1N1_s01"
   "/rendition/preview/png/content/dam/tccc/products/ma/coca-cola-zero/coca-cola-zero-sugar/00000090375323/90375323_U1N1_s01"
   "/rendition/original/png/content/dam/tccc/products/ma/coca-cola-zero/coca-cola-zero-sugar/00000090375323/90375323_U1N1_s01"
-  "/public/download/original/png/content/dam/tccc/marketing/public-links/KOAssetsLogoTransparent"
+  "/public/download/original/png/content/dam/tccc/marketing/public-links/SparkLogoTransparent"
   "/public/download/original/mp4/content/dam/tccc/marketing/public-links/global-sprite-motion-wordmark-immersive-mp4"
 )
 

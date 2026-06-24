@@ -1,6 +1,8 @@
 import showToast from '../toast/toast.js';
 import { getAppLabel } from '../locale-utils.js';
 import { buildAssetDetailsUrl } from '../asset-id-utils.js';
+import { dispatchAssetAction } from '../audit/asset-audit.js';
+import { ASSET_AUDIT_ACTIONS } from '../audit/asset-audit-constants.js';
 
 /**
  * Creates a share asset button DOM element
@@ -20,6 +22,11 @@ export function createShareAssetButton({ assetId, filename, disabled = false }) 
   button.className = 'share-asset-button';
   button.disabled = disabled;
   button.removeAttribute('aria-label');
+
+  const icon = document.createElement('span');
+  icon.className = 'icon-mask icon-mask-share';
+  icon.setAttribute('aria-hidden', 'true');
+  button.appendChild(icon);
   const fallbackCopyToClipboard = (text) => {
     const textArea = document.createElement('textarea');
     textArea.value = text;
@@ -63,6 +70,7 @@ export function createShareAssetButton({ assetId, filename, disabled = false }) 
       await navigator.clipboard.writeText(shareUrl);
       // eslint-disable-next-line no-console
       console.debug('Share link copied to clipboard:', shareUrl);
+      dispatchAssetAction(ASSET_AUDIT_ACTIONS.SHARE_LINK_COPY, assetId);
       showToast('Asset link copied to clipboard', 'success');
     } catch (error) {
       // eslint-disable-next-line no-console

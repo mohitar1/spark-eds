@@ -337,6 +337,11 @@ async function loadLazy(doc) {
     console.log('Add to collection modal not available');
   });
 
+  // Initialize asset audit tracking (fires asset:action events → /api/audit/event)
+  import('./audit/asset-audit.js')
+    .then(({ default: initAssetAuditTracking }) => initAssetAuditTracking())
+    .catch((err) => console.warn('[asset-audit] failed to load:', err));
+
   // Show important unread notifications on any page when user is logged in
   if (window.user) {
     import('./notifications/priority-modal.js')
@@ -582,7 +587,7 @@ export function extractMimeTypeMappings(configs) {
 }
 
 /**
- * Ensure KOAssetsConfig has mimeTypeMappings loaded from configs.
+ * Ensure SparkConfig has mimeTypeMappings loaded from configs.
  * Used by non-search pages that rely on shared mime label mapping.
  * @param {string} warnPrefix - Prefix for warning logs
  * @returns {Promise<Array|null>} Loaded mappings or null
@@ -590,7 +595,7 @@ export function extractMimeTypeMappings(configs) {
 export async function ensureMimeTypeMappingsConfig(
   warnPrefix = '[MimeTypeMappings]',
 ) {
-  const existingMappings = window.KOAssetsConfig?.externalParams?.mimeTypeMappings;
+  const existingMappings = window.SparkConfig?.externalParams?.mimeTypeMappings;
   if (Array.isArray(existingMappings) && existingMappings.length > 0) {
     return existingMappings;
   }
@@ -599,9 +604,9 @@ export async function ensureMimeTypeMappingsConfig(
     const configs = await fetchSpreadsheetData('configs');
     const mimeTypeMappings = extractMimeTypeMappings(configs);
 
-    window.KOAssetsConfig = window.KOAssetsConfig || {};
-    window.KOAssetsConfig.externalParams = {
-      ...(window.KOAssetsConfig.externalParams || {}),
+    window.SparkConfig = window.SparkConfig || {};
+    window.SparkConfig.externalParams = {
+      ...(window.SparkConfig.externalParams || {}),
       mimeTypeMappings,
     };
 

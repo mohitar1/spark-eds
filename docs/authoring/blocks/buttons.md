@@ -82,8 +82,8 @@ Place each link on its own line:
 
 ## Live Examples
 
-- Welcome page buttons: [da.live/edit#/.../public/welcome](https://da.live/edit#/the-coca-cola-company/koassets/public/welcome)
-- Content Stores page: [da.live/edit#/.../all-content-stores](https://da.live/edit#/the-coca-cola-company/koassets/all-content-stores)
+- Welcome page buttons: [da.live/edit#/.../public/welcome](https://da.live/edit#/adobe/spark-eds/public/welcome)
+- Content Stores page: [da.live/edit#/.../all-content-stores](https://da.live/edit#/adobe/spark-eds/all-content-stores)
 
 
 ## Related

@@ -28,7 +28,7 @@ function allowOrigins(...allowedOrigins) {
       return undefined;
     }
     for (const allowed of allowedOrigins) {
-      if (typeof allowed === "string") {
+      if (typeof allowed === 'string') {
         if (origin === allowed) {
           return origin;
         }
@@ -41,7 +41,7 @@ function allowOrigins(...allowedOrigins) {
           return origin;
         }
       }
-    };
+    }
     return undefined;
   };
 }
@@ -60,30 +60,27 @@ export function cors(options) {
 
   const appendHeadersAndReturn = (response, headers) => {
     for (const [key, value] of Object.entries(headers)) {
-      if (value) response.headers.append(key, value)
+      if (value) response.headers.append(key, value);
     }
-    return response
-  }
+    return response;
+  };
 
   const getAccessControlOrigin = (request) => {
     const requestOrigin = request?.headers.get('origin');
     return options.origin(requestOrigin);
-  }
+  };
 
   // fix taken from https://github.com/kwhitley/itty-router/pull/268
   // see also https://github.com/kwhitley/itty-router/issues/261
   const corsify = (response, request) => {
     // ignore if already has CORS headers
-    if (
-      response?.headers?.get('access-control-allow-origin')
-      || response.status === 101
-    ) return response
+    if (response?.headers?.get('access-control-allow-origin') || response.status === 101) return response;
 
     return appendHeadersAndReturn(new Response(response.body, response), {
       'access-control-allow-origin': getAccessControlOrigin(request),
       'access-control-allow-credentials': options.credentials,
-    })
-  }
+    });
+  };
 
   return {
     preflight: ittyCors(options).preflight,

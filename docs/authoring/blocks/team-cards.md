@@ -24,7 +24,7 @@ Add a single-cell row at the top to create a section title:
 
 | team-cards            |                  |
 |-----------------------|------------------|
-| TCCC KO Assets Team   |
+| TCCC Spark Team   |
 | photo1.jpg            | Name, Job Title  |
 | photo2.jpg            | Name, Job Title  |
 
@@ -52,7 +52,7 @@ Each team member uses one row with:
 
 ## Live Examples
 
-- Meet the Team page: [da.live/edit#/.../help/meet-the-team](https://da.live/edit#/the-coca-cola-company/koassets/en/help/meet-the-team)
+- Meet the Team page: [da.live/edit#/.../help/meet-the-team](https://da.live/edit#/adobe/spark-eds/en/help/meet-the-team)
 
 ## Tips
 

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { parsePageExclusions, isUserExcluded } from '../page-access.js';
+import { describe, expect, it } from 'vitest';
+import { isUserExcluded, parsePageExclusions } from '../page-access.js';
 
 describe('parsePageExclusions', () => {
   it('returns empty exclusions when no meta tag exists', () => {

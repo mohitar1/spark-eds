@@ -8,7 +8,7 @@
  * Note: maskEmail was removed when we switched from email to koid for user identification.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ASSET_URN_PREFIX, stripAssetUrn } from '../../util/constants.js';
 
 /**
@@ -105,7 +105,7 @@ describe('raw downloads CSV generation', () => {
       roles: 'associate',
       resourceType: 'asset',
       campaign: 'Christmas 2025',
-      brand: 'Coca-Cola',
+      brand: 'Acme Corp',
       downloadId: '550e8400-e29b-41d4-a716-446655440000',
       downloadItemId: 'abc123-def4-5678-9abc-def012345678',
       downloadType: 'ready-to-use',
@@ -115,7 +115,9 @@ describe('raw downloads CSV generation', () => {
 
     const csvRow = generateCSVRow(row);
     // asset: Asset ID = downloadItemId, Template ID empty, campaign/brand after IDs
-    expect(csvRow).toBe('2026-01-20T14:30:22Z,S700855,US,employee,Adobe,associate,550e8400-e29b-41d4-a716-446655440000,asset,abc123-def4-5678-9abc-def012345678,,,Christmas 2025,Coca-Cola,ready-to-use,original');
+    expect(csvRow).toBe(
+      '2026-01-20T14:30:22Z,S700855,US,employee,Adobe,associate,550e8400-e29b-41d4-a716-446655440000,asset,abc123-def4-5678-9abc-def012345678,,,Christmas 2025,Acme Corp,ready-to-use,original',
+    );
   });
 
   it('strips urn:aaid:aem: prefix from asset downloadItemId', () => {
@@ -128,7 +130,7 @@ describe('raw downloads CSV generation', () => {
       roles: 'associate',
       resourceType: 'asset',
       campaign: 'Test',
-      brand: 'Coca-Cola',
+      brand: 'Acme Corp',
       downloadId: 'dl-uuid',
       downloadItemId: 'urn:aaid:aem:c086ecad-3eab-40da-8580-37b0a18523dc',
       downloadType: 'ready-to-use',
@@ -174,7 +176,7 @@ describe('raw downloads CSV generation', () => {
       roles: 'associate',
       resourceType: 'asset',
       campaign: '',
-      brand: 'Coca-Cola',
+      brand: 'Acme Corp',
       downloadId: '',
       downloadItemId: '',
       downloadType: '',
@@ -187,7 +189,7 @@ describe('raw downloads CSV generation', () => {
     // downloadId, resourceType, assetId, templateId, publicationId,
     // campaign, brand, downloadType, rendition
     // null/undefined/empty all become empty strings; resourceType=asset so templateId is empty
-    expect(csvRow).toBe('2026-01-20T14:30:22Z,,,,Adobe,associate,,asset,,,,,Coca-Cola,,');
+    expect(csvRow).toBe('2026-01-20T14:30:22Z,,,,Adobe,associate,,asset,,,,,Acme Corp,,');
   });
 
   it('does not mask koid (unlike old email masking)', () => {
@@ -200,7 +202,7 @@ describe('raw downloads CSV generation', () => {
       roles: 'associate',
       resourceType: 'asset',
       campaign: 'Test',
-      brand: 'Coca-Cola',
+      brand: 'Acme Corp',
       downloadId: 'abc',
       downloadItemId: 'xyz',
       downloadType: 'ready-to-use',
@@ -223,8 +225,8 @@ describe('raw downloads CSV generation', () => {
       company: 'Adobe',
       roles: 'associate',
       resourceType: 'template',
-      campaign: 'Coca-Cola',
-      brand: 'Coca-Cola - Always On Soccer',
+      campaign: 'Acme Corp',
+      brand: 'Acme Corp - Always On Soccer',
       downloadId: 'dl-uuid-123',
       downloadItemId: '7c2eb8e8-7c55-4484-b236-bc9ccdb7117a',
       downloadType: 'ready-to-use',
@@ -253,7 +255,7 @@ describe('raw downloads CSV generation', () => {
       roles: 'associate',
       resourceType: 'template',
       campaign: 'Always On',
-      brand: 'Coca-Cola',
+      brand: 'Acme Corp',
       downloadId: 'dl-uuid-456',
       downloadItemId: 'urn:aaid:aem:3d8c06a8-3615-4604-9590-e6a57c415043',
       downloadType: 'ready-to-use',
@@ -278,7 +280,7 @@ describe('raw downloads CSV generation', () => {
       roles: 'associate',
       resourceType: 'template',
       campaign: '',
-      brand: 'Coca-Cola',
+      brand: 'Acme Corp',
       downloadId: '',
       downloadItemId: '',
       downloadType: '',
@@ -288,7 +290,7 @@ describe('raw downloads CSV generation', () => {
 
     const csvRow = generateCSVRow(row);
     // 15 fields; resourceType=template so Asset ID empty, Template ID empty (no downloadItemId)
-    expect(csvRow).toBe('2026-01-20T14:30:22Z,,,,Adobe,associate,,template,,,,,Coca-Cola,,');
+    expect(csvRow).toBe('2026-01-20T14:30:22Z,,,,Adobe,associate,,template,,,,,Acme Corp,,');
   });
 });
 

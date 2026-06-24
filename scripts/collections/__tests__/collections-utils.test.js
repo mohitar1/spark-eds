@@ -116,13 +116,13 @@ describe('collections-utils', () => {
       expect(result.lastUpdated).toBe('2024-01-15T10:00:00Z');
     });
 
-    it('should extract tccc:acl from nested metadata', () => {
+    it('should extract custom:acl from nested metadata', () => {
       const apiCollection = {
         collectionId: 'col-123',
         collectionMetadata: {
           title: 'Test',
-          'tccc:metadata': {
-            'tccc:acl': ['user1', 'user2'],
+          'custom:metadata': {
+            'custom:acl': ['user1', 'user2'],
           },
         },
       };

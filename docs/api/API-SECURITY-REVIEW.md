@@ -1,6 +1,6 @@
-# KO Assets API Security Review Documentation
+# Spark API Security Review Documentation
 
-This document provides comprehensive API documentation for security assessment of the KO Assets platform.
+This document provides comprehensive API documentation for security assessment of the Spark platform.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ This document provides comprehensive API documentation for security assessment o
 
 ## Overview
 
-KO Assets is a digital asset management platform built on:
+Spark is a digital asset management platform built on:
 - **Cloudflare Workers**: Edge computing for API routing, authentication, and business logic
 - **Adobe Experience Manager (AEM)**: Content delivery via Helix/EDS
 - **Adobe Dynamic Media**: Asset storage and delivery
@@ -41,10 +41,10 @@ KO Assets is a digital asset management platform built on:
 
 | Environment | URL |
 |-------------|-----|
-| Production | `https://koassets.adobecocacola.workers.dev` |
-| Preview | `https://preview-koassets.adobecocacola.workers.dev` |
-| Branch (preview) | `https://{branch}-koassets.adobecocacola.workers.dev` |
-| Branch (live) | `https://{branch}-live-koassets.adobecocacola.workers.dev` |
+| Production | `https://spark-eds.workers.dev` |
+| Preview | `https://preview-spark-eds.workers.dev` |
+| Branch (preview) | `https://{branch}-spark-eds.workers.dev` |
+| Branch (live) | `https://{branch}-live-spark-eds.workers.dev` |
 | Local Development | `http://localhost:8787` |
 
 ---
@@ -53,7 +53,7 @@ KO Assets is a digital asset management platform built on:
 
 ### OAuth/OIDC Flow
 
-KO Assets uses **Microsoft Entra ID** (formerly Azure AD) for authentication via OAuth 2.0 / OpenID Connect.
+Spark uses **Microsoft Entra ID** (formerly Azure AD) for authentication via OAuth 2.0 / OpenID Connect.
 
 #### Authentication Flow
 
@@ -521,28 +521,17 @@ Proxied to AEM CS Publish environment (`publish-*.adobeaemcloud.com`).
 
 ## Testing Resources
 
-### Postman Collection
-
-Import `koassets-api-collection-postman.json` into Postman:
-
-1. Open Postman
-2. Click Import → Upload Files
-3. Select `koassets-api-collection-postman.json`
-4. Set collection variables:
-   - `baseUrl`: Your target environment URL
-   - `sessionCookie`: Your session cookie value
-
 ### curl Examples
 
-See `koassets-api-collection-curl.sh` for executable examples:
+See `spark-api-collection-curl.sh` for executable examples:
 
 ```bash
 # Set environment variables
-export BASE_URL="https://koassets.adobecocacola.workers.dev"
+export BASE_URL="https://spark-eds.workers.dev"
 export SESSION_COOKIE="your_session_cookie_value"
 
 # Source the file for helper functions
-source koassets-api-collection-curl.sh
+source spark-api-collection-curl.sh
 
 # Or run individual commands from the file
 ```
@@ -597,4 +586,4 @@ All APIs return consistent error responses:
 
 ## Contact
 
-For questions about this security review documentation, contact the KO Assets development team.
+For questions about this security review documentation, contact the Spark development team.

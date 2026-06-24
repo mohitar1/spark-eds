@@ -7,7 +7,7 @@ import { cleanBrandName, BRAND_PREFIX_PATTERN } from '../brand-utils.js';
 
 describe('cleanBrandName', () => {
   it('removes "Brand / " prefix from single brand', () => {
-    expect(cleanBrandName('Brand / Coca-Cola')).toBe('Coca-Cola');
+    expect(cleanBrandName('Brand / Acme Brand')).toBe('Acme Brand');
   });
 
   it('removes "Brand / " prefix from multiple comma-separated brands', () => {
@@ -16,11 +16,11 @@ describe('cleanBrandName', () => {
 
   it('handles case-insensitive "brand" keyword', () => {
     expect(cleanBrandName('brand / Sprite')).toBe('Sprite');
-    expect(cleanBrandName('BRAND / Coca-Cola')).toBe('Coca-Cola');
+    expect(cleanBrandName('BRAND / Acme Brand')).toBe('Acme Brand');
   });
 
   it('handles flexible whitespace in prefix', () => {
-    expect(cleanBrandName('Brand/Coca-Cola')).toBe('Coca-Cola');
+    expect(cleanBrandName('Brand/Acme Brand')).toBe('Acme Brand');
     expect(cleanBrandName('Brand  /  Fanta')).toBe('Fanta');
   });
 
@@ -37,7 +37,7 @@ describe('cleanBrandName', () => {
   });
 
   it('filters out empty values after cleaning', () => {
-    expect(cleanBrandName('Brand / Coca-Cola, , Brand / Fanta')).toBe('Coca-Cola, Fanta');
+    expect(cleanBrandName('Brand / Acme Brand, , Brand / Fanta')).toBe('Acme Brand, Fanta');
   });
 
   it('returns "unknown" when all values are empty after cleaning', () => {
@@ -45,21 +45,21 @@ describe('cleanBrandName', () => {
   });
 
   it('preserves brands without prefix', () => {
-    expect(cleanBrandName('Coca-Cola')).toBe('Coca-Cola');
+    expect(cleanBrandName('Acme Brand')).toBe('Acme Brand');
   });
 
   it('handles mixed brands (some with prefix, some without)', () => {
-    expect(cleanBrandName('Brand / Coca-Cola, Sprite, Brand / Fanta')).toBe('Coca-Cola, Sprite, Fanta');
+    expect(cleanBrandName('Brand / Acme Brand, Sprite, Brand / Fanta')).toBe('Acme Brand, Sprite, Fanta');
   });
 
   it('trims whitespace from brand names', () => {
-    expect(cleanBrandName('  Brand / Coca-Cola  ,  Brand / Fanta  ')).toBe('Coca-Cola, Fanta');
+    expect(cleanBrandName('  Brand / Acme Brand  ,  Brand / Fanta  ')).toBe('Acme Brand, Fanta');
   });
 });
 
 describe('BRAND_PREFIX_PATTERN', () => {
   it('matches standard "Brand / " prefix', () => {
-    expect('Brand / Coca-Cola'.replace(BRAND_PREFIX_PATTERN, '')).toBe('Coca-Cola');
+    expect('Brand / Acme Brand'.replace(BRAND_PREFIX_PATTERN, '')).toBe('Acme Brand');
   });
 
   it('matches case-insensitive prefix', () => {
@@ -68,7 +68,7 @@ describe('BRAND_PREFIX_PATTERN', () => {
   });
 
   it('matches prefix with flexible whitespace', () => {
-    expect('Brand/Coca-Cola'.replace(BRAND_PREFIX_PATTERN, '')).toBe('Coca-Cola');
+    expect('Brand/Acme Brand'.replace(BRAND_PREFIX_PATTERN, '')).toBe('Acme Brand');
     expect('Brand  /  Sprite'.replace(BRAND_PREFIX_PATTERN, '')).toBe('Sprite');
   });
 
