@@ -76,24 +76,18 @@ id = "00000000000000000000000000000000"
 [[d1_databases]]
 binding = "USER_LOGINS"
 database_name = "spark-user-logins"
-database_id = "00000000-0000-0000-0000-000000000001"
+database_id = "3db42334-a8ba-48cc-b5bd-84f7e1b04eb2"
 
 # Asset activity audit log (report-asset-activity).
 # Create the remote database with: npx wrangler d1 create spark-audit-events
 [[d1_databases]]
 binding = "AUDIT_EVENTS"
 database_name = "spark-audit-events"
-database_id = "00000000-0000-0000-0000-000000000002"
+database_id = "3db42334-a8ba-48cc-b5bd-84f7e1b04eb2"
 
 # Search events log (report-searches).
 # Create the remote database with: npx wrangler d1 create spark-search-events
 [[d1_databases]]
 binding = "SEARCH_EVENTS"
 database_name = "spark-search-events"
-database_id = "00000000-0000-0000-0000-000000000003"
-
-# Search/download analytics (report-searches).
-# Create with: npx wrangler analytics-engine dataset create spark_analytics
-[[analytics_engine_datasets]]
-binding = "SPARK_ANALYTICS_ENGINE"
-dataset = "spark_analytics"
+database_id = "3db42334-a8ba-48cc-b5bd-84f7e1b04eb2"
