@@ -16,7 +16,7 @@ enabled = true
 name = "spark-eds-production"
 
 routes = [
-  { pattern = "spark.aem.media/*" },
+  { pattern = "spark.aem.media/*", zone_name = "aem.media" },
 ]
 
 kv_namespaces = [
