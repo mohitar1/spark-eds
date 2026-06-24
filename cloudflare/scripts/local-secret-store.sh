@@ -16,7 +16,7 @@ set -o pipefail
 FILE=".secrets"
 
 # parse SECRET_STORE_ID out of wrangler.toml, only the first match
-SECRET_STORE_ID=$(grep -m 1 'store_id = "' wrangler.toml | sed 's/.*store_id = "\(.*\)".*/\1/')
+SECRET_STORE_ID=$(grep -m 1 'store_id = "' wrangler.toml | sed 's/.*store_id = "\([^"]*\)".*/\1/')
 
 if [ -z "$SECRET_STORE_ID" ]; then
   echo "Error: no secret store_id found in cloudflare/wrangler.toml"
